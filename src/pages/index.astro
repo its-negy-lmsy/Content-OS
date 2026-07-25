@@ -1,0 +1,1034 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Content OS — Creative AI Control Room">
+  <div class="app-shell">
+    <!-- Sidebar Navigation (Matching Reference Design) -->
+    <aside class="app-sidebar">
+      <a href="#dashboard" class="brand-wrap">
+        <div class="brand-icon">
+          <i class="ph-bold ph-lightning"></i>
+        </div>
+        <div class="brand-text">CONTENT <span>OS</span></div>
+      </a>
+
+      <nav class="nav-section" aria-label="Main Navigation">
+        <!-- CORE -->
+        <div class="nav-label">Core Workspace</div>
+        <a href="#dashboard" class="nav-item active" data-target="v-dashboard">
+          <i class="ph-bold ph-squares-four"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="#projects" class="nav-item" data-target="v-projects">
+          <i class="ph-bold ph-folder-open"></i>
+          <span>Projects</span>
+        </a>
+        <a href="#research" class="nav-item" data-target="v-research">
+          <i class="ph-bold ph-book-bookmark"></i>
+          <span>Knowledge Vault</span>
+        </a>
+        <a href="#canvas" class="nav-item" data-target="v-canvas">
+          <i class="ph-bold ph-diagram"></i>
+          <span>Workflow</span>
+        </a>
+        <a href="#agents" class="nav-item" data-target="v-agents">
+          <i class="ph-bold ph-robot"></i>
+          <span>Agents</span>
+        </a>
+        <a href="#assets" class="nav-item" data-target="v-assets">
+          <i class="ph-bold ph-image"></i>
+          <span>Assets</span>
+        </a>
+        <a href="#templates" class="nav-item" data-target="v-templates">
+          <i class="ph-bold ph-layout"></i>
+          <span>Templates</span>
+        </a>
+
+        <!-- TOOLS -->
+        <div class="nav-label">Tools</div>
+        <a href="#voice" class="nav-item" data-target="v-voice">
+          <i class="ph-bold ph-microphone"></i>
+          <span>Voice Studio</span>
+        </a>
+        <a href="#video" class="nav-item" data-target="v-video">
+          <i class="ph-bold ph-video-camera"></i>
+          <span>Video Studio</span>
+        </a>
+        <a href="#audio" class="nav-item" data-target="v-audio">
+          <i class="ph-bold ph-waveform"></i>
+          <span>Audio Studio</span>
+        </a>
+        <a href="#image-studio" class="nav-item" data-target="v-image">
+          <i class="ph-bold ph-palette"></i>
+          <span>Image Studio</span>
+        </a>
+        <a href="#research-hub" class="nav-item" data-target="v-research-hub">
+          <i class="ph-bold ph-magnifying-glass-plus"></i>
+          <span>Research Hub</span>
+        </a>
+
+        <!-- SYSTEM -->
+        <div class="nav-label">System</div>
+        <a href="#settings" class="nav-item" data-target="v-settings">
+          <i class="ph-bold ph-gear-six"></i>
+          <span>Settings</span>
+        </a>
+        <a href="#integrations" class="nav-item" data-target="v-integrations">
+          <i class="ph-bold ph-plugs-connected"></i>
+          <span>Integrations</span>
+        </a>
+        <a href="#logs" class="nav-item" data-target="v-logs">
+          <i class="ph-bold ph-terminal-window"></i>
+          <span>System Logs</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="pulse-dot"></div>
+        <div>
+          <strong style="color: #fff; font-size: 0.82rem; display: block;">System Operational</strong>
+          <span style="font-size: 0.75rem; color: var(--text-dim);">localhost:8000</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="app-main">
+      <!-- Top Header -->
+      <header class="app-header">
+        <div class="header-left">
+          <span class="current-view-title" id="view-title">Dashboard Overview</span>
+        </div>
+        <div class="header-right">
+          <div class="runner-badge">
+            <i class="ph-bold ph-cpu"></i>
+            <span>Active Runner: <strong id="active-runner-name">Codex CLI</strong></span>
+          </div>
+          <button class="btn-primary" id="quick-new-project-btn">
+            <i class="ph-bold ph-plus"></i>
+            <span>+ New Project</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- View 1: Dashboard (Matching Reference Image Layout) -->
+      <section id="v-dashboard" class="view-panel active">
+        <div class="view-header">
+          <h1>Good evening, Negy</h1>
+          <p>"Ideas are easy. Execution is everything."</p>
+        </div>
+
+        <!-- 4 Top Stats Cards -->
+        <div class="card-grid-4">
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>Active Projects</span>
+              <div class="stat-icon"><i class="ph-bold ph-folder"></i></div>
+            </div>
+            <div class="stat-value" id="stat-projects-val">3</div>
+            <div class="stat-meta">+2 this week</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>In Progress</span>
+              <div class="stat-icon"><i class="ph-bold ph-timer"></i></div>
+            </div>
+            <div class="stat-value" id="stat-inprogress-val">7</div>
+            <div class="stat-meta">4 running now</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>Assets Generated</span>
+              <div class="stat-icon"><i class="ph-bold ph-images"></i></div>
+            </div>
+            <div class="stat-value" id="stat-assets-val">3,247</div>
+            <div class="stat-meta">+342 this week</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>Knowledge Vault</span>
+              <div class="stat-icon"><i class="ph-bold ph-notebook"></i></div>
+            </div>
+            <div class="stat-value" id="stat-research-val">12</div>
+            <div class="stat-meta">Karpathy-style notes</div>
+          </div>
+        </div>
+
+        <!-- Dashboard 2-Column Split Layout -->
+        <div class="dashboard-main-grid">
+          <!-- Left Column -->
+          <div class="dashboard-col-left">
+            <!-- Content Workflow Pipeline Widget -->
+            <div class="pipeline-card">
+              <div class="pipeline-header">
+                <h3><i class="ph-bold ph-diagram" style="color: #ffffff;"></i> Content Workflow Pipeline <span class="badge ready" style="margin-left: 8px;">Live</span></h3>
+                <a href="#canvas" class="btn-secondary" style="font-size: 0.78rem; padding: 5px 10px;">View All Workflows →</a>
+              </div>
+              <p style="font-size: 0.82rem; color: var(--text-dim); margin-bottom: 16px;">Track your content from idea to upload</p>
+
+              <div class="pipeline-steps-row" id="pipeline-steps-container">
+                <!-- Dynamic Pipeline Steps -->
+                <div class="pipeline-step-box done">
+                  <div class="pipeline-step-node"><i class="ph-bold ph-lightbulb"></i></div>
+                  <span class="pipeline-step-label">Idea</span>
+                  <span class="pipeline-step-status">✓ Done</span>
+                </div>
+                <div class="pipeline-step-box done">
+                  <div class="pipeline-step-node"><i class="ph-bold ph-magnifying-glass"></i></div>
+                  <span class="pipeline-step-label">Research</span>
+                  <span class="pipeline-step-status">✓ Done</span>
+                </div>
+                <div class="pipeline-step-box in_progress">
+                  <div class="pipeline-step-node"><i class="ph-bold ph-file-text"></i></div>
+                  <span class="pipeline-step-label">Script</span>
+                  <span class="pipeline-step-status">In Progress</span>
+                </div>
+                <div class="pipeline-step-box">
+                  <div class="pipeline-step-node"><i class="ph-bold ph-squares-four"></i></div>
+                  <span class="pipeline-step-label">Storyboard</span>
+                  <span class="pipeline-step-status">Waiting</span>
+                </div>
+                <div class="pipeline-step-box">
+                  <div class="pipeline-step-node"><i class="ph-bold ph-image"></i></div>
+                  <span class="pipeline-step-label">Assets</span>
+                  <span class="pipeline-step-status">Waiting</span>
+                </div>
+                <div class="pipeline-step-box">
+                  <div class="pipeline-step-node"><i class="ph-bold ph-waveform"></i></div>
+                  <span class="pipeline-step-label">Voice</span>
+                  <span class="pipeline-step-status">Waiting</span>
+                </div>
+                <div class="pipeline-step-box">
+                  <div class="pipeline-step-node"><i class="ph-bold ph-scissors"></i></div>
+                  <span class="pipeline-step-label">Edit</span>
+                  <span class="pipeline-step-status">Waiting</span>
+                </div>
+                <div class="pipeline-step-box">
+                  <div class="pipeline-step-node"><i class="ph-bold ph-play-circle"></i></div>
+                  <span class="pipeline-step-label">Render</span>
+                  <span class="pipeline-step-status">Queued</span>
+                </div>
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; color: var(--text-dim); margin-top: 8px;">
+                <span>Overall Progress</span>
+                <strong id="pipeline-progress-percent" style="color: #ffffff;">28%</strong>
+              </div>
+              <div class="pipeline-progress-bar-wrap">
+                <div class="pipeline-progress-bar-fill" id="pipeline-progress-bar" style="width: 28%;"></div>
+              </div>
+            </div>
+
+            <!-- Active Projects Summary -->
+            <div class="panel-card">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+                <h3><i class="ph-bold ph-folder"></i> Active Projects</h3>
+                <a href="#projects" class="btn-secondary" style="font-size: 0.78rem; padding: 5px 10px;">View All Projects →</a>
+              </div>
+              <div id="dashboard-projects-list" class="items-grid">
+                <p style="color: var(--text-dim);">Loading active projects...</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column -->
+          <div class="dashboard-col-right">
+            <!-- Today's Overview Panel -->
+            <div class="panel-card">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                <h3 style="font-size: 1.05rem;"><i class="ph-bold ph-calendar-check"></i> Today's Overview</h3>
+                <button class="btn-secondary" id="add-schedule-task-btn" style="font-size: 0.75rem; padding: 4px 8px;">+ Task</button>
+              </div>
+              <div id="today-timeline-list" class="timeline-list">
+                <p style="color: var(--text-dim);">Loading today's schedule...</p>
+              </div>
+            </div>
+
+            <!-- Recent Activity Feed Panel -->
+            <div class="panel-card">
+              <h3 style="font-size: 1.05rem; margin-bottom: 14px;"><i class="ph-bold ph-clock-counter-clockwise"></i> Recent Activity</h3>
+              <div id="activity-feed-list" class="activity-feed">
+                <p style="color: var(--text-dim);">Loading activity log...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- View 2: Projects -->
+      <section id="v-projects" class="view-panel">
+        <div class="projects-vault-header">
+          <div>
+            <h1 style="font-size: 1.8rem; font-weight: 800; color: #ffffff; letter-spacing: -0.02em; margin-bottom: 4px;">Projects Vault</h1>
+            <p style="font-size: 0.88rem; color: #a1a1aa;">Organize content topics, manage production pipelines, and track video assets.</p>
+          </div>
+          <button class="btn-primary" id="open-create-project-modal">
+            <i class="ph-bold ph-plus"></i>
+            <span>New Project</span>
+          </button>
+        </div>
+
+        <!-- Projects Filter & Toolbar -->
+        <div class="projects-toolbar">
+          <div class="projects-search-wrap">
+            <i class="ph-bold ph-magnifying-glass search-icon"></i>
+            <input type="text" id="projects-search-input" placeholder="Filter projects by title..." class="projects-search-input" />
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <select id="projects-platform-filter" class="projects-select">
+              <option value="ALL">All Platforms</option>
+              <option value="YouTube">YouTube</option>
+              <option value="Shorts">Shorts / Reels</option>
+              <option value="Blog">Blog Article</option>
+              <option value="Podcast">Podcast</option>
+              <option value="Newsletter">Newsletter</option>
+            </select>
+
+            <div class="view-toggle-wrap">
+              <button class="view-toggle-btn active" id="view-toggle-kanban" title="Kanban Board View"><i class="ph-bold ph-kanban"></i></button>
+              <button class="view-toggle-btn" id="view-toggle-grid" title="Grid Cards View"><i class="ph-bold ph-squares-four"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Kanban Board View -->
+        <div id="projects-kanban-view" class="kanban-board-container">
+          <!-- Columns rendered dynamically -->
+        </div>
+
+        <!-- Grid Cards View -->
+        <div id="projects-grid-view" class="projects-grid-container" style="display: none;">
+          <!-- Cards rendered dynamically -->
+        </div>
+
+        <!-- Create Project Modal -->
+        <div id="project-modal-backdrop" class="modal-backdrop">
+          <div class="modal-card">
+            <div class="modal-header">
+              <h3 id="modal-title-text" style="font-size: 1.15rem; font-weight: 700; color: #ffffff;">Create New Project</h3>
+              <button id="close-project-modal" class="modal-close-btn"><i class="ph-bold ph-x"></i></button>
+            </div>
+            <form id="project-modal-form" class="modal-body">
+              <div class="form-group">
+                <label class="form-label">Project Title *</label>
+                <input type="text" id="pm-title" class="form-input" placeholder="e.g. Building an AI Content Engine" required />
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Platform</label>
+                  <select id="pm-platform" class="form-input">
+                    <option value="YouTube">YouTube</option>
+                    <option value="Shorts">Shorts / Reels</option>
+                    <option value="Blog">Blog Article</option>
+                    <option value="Podcast">Podcast</option>
+                    <option value="Newsletter">Newsletter</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Initial Stage</label>
+                  <select id="pm-stage" class="form-input">
+                    <option value="Idea">Idea / Backlog</option>
+                    <option value="Scripting">Scripting</option>
+                    <option value="Production">Production</option>
+                    <option value="Editing">Editing & Review</option>
+                    <option value="Published">Published</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Target Release Date</label>
+                  <input type="date" id="pm-target-date" class="form-input" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Priority</label>
+                  <select id="pm-priority" class="form-input">
+                    <option value="Low">Low</option>
+                    <option value="Medium" selected>Medium</option>
+                    <option value="High">High</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Description / Brief</label>
+                <textarea id="pm-description" class="form-textarea" placeholder="Key goals, target angle, or notes..."></textarea>
+              </div>
+              <div class="modal-footer">
+                <button type="button" id="cancel-project-modal" class="btn-secondary">Cancel</button>
+                <button type="submit" class="btn-primary">Save Project</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Project Detail Workspace Drawer -->
+        <div id="project-drawer-backdrop" class="drawer-backdrop">
+          <div class="project-drawer-card">
+            <div class="drawer-header">
+              <div>
+                <span id="pd-platform-badge" class="platform-tag">YouTube</span>
+                <h2 id="pd-title" style="font-size: 1.3rem; font-weight: 800; color: #ffffff; margin-top: 6px;">Project Title</h2>
+              </div>
+              <button id="close-project-drawer" class="modal-close-btn"><i class="ph-bold ph-x"></i></button>
+            </div>
+            <div class="drawer-body">
+              <!-- Stage selector -->
+              <div class="drawer-section">
+                <label class="drawer-label">Production Stage</label>
+                <div class="stage-pills-wrap">
+                  <button class="stage-pill" data-stage="Idea">Idea</button>
+                  <button class="stage-pill" data-stage="Scripting">Scripting</button>
+                  <button class="stage-pill" data-stage="Production">Production</button>
+                  <button class="stage-pill" data-stage="Editing">Editing</button>
+                  <button class="stage-pill" data-stage="Published">Published</button>
+                </div>
+              </div>
+
+              <!-- Progress bar slider -->
+              <div class="drawer-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                  <label class="drawer-label" style="margin-bottom: 0;">Overall Progress</label>
+                  <span id="pd-progress-value" style="font-size: 0.85rem; font-weight: 700; color: var(--accent-orange);">0%</span>
+                </div>
+                <input type="range" id="pd-progress-range" min="0" max="100" value="0" class="progress-slider" />
+              </div>
+
+              <!-- Metadata row -->
+              <div class="drawer-row-meta">
+                <div>
+                  <span style="color: #a1a1aa; font-size: 0.78rem;">Target Date:</span>
+                  <input type="date" id="pd-target-date" class="drawer-date-input" />
+                </div>
+                <div>
+                  <span style="color: #a1a1aa; font-size: 0.78rem;">Priority:</span>
+                  <select id="pd-priority" class="drawer-select">
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Description -->
+              <div class="drawer-section">
+                <label class="drawer-label">Description & Brief</label>
+                <textarea id="pd-description" class="drawer-textarea" placeholder="Project overview..."></textarea>
+              </div>
+
+              <!-- Production Notes & Wiki Links -->
+              <div class="drawer-section">
+                <label class="drawer-label">Production Notes & [[WikiLinks]]</label>
+                <textarea id="pd-notes" class="drawer-textarea" placeholder="Add script notes or [[WikiLinks]] to knowledge vault notes..."></textarea>
+              </div>
+            </div>
+
+            <div class="drawer-footer">
+              <button id="pd-delete-btn" class="btn-danger"><i class="ph-bold ph-trash"></i> Delete Project</button>
+              <button id="pd-save-btn" class="btn-primary"><i class="ph-bold ph-check"></i> Save Changes</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- View 3: Knowledge Vault (Obsidian Studio) -->
+      <section id="v-research" class="view-panel">
+        <!-- Obsidian Main Container -->
+        <div class="obsidian-container">
+          <!-- Left Vertical Ribbon (Image 2) -->
+          <div class="obsidian-ribbon">
+            <button class="ribbon-btn active" id="ribbon-btn-explorer" title="Files"><i class="ph-bold ph-files"></i></button>
+            <button class="ribbon-btn" id="ribbon-btn-graph" title="Open Graph View"><i class="ph-bold ph-tree-structure"></i></button>
+            <button class="ribbon-btn" id="ribbon-btn-search" title="Search"><i class="ph-bold ph-magnifying-glass"></i></button>
+            <button class="ribbon-btn" id="ribbon-btn-canvas" title="Canvas"><i class="ph-bold ph-squares-four"></i></button>
+            <button class="ribbon-btn" id="ribbon-btn-bookmark" title="Bookmarks"><i class="ph-bold ph-bookmark"></i></button>
+          </div>
+
+          <!-- Left Sidebar: Vault Explorer (Image 2) -->
+          <div class="obsidian-sidebar">
+            <div class="obsidian-sidebar-header">
+              <button class="obsidian-tree-btn" id="obsidian-tree-new-note" title="New Note"><i class="ph-bold ph-note-pencil"></i></button>
+              <button class="obsidian-tree-btn" id="obsidian-tree-new-folder" title="New Folder"><i class="ph-bold ph-folder-plus"></i></button>
+              <button class="obsidian-tree-btn" id="obsidian-tree-sort" title="Change sort order"><i class="ph-bold ph-arrows-down-up"></i></button>
+              <button class="obsidian-tree-btn" id="obsidian-tree-collapse" title="Collapse All"><i class="ph-bold ph-caret-line-up"></i></button>
+            </div>
+            <div class="obsidian-tree-content" id="obsidian-tree-root">
+              <p style="font-size: 0.8rem; color: var(--text-dim); padding: 10px;">Loading vault tree...</p>
+            </div>
+          </div>
+
+          <!-- Center Pane: Tabbed Editor & Workspace -->
+          <div class="obsidian-editor-pane">
+            <!-- Multi-tab bar -->
+            <div class="obsidian-tab-bar">
+              <div id="obsidian-tabs-list" style="display: flex; align-items: center;">
+                <!-- Tabs inserted dynamically -->
+              </div>
+              <button class="obsidian-tab" id="obsidian-add-tab-btn" title="New Tab" style="padding: 8px 12px;"><i class="ph-bold ph-plus"></i></button>
+            </div>
+
+            <!-- Editor Body / Workspace -->
+            <div class="obsidian-editor-body" style="position: relative;">
+              <!-- Note Textarea Mode -->
+              <textarea id="obsidian-editor-textarea" class="obsidian-textarea" placeholder="Start typing note content here..."></textarea>
+              <!-- Rendered Markdown Preview Mode -->
+              <div id="obsidian-editor-preview" class="obsidian-preview markdown-body"></div>
+              <!-- Dedicated Fullscreen Graph View Tab -->
+              <div id="obsidian-graph-tab-view" style="display: none; flex: 1; position: relative; background: #1f1f23;">
+                <canvas id="obsidian-full-graph-canvas" style="width: 100%; height: 100%; display: block;"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Custom Context Menu for Tree Items (Image 3) -->
+        <div id="tree-context-menu" class="obsidian-context-menu">
+          <div class="context-item" data-action="new-note"><i class="ph-bold ph-note-pencil"></i> New note</div>
+          <div class="context-item" data-action="new-folder"><i class="ph-bold ph-folder-plus"></i> New folder</div>
+          <div class="context-divider"></div>
+          <div class="context-item" data-action="copy-path"><i class="ph-bold ph-copy"></i> Copy path</div>
+          <div class="context-item" data-action="rename"><i class="ph-bold ph-pencil-simple"></i> Rename...</div>
+          <div class="context-divider"></div>
+          <div class="context-item danger" data-action="delete"><i class="ph-bold ph-trash"></i> Delete</div>
+        </div>
+
+        <!-- Custom Context Menu for Editor Text Selection (Image 4) -->
+        <div id="editor-context-menu" class="obsidian-context-menu">
+          <div class="context-item" data-action="add-link"><i class="ph-bold ph-link-simple"></i> Add link [[WikiLink]]</div>
+          <div class="context-divider"></div>
+          <div class="context-item" data-action="bold"><i class="ph-bold ph-text-b"></i> Format -> Bold</div>
+          <div class="context-item" data-action="italic"><i class="ph-bold ph-text-italic"></i> Format -> Italic</div>
+          <div class="context-item" data-action="heading"><i class="ph-bold ph-text-h"></i> Paragraph -> Heading</div>
+          <div class="context-divider"></div>
+          <div class="context-item" data-action="cut"><i class="ph-bold ph-scissors"></i> Cut</div>
+          <div class="context-item" data-action="copy"><i class="ph-bold ph-copy"></i> Copy</div>
+        </div>
+      </section>
+
+      <!-- View 4: Workflow Canvas -->
+      <section id="v-canvas" class="view-panel">
+        <div class="workflow-studio-header">
+          <div>
+            <h1 style="font-size: 1.8rem; font-weight: 800; color: #ffffff; letter-spacing: -0.02em; margin-bottom: 4px;">Workflow Canvas Engine</h1>
+            <p style="font-size: 0.88rem; color: #a1a1aa;">Visual execution graph orchestrating data flow from topic input to script, audio, and publication.</p>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <button class="btn-secondary" id="workflow-add-node-btn"><i class="ph-bold ph-plus"></i> Add Node</button>
+            <button class="btn-primary" id="run-workflow-btn" style="padding: 10px 22px; font-size: 0.92rem;">
+              <i class="ph-bold ph-play"></i>
+              <span>▶ Run Full Pipeline</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Workflow Canvas Workspace -->
+        <div class="workflow-studio-wrap">
+          <!-- Interactive SVG Wires Layer -->
+          <svg class="workflow-svg-layer" id="workflow-svg-layer">
+            <defs>
+              <linearGradient id="wireGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#ff5500" stop-opacity="0.8" />
+                <stop offset="100%" stop-color="#ff8800" stop-opacity="0.9" />
+              </linearGradient>
+            </defs>
+          </svg>
+
+          <!-- Interactive Node Cards Container -->
+          <div class="workflow-nodes-area" id="workflow-nodes-area">
+            <!-- Node 1: Topic Input -->
+            <div class="wf-node-card" id="wf-node-topic" style="left: 40px; top: 120px;" data-id="topic">
+              <div class="node-header">
+                <div class="node-title"><i class="ph-bold ph-lightbulb" style="color: #f59e0b;"></i> Topic Input</div>
+                <span class="node-status-badge waiting" id="badge-topic">WAITING</span>
+              </div>
+              <div class="node-body">
+                <div class="node-input-label">Content Topic</div>
+                <input type="text" id="wf-input-topic" class="node-input-field" value="Building an AI Content Engine" />
+              </div>
+              <div class="node-socket output" data-node="topic" title="Output: Topic Data"></div>
+            </div>
+
+            <!-- Node 2: Research Ingest -->
+            <div class="wf-node-card" id="wf-node-research" style="left: 310px; top: 220px;" data-id="research">
+              <div class="node-socket input" data-node="research" title="Input: Topic"></div>
+              <div class="node-header">
+                <div class="node-title"><i class="ph-bold ph-magnifying-glass" style="color: #3b82f6;"></i> Research Ingest</div>
+                <span class="node-status-badge waiting" id="badge-research">WAITING</span>
+              </div>
+              <div class="node-body">
+                <div class="node-subtext">Fetch Knowledge Vault references</div>
+              </div>
+              <div class="node-socket output" data-node="research" title="Output: Research Notes"></div>
+            </div>
+
+            <!-- Node 3: Script Generator -->
+            <div class="wf-node-card" id="wf-node-script" style="left: 580px; top: 120px;" data-id="script">
+              <div class="node-socket input" data-node="script" title="Input: Research"></div>
+              <div class="node-header">
+                <div class="node-title"><i class="ph-bold ph-article" style="color: #10b981;"></i> Script Engine</div>
+                <span class="node-status-badge waiting" id="badge-script">WAITING</span>
+              </div>
+              <div class="node-body">
+                <div class="node-subtext">Generate Hook, Beats & CTA</div>
+              </div>
+              <div class="node-socket output" data-node="script" title="Output: Script Text"></div>
+            </div>
+
+            <!-- Node 4: Visual Prompts -->
+            <div class="wf-node-card" id="wf-node-prompts" style="left: 850px; top: 240px;" data-id="prompts">
+              <div class="node-socket input" data-node="prompts" title="Input: Script"></div>
+              <div class="node-header">
+                <div class="node-title"><i class="ph-bold ph-palette" style="color: #8b5cf6;"></i> Visual Prompts</div>
+                <span class="node-status-badge waiting" id="badge-prompts">WAITING</span>
+              </div>
+              <div class="node-body">
+                <div class="node-subtext">Generate Image Spec Prompts</div>
+              </div>
+              <div class="node-socket output" data-node="prompts" title="Output: Prompts"></div>
+            </div>
+
+            <!-- Node 5: Voice Synthesizer -->
+            <div class="wf-node-card" id="wf-node-voice" style="left: 1120px; top: 120px;" data-id="voice">
+              <div class="node-socket input" data-node="voice" title="Input: Script"></div>
+              <div class="node-header">
+                <div class="node-title"><i class="ph-bold ph-microphone" style="color: #ec4899;"></i> Voice Synthesizer</div>
+                <span class="node-status-badge waiting" id="badge-voice">WAITING</span>
+              </div>
+              <div class="node-body">
+                <div class="node-subtext">Generate Narration Script</div>
+              </div>
+              <div class="node-socket output" data-node="voice" title="Output: Audio Transcript"></div>
+            </div>
+
+            <!-- Node 6: Publish Gate -->
+            <div class="wf-node-card" id="wf-node-publish" style="left: 1390px; top: 200px;" data-id="publish">
+              <div class="node-socket input" data-node="publish" title="Input: Voice & Assets"></div>
+              <div class="node-header">
+                <div class="node-title"><i class="ph-bold ph-check-circle" style="color: var(--accent-orange);"></i> Publish Gate</div>
+                <span class="node-status-badge waiting" id="badge-publish">WAITING</span>
+              </div>
+              <div class="node-body">
+                <div class="node-subtext">Save Production Pack to Projects</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Node Inspector Drawer -->
+        <div id="node-inspector-drawer" class="drawer-backdrop">
+          <div class="project-drawer-card" style="max-width: 440px;">
+            <div class="drawer-header">
+              <div>
+                <span id="ni-type-badge" class="platform-tag">NODE INSPECTOR</span>
+                <h2 id="ni-title" style="font-size: 1.2rem; font-weight: 800; color: #ffffff; margin-top: 4px;">Node Settings</h2>
+              </div>
+              <button id="close-node-inspector" class="modal-close-btn"><i class="ph-bold ph-x"></i></button>
+            </div>
+            <div class="drawer-body">
+              <div class="drawer-section">
+                <label class="drawer-label">Node Status</label>
+                <div id="ni-status-display" style="font-size: 0.85rem; font-weight: 700; color: #a1a1aa;">WAITING</div>
+              </div>
+              <div class="drawer-section">
+                <label class="drawer-label">Node Description</label>
+                <p id="ni-description" style="font-size: 0.84rem; color: #d4d4d8; line-height: 1.5;"></p>
+              </div>
+              <div class="drawer-section">
+                <label class="drawer-label">Live Output Preview</label>
+                <pre id="ni-output-preview" style="background: #202024; border: 1px solid #27272a; padding: 12px; border-radius: 6px; font-family: var(--font-mono); font-size: 0.8rem; color: #e4e4e7; white-space: pre-wrap; min-height: 140px;"></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- View 5: Agents (AI Studio) -->
+      <section id="v-agents" class="view-panel">
+        <div class="agent-studio-header">
+          <div>
+            <h1 style="font-size: 1.8rem; font-weight: 800; color: #ffffff; letter-spacing: -0.02em; margin-bottom: 4px;">AI Agent Studio</h1>
+            <p style="font-size: 0.88rem; color: #a1a1aa;">Multi-turn conversational workspace connected to 9router & Hermes Agent.</p>
+          </div>
+          <div class="endpoint-status-pill" id="router-status-indicator">
+            <span class="status-dot green" id="router-dot"></span>
+            <span id="router-status-text">9router :20128 Active</span>
+          </div>
+        </div>
+
+        <!-- Agent Personas Selection Bar -->
+        <div class="agent-personas-bar">
+          <button class="persona-card active" data-role="content_os">
+            <i class="ph-bold ph-lightbulb" style="color: #ff5500;"></i>
+            <div>
+              <div class="persona-name">Content OS Master</div>
+              <div class="persona-desc">Master Orchestrator</div>
+            </div>
+          </button>
+          <button class="persona-card" data-role="scriptwriter">
+            <i class="ph-bold ph-article" style="color: #10b981;"></i>
+            <div>
+              <div class="persona-name">Scriptwriter Agent</div>
+              <div class="persona-desc">Hooks, Story & CTAs</div>
+            </div>
+          </button>
+          <button class="persona-card" data-role="researcher">
+            <i class="ph-bold ph-magnifying-glass" style="color: #3b82f6;"></i>
+            <div>
+              <div class="persona-name">Research Analyst</div>
+              <div class="persona-desc">Vault Ingestion & Trends</div>
+            </div>
+          </button>
+          <button class="persona-card" data-role="visual_prompts">
+            <i class="ph-bold ph-palette" style="color: #8b5cf6;"></i>
+            <div>
+              <div class="persona-name">Visual Crafter</div>
+              <div class="persona-desc">Flux & Midjourney</div>
+            </div>
+          </button>
+          <button class="persona-card" data-role="seo">
+            <i class="ph-bold ph-chart-line-up" style="color: #f59e0b;"></i>
+            <div>
+              <div class="persona-name">SEO & Packaging</div>
+              <div class="persona-desc">Titles, Tags & Briefs</div>
+            </div>
+          </button>
+        </div>
+
+        <!-- 2-Column Agent Studio Workspace -->
+        <div class="agent-studio-layout">
+          <!-- Left Column: Session History Sidebar -->
+          <div class="agent-sessions-sidebar">
+            <button class="btn-new-chat" id="btn-new-session">
+              <i class="ph-bold ph-plus-circle"></i>
+              <span>New Conversation</span>
+            </button>
+
+            <div class="sessions-list-header">Conversation History</div>
+            <div class="sessions-history-list" id="sessions-history-list">
+              <p style="font-size: 0.8rem; color: var(--text-dim); padding: 12px;">Loading chat memory...</p>
+            </div>
+          </div>
+
+          <!-- Right Column: Main Chat Studio -->
+          <div class="agent-chat-window">
+            <div class="chat-stream-window" id="chat-stream">
+              <div class="chat-welcome" id="chat-welcome-card">
+                <div class="chat-welcome-icon">
+                  <i class="ph-bold ph-robot"></i>
+                </div>
+                <h2 id="persona-welcome-title">What content will you build today?</h2>
+                <p id="persona-welcome-desc">Ask Hermes or 9router to write script outlines, analyze research trends, or generate visual prompt specifications.</p>
+                <div class="prompt-chips">
+                  <button class="chip-btn" data-prompt="Write a 60-second YouTube Short script about why local AI matters.">🎬 Write Short Script</button>
+                  <button class="chip-btn" data-prompt="Give me 5 viral YouTube title ideas and an SEO description seed for a tech tutorial.">📈 SEO & Title Ideas</button>
+                  <button class="chip-btn" data-prompt="Generate visual B-roll prompts for a high contrast dark minimalist UI presentation.">🎨 Visual Prompts</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bottom Composer Bar -->
+            <div class="composer-box">
+              <div class="composer-toolbar">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <div class="mode-pills">
+                    <button class="mode-btn active" data-mode="endpoint">9router (:20128)</button>
+                    <button class="mode-btn" data-mode="cli">Hermes CLI</button>
+                  </div>
+
+                  <select id="agent-runner-select" class="runner-select">
+                    <option value="hermes">Hermes Agent</option>
+                    <option value="codex">Codex CLI</option>
+                    <option value="claude">Claude Code</option>
+                    <option value="ollama">Ollama (Llama 3)</option>
+                  </select>
+                </div>
+
+                <div style="font-size: 0.78rem; color: var(--text-dim);">
+                  <i class="ph-bold ph-shield-check" style="color: var(--status-green);"></i> Persistent Memory Enabled
+                </div>
+              </div>
+
+              <div class="composer-input-row">
+                <textarea id="composer-textarea" class="composer-textarea" placeholder="Type your prompt or instruction... (Ctrl + Enter to send)"></textarea>
+                <button class="send-btn" id="composer-send-btn">
+                  <span>Send</span>
+                  <i class="ph-bold ph-paper-plane-right"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- View 6: Assets Studio -->
+      <section id="v-assets" class="view-panel">
+        <div class="view-header">
+          <h1>Assets Studio</h1>
+          <p>View and manage generated visual cards, HTML graphics, and prompt folders.</p>
+        </div>
+        <div class="panel-card">
+          <h3><i class="ph-bold ph-image"></i> Generated Asset Prompt Collections</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Assets generated during project pack compilation are saved directly in project folders under <code>data/projects/</code>.</p>
+        </div>
+      </section>
+
+      <!-- View 7: Templates -->
+      <section id="v-templates" class="view-panel">
+        <div class="view-header">
+          <h1>Content Templates</h1>
+          <p>Pre-configured structures for YouTube Videos, Shorts, X Threads, and Newsletters.</p>
+        </div>
+        <div class="items-grid">
+          <div class="item-card">
+            <h3>YouTube Deep Dive</h3>
+            <p style="color: var(--text-muted); font-size: 0.85rem;">Hook (15s) → Problem → 3 Beats → Code Demo → Call to Action.</p>
+          </div>
+          <div class="item-card">
+            <h3>Short-Form Reel</h3>
+            <p style="color: var(--text-muted); font-size: 0.85rem;">Punchy Hook (3s) → High Contrast Visual → Single Takeaway.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- View 8: Voice Studio -->
+      <section id="v-voice" class="view-panel">
+        <div class="view-header">
+          <h1>Voice Studio</h1>
+          <p>Local Text-to-Speech (Coqui / Bark) and ElevenLabs BYOK audio generation.</p>
+        </div>
+        <div class="panel-card">
+          <h3><i class="ph-bold ph-microphone"></i> TTS Engine Status</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Local TTS voice synthesis models ready on GPU.</p>
+        </div>
+      </section>
+
+      <!-- View 9: Video Studio -->
+      <section id="v-video" class="view-panel">
+        <div class="view-header">
+          <h1>Video Studio</h1>
+          <p>Code-based HeyGen Hyperframe and HTML visual rendering engine.</p>
+        </div>
+        <div class="panel-card">
+          <h3><i class="ph-bold ph-video-camera"></i> Programmatic Renderer</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Playwright headless screenshot and video card generator.</p>
+        </div>
+      </section>
+
+      <!-- View 10: Audio Studio -->
+      <section id="v-audio" class="view-panel">
+        <div class="view-header">
+          <h1>Audio Studio</h1>
+          <p>BGM mixing and audio track alignment for videos.</p>
+        </div>
+        <div class="panel-card">
+          <h3><i class="ph-bold ph-waveform"></i> Audio Track Mixer</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Track alignment and loudness normalizer.</p>
+        </div>
+      </section>
+
+      <!-- View 11: Image Studio -->
+      <section id="v-image" class="view-panel">
+        <div class="view-header">
+          <h1>Image Studio</h1>
+          <p>AI Thumbnail prompts and asset card rendering.</p>
+        </div>
+        <div class="panel-card">
+          <h3><i class="ph-bold ph-palette"></i> Thumbnail Prompt Factory</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Generates prompt specifications for Flux and Midjourney.</p>
+        </div>
+      </section>
+
+      <!-- View 12: Research Hub -->
+      <section id="v-research-hub" class="view-panel">
+        <div class="view-header">
+          <h1>Research Hub & Scraper</h1>
+          <p>Ingest public video transcripts and web content into Markdown memory.</p>
+        </div>
+        <div class="panel-card">
+          <h3><i class="ph-bold ph-magnifying-glass-plus"></i> Transcript & Trend Scraper</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Extract key insights directly into the Karpathy Wiki.</p>
+        </div>
+      </section>
+
+      <!-- View 13: Settings -->
+      <section id="v-settings" class="view-panel">
+        <div class="view-header">
+          <h1>Settings & Local Runners</h1>
+          <p>Configure local CLI agents, Ollama endpoints, and environment paths.</p>
+        </div>
+        <div class="panel-card">
+          <h3><i class="ph-bold ph-cpu"></i> Detected CLI Agents</h3>
+          <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 20px;">
+            <button class="btn-primary" id="scan-runners-btn">Scan System for CLI Agents</button>
+            <span id="scan-status" style="font-size: 0.85rem; color: var(--status-green);"></span>
+          </div>
+          <div id="discovered-runners-list" style="display: flex; flex-wrap: wrap; gap: 12px;">
+            <p style="color: var(--text-dim);">Click scan to find local CLI tools.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- View 14: Integrations -->
+      <section id="v-integrations" class="view-panel">
+        <div class="view-header">
+          <h1>Integrations</h1>
+          <p>Connect 9router, local LLM endpoints, and social APIs.</p>
+        </div>
+        <div class="panel-card">
+          <h3><i class="ph-bold ph-plugs-connected"></i> Universal Connectors</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Connect local CLI agents or API gateways.</p>
+        </div>
+      </section>
+
+      <!-- View 15: System Logs -->
+      <section id="v-logs" class="view-panel">
+        <div class="view-header">
+          <h1>System Logs</h1>
+          <p>Real-time execution logs for local API and subprocess runners.</p>
+        </div>
+        <div class="panel-card">
+          <h3><i class="ph-bold ph-terminal-window"></i> Backend Log Stream</h3>
+          <pre style="font-family: var(--font-mono); font-size: 0.85rem; background: var(--bg-input); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">[INFO] Local API running at http://localhost:8000
+[INFO] Storage path: data/
+[INFO] Systems operational.</pre>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Modals -->
+  <!-- Create Project Modal -->
+  <div id="project-modal-backdrop" class="modal-backdrop">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3 style="font-family: var(--font-heading); font-weight: 700; font-size: 1.2rem;">Create Content Project</h3>
+        <button class="close-btn" id="close-project-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="create-project-form">
+          <div class="form-group">
+            <label>Project Title</label>
+            <input type="text" name="title" class="form-control" placeholder="e.g. Why Creator AI Pipelines Win" required />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Channel</label>
+              <input type="text" name="channel" class="form-control" value="Main YouTube" required />
+            </div>
+            <div class="form-group">
+              <label>Format</label>
+              <select name="format" class="form-control">
+                <option>YouTube video</option>
+                <option>Short-form video</option>
+                <option>Newsletter</option>
+                <option>X / LinkedIn thread</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Topic / Target Question</label>
+            <input type="text" name="topic" class="form-control" placeholder="What core problem does this solve?" required />
+          </div>
+          <div class="form-group">
+            <label>Angle / Perspective (Optional)</label>
+            <textarea name="angle" class="form-control" placeholder="The honest, unique takeaway you want to deliver..."></textarea>
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px;">
+            <button type="button" class="btn-secondary" id="cancel-create-project">Cancel</button>
+            <button type="submit" class="btn-primary">Create Project</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Task Modal -->
+  <div id="task-modal-backdrop" class="modal-backdrop">
+    <div class="modal-window" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3 style="font-family: var(--font-heading); font-weight: 700;">Add Daily Task</h3>
+        <button class="close-btn" id="close-task-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="create-task-form">
+          <div class="form-group">
+            <label>Scheduled Time</label>
+            <input type="text" name="time" class="form-control" placeholder="14:00" required />
+          </div>
+          <div class="form-group">
+            <label>Task Title</label>
+            <input type="text" name="title" class="form-control" placeholder="Script Review" required />
+          </div>
+          <div class="form-group">
+            <label>Project / Detail</label>
+            <input type="text" name="detail" class="form-control" placeholder="The Anatomy of Focus" />
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px;">
+            <button type="button" class="btn-secondary" id="cancel-task-btn">Cancel</button>
+            <button type="submit" class="btn-primary">Add Task</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Project Pack Viewer / Editor Modal -->
+  <div id="pack-modal-backdrop" class="modal-backdrop">
+    <div class="modal-window" style="max-width: 900px;">
+      <div class="modal-header">
+        <h3 id="pack-modal-title" style="font-family: var(--font-heading); font-weight: 700;">Project Production Pack</h3>
+        <button class="close-btn" id="close-pack-modal">&times;</button>
+      </div>
+      <div class="modal-body" style="display: grid; grid-template-columns: 220px 1fr; gap: 20px; padding: 0; min-height: 450px;">
+        <div style="background: var(--bg-surface); border-right: 1px solid var(--border-color); padding: 16px;" id="pack-file-list">
+          <p style="font-size: 0.8rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; margin-bottom: 10px;">Files</p>
+        </div>
+        <div style="padding: 20px; display: flex; flex-direction: column; gap: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <strong id="current-pack-file-name" style="font-family: var(--font-mono); color: var(--accent-light);">Select a file</strong>
+            <button class="btn-primary" id="save-pack-file-btn" style="font-size: 0.8rem; padding: 6px 14px;">Save Changes</button>
+          </div>
+          <textarea id="pack-file-editor" class="form-control" style="flex: 1; font-family: var(--font-mono); font-size: 0.88rem; min-height: 340px; resize: none;"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Markdown Viewer Modal -->
+  <div id="markdown-modal-backdrop" class="modal-backdrop">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3 id="markdown-modal-title" style="font-family: var(--font-heading); font-weight: 700;">Research Note</h3>
+        <button class="close-btn" id="close-markdown-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <pre id="markdown-modal-content" style="font-family: var(--font-mono); white-space: pre-wrap; font-size: 0.9rem; background: var(--bg-input); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color);"></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Confirmation Modal -->
+  <div id="confirm-modal-backdrop" class="modal-backdrop">
+    <div class="modal-window" style="max-width: 440px;">
+      <div class="modal-header">
+        <h3 id="confirm-modal-title" style="font-family: var(--font-heading); font-weight: 700; color: #ffffff; display: flex; align-items: center; gap: 10px;">
+          <i class="ph-bold ph-warning-circle" style="color: #ef4444;"></i> Delete Confirmation
+        </h3>
+        <button class="close-btn" id="close-confirm-modal">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 20px 24px;">
+        <p id="confirm-modal-message" style="font-size: 0.95rem; color: var(--text-main); line-height: 1.5; margin-bottom: 24px;">Are you sure you want to delete this item?</p>
+        <div style="display: flex; justify-content: flex-end; gap: 12px;">
+          <button type="button" class="btn-secondary" id="confirm-modal-cancel">Cancel</button>
+          <button type="button" class="btn-danger" id="confirm-modal-action">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    import '../scripts/dashboard.ts';
+  </script>
+</BaseLayout>
+
