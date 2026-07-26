@@ -62,39 +62,43 @@ const frontendProcess = spawn(
   { cwd: __dirname, shell: true }
 );
 
-// 3. Launch Chatterbox TTS Local Web Studio
-console.log(`\x1b[36m[System]\x1b[0m Starting Chatterbox TTS Local Web Studio on http://localhost:8001 ...`);
-const chatterboxProcess = spawn(
-  pythonCmd,
-  [path.join(__dirname, 'backend', 'chatterbox_server.py')],
-  { cwd: __dirname }
-);
+let chatterboxProcess = null;
 
-chatterboxProcess.stderr?.on('data', (data) => {
-  const str = data.toString();
-  if (str.includes('Traceback (most recent call last)')) {
-    console.error(`\x1b[31m[Chatterbox Error]\x1b[0m ${str.trim()}`);
-  }
-});
+// Delay Chatterbox TTS startup by 2.5 seconds so Astro & FastAPI launch instantly (1-2s)
+setTimeout(() => {
+  console.log(`\x1b[36m[System]\x1b[0m Starting Chatterbox TTS Local Web Studio on http://localhost:8001 ...`);
+  chatterboxProcess = spawn(
+    pythonCmd,
+    [path.join(__dirname, 'backend', 'chatterbox_server.py')],
+    { cwd: __dirname }
+  );
+
+  chatterboxProcess.stderr?.on('data', (data) => {
+    const str = data.toString();
+    if (str.includes('Traceback (most recent call last)')) {
+      console.error(`\x1b[31m[Chatterbox Error]\x1b[0m ${str.trim()}`);
+    }
+  });
+}, 2500);
 
 frontendProcess.stdout?.on('data', (data) => {
   const str = data.toString();
-  if (str.includes('http://localhost:4321') || str.includes('ready in')) {
+  if (str.includes('http://localhost:4321') || str.includes('ready in') || str.includes('Local:')) {
     openBrowser('http://localhost:4321');
   }
 });
 
 frontendProcess.stderr?.on('data', (data) => {
   const str = data.toString();
-  if (str.includes('http://localhost:4321') || str.includes('ready in')) {
+  if (str.includes('http://localhost:4321') || str.includes('ready in') || str.includes('Local:')) {
     openBrowser('http://localhost:4321');
   }
 });
 
-// Auto-fallback timer to open browser after Astro finishes initialization (8 seconds)
+// Auto-open browser after 2.5 seconds
 setTimeout(() => {
   openBrowser('http://localhost:4321');
-}, 8000);
+}, 2500);
 
 // Cleanup processes on termination
 function cleanup() {
@@ -102,7 +106,7 @@ function cleanup() {
   try {
     backendProcess.kill();
     frontendProcess.kill();
-    chatterboxProcess.kill();
+    if (chatterboxProcess) chatterboxProcess.kill();
   } catch (e) {}
   process.exit(0);
 }

@@ -2576,7 +2576,7 @@ function initTTSStudio() {
   const offlineNotice = $('#tts-offline-notice') as HTMLElement | null;
   const iframe = $('#tts-studio-iframe') as HTMLIFrameElement | null;
 
-  async function checkTTSStatus() {
+  async function checkTTSStatus(): Promise<boolean> {
     try {
       const res = await apiRequest<{ status: string; url: string }>('/api/tts/server/status');
       if (res.status === 'online') {
@@ -2593,6 +2593,7 @@ function initTTSStudio() {
             iframe.src = 'http://localhost:8001';
           }
         }
+        return true;
       } else {
         if (statusBadge) {
           statusBadge.textContent = '○ STARTING / OFFLINE';
@@ -2602,6 +2603,7 @@ function initTTSStudio() {
         }
         if (offlineNotice) offlineNotice.style.display = 'block';
         if (iframe) iframe.style.display = 'none';
+        return false;
       }
     } catch (e) {
       if (statusBadge) {
@@ -2609,6 +2611,7 @@ function initTTSStudio() {
         statusBadge.style.background = 'rgba(239, 68, 68, 0.15)';
         statusBadge.style.color = '#ef4444';
       }
+      return false;
     }
   }
 
@@ -2616,8 +2619,18 @@ function initTTSStudio() {
     if (statusBadge) statusBadge.textContent = '⏳ STARTING SERVER...';
     try {
       await apiRequest('/api/tts/server/start', { method: 'POST' });
-      setTimeout(checkTTSStatus, 1500);
-      setTimeout(checkTTSStatus, 4000);
+      
+      let attempts = 0;
+      const pollInterval = setInterval(async () => {
+        attempts++;
+        const isOnline = await checkTTSStatus();
+        if (isOnline) {
+          if (iframe) iframe.src = 'http://localhost:8001?t=' + Date.now();
+          clearInterval(pollInterval);
+        } else if (attempts >= 20) {
+          clearInterval(pollInterval);
+        }
+      }, 1500);
     } catch (e) {}
   }
 

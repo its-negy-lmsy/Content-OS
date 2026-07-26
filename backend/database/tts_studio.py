@@ -36,17 +36,25 @@ def check_chatterbox_server_status() -> dict:
     }
 
 
+def kill_process_on_port(port: int = 8001):
+    try:
+        out = subprocess.check_output(f"netstat -ano | findstr :{port}", shell=True, text=True)
+        for line in out.strip().splitlines():
+            parts = line.split()
+            if len(parts) >= 5 and "LISTENING" in line:
+                pid = parts[-1]
+                subprocess.run(f"taskkill /F /PID {pid}", shell=True, capture_output=True)
+    except Exception:
+        pass
+
+
 def start_chatterbox_server() -> dict:
     global _chatterbox_process
-    if is_chatterbox_server_running(8001):
-        return {
-            "status": "already_running",
-            "port": 8001,
-            "url": "http://localhost:8001",
-            "message": "Chatterbox TTS Local Web Studio is already active on http://localhost:8001"
-        }
+    
+    # Terminate any existing instance to ensure fresh server startup
+    kill_process_on_port(8001)
 
-    push_log("INFO", "TTS", "Starting Chatterbox TTS Local Web Studio on port 8001...")
+    push_log("INFO", "TTS", "Starting Chatterbox Multilingual Web Studio on port 8001...")
     
     python_cmd = str(PYTHON_EXE) if PYTHON_EXE.exists() else sys.executable
 
@@ -63,7 +71,7 @@ def start_chatterbox_server() -> dict:
             "status": "starting",
             "port": 8001,
             "url": "http://localhost:8001",
-            "message": "Chatterbox TTS Local Web Studio server process launched on port 8001"
+            "message": "Chatterbox Multilingual Web Studio server process launched on port 8001"
         }
     except Exception as err:
         push_log("ERROR", "TTS", f"Failed to start Chatterbox server: {err}")

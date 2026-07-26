@@ -356,3 +356,598 @@
 {"id": "log-1785067620049-56", "timestamp": "12:07:00.049", "level": "INFO", "source": "API", "message": "GET /api/activity -> 200 (15ms)", "detail": ""}
 {"id": "log-1785067620082-57", "timestamp": "12:07:00.082", "level": "INFO", "source": "API", "message": "GET /api/system/stats -> 200 (84ms)", "detail": ""}
 {"id": "log-1785067621994-58", "timestamp": "12:07:01.994", "level": "INFO", "source": "API", "message": "GET /api/hyperframe/server/status -> 200 (2014ms)", "detail": ""}
+{"id": "log-1785067965848-0", "timestamp": "12:12:45.848", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785067965944-1", "timestamp": "12:12:45.944", "level": "SUCCESS", "source": "SYSTEM", "message": "Backend FastAPI server started successfully.", "detail": ""}
+{"id": "log-1785067970015-2", "timestamp": "12:12:50.015", "level": "INFO", "source": "HYPERFRAME", "message": "HyperFrame studio auto-start initiated.", "detail": ""}
+{"id": "log-1785068018052-3", "timestamp": "12:13:38.052", "level": "INFO", "source": "API", "message": "OPTIONS /api/assets-vault/tree -> 200 (0ms)", "detail": ""}
+{"id": "log-1785068018053-4", "timestamp": "12:13:38.053", "level": "INFO", "source": "API", "message": "OPTIONS /api/wiki/tree -> 200 (2ms)", "detail": ""}
+{"id": "log-1785068018054-5", "timestamp": "12:13:38.054", "level": "INFO", "source": "API", "message": "OPTIONS /api/hyperframe/server/status -> 200 (3ms)", "detail": ""}
+{"id": "log-1785068018055-6", "timestamp": "12:13:38.055", "level": "INFO", "source": "API", "message": "OPTIONS /api/system/stats -> 200 (4ms)", "detail": ""}
+{"id": "log-1785068018057-7", "timestamp": "12:13:38.057", "level": "INFO", "source": "API", "message": "OPTIONS /api/pipeline/status -> 200 (1ms)", "detail": ""}
+{"id": "log-1785068018062-8", "timestamp": "12:13:38.062", "level": "INFO", "source": "API", "message": "OPTIONS /api/overview/today -> 200 (0ms)", "detail": ""}
+{"id": "log-1785068018074-9", "timestamp": "12:13:38.074", "level": "INFO", "source": "API", "message": "OPTIONS /api/activity -> 200 (0ms)", "detail": ""}
+{"id": "log-1785068018088-10", "timestamp": "12:13:38.088", "level": "INFO", "source": "API", "message": "OPTIONS /api/projects -> 200 (1ms)", "detail": ""}
+{"id": "log-1785068018094-11", "timestamp": "12:13:38.094", "level": "INFO", "source": "API", "message": "GET /api/wiki/tree -> 200 (4ms)", "detail": ""}
+{"id": "log-1785068018097-12", "timestamp": "12:13:38.097", "level": "INFO", "source": "API", "message": "OPTIONS /api/tts/server/status -> 200 (1ms)", "detail": ""}
+{"id": "log-1785068018112-13", "timestamp": "12:13:38.112", "level": "INFO", "source": "API", "message": "OPTIONS /api/research -> 200 (1ms)", "detail": ""}
+{"id": "log-1785068018122-14", "timestamp": "12:13:38.122", "level": "INFO", "source": "API", "message": "GET /api/assets-vault/tree -> 200 (10ms)", "detail": ""}
+{"id": "log-1785068018165-15", "timestamp": "12:13:38.165", "level": "INFO", "source": "API", "message": "GET /api/pipeline/status -> 200 (4ms)", "detail": ""}
+{"id": "log-1785068018176-16", "timestamp": "12:13:38.176", "level": "INFO", "source": "API", "message": "GET /api/overview/today -> 200 (2ms)", "detail": ""}
+{"id": "log-1785068018189-17", "timestamp": "12:13:38.189", "level": "INFO", "source": "API", "message": "GET /api/activity -> 200 (2ms)", "detail": ""}
+{"id": "log-1785068018201-18", "timestamp": "12:13:38.201", "level": "INFO", "source": "API", "message": "GET /api/projects -> 200 (2ms)", "detail": ""}
+{"id": "log-1785068018214-19", "timestamp": "12:13:38.214", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (2ms)", "detail": ""}
+{"id": "log-1785068018227-20", "timestamp": "12:13:38.227", "level": "INFO", "source": "API", "message": "GET /api/research -> 200 (3ms)", "detail": ""}
+{"id": "log-1785068018274-21", "timestamp": "12:13:38.274", "level": "INFO", "source": "API", "message": "GET /api/system/stats -> 200 (175ms)", "detail": ""}
+{"id": "log-1785068018322-22", "timestamp": "12:13:38.322", "level": "INFO", "source": "API", "message": "GET /api/assets-vault/stream/audio/tts_chatterbox_1785067278.wav -> 206 (85ms)", "detail": ""}
+{"id": "log-1785068020158-23", "timestamp": "12:13:40.158", "level": "INFO", "source": "API", "message": "GET /api/hyperframe/server/status -> 200 (2010ms)", "detail": ""}
+{"id": "log-1785068023351-24", "timestamp": "12:13:43.351", "level": "INFO", "source": "API", "message": "OPTIONS /api/overview/today/t1 -> 200 (0ms)", "detail": ""}
+{"id": "log-1785068023357-25", "timestamp": "12:13:43.357", "level": "INFO", "source": "API", "message": "DELETE /api/overview/today/t1 -> 200 (3ms)", "detail": ""}
+{"id": "log-1785068023380-26", "timestamp": "12:13:43.380", "level": "INFO", "source": "API", "message": "GET /api/overview/today -> 200 (14ms)", "detail": ""}
+{"id": "log-1785068023400-27", "timestamp": "12:13:43.400", "level": "INFO", "source": "API", "message": "GET /api/activity -> 200 (15ms)", "detail": ""}
+{"id": "log-1785068027386-28", "timestamp": "12:13:47.386", "level": "INFO", "source": "API", "message": "OPTIONS /api/overview/today/t2 -> 200 (0ms)", "detail": ""}
+{"id": "log-1785068027392-29", "timestamp": "12:13:47.392", "level": "INFO", "source": "API", "message": "DELETE /api/overview/today/t2 -> 200 (2ms)", "detail": ""}
+{"id": "log-1785068027411-30", "timestamp": "12:13:47.411", "level": "INFO", "source": "API", "message": "GET /api/overview/today -> 200 (13ms)", "detail": ""}
+{"id": "log-1785068027430-31", "timestamp": "12:13:47.430", "level": "INFO", "source": "API", "message": "GET /api/activity -> 200 (14ms)", "detail": ""}
+{"id": "log-1785068029059-32", "timestamp": "12:13:49.059", "level": "INFO", "source": "API", "message": "OPTIONS /api/overview/today/t3 -> 200 (0ms)", "detail": ""}
+{"id": "log-1785068029065-33", "timestamp": "12:13:49.065", "level": "INFO", "source": "API", "message": "DELETE /api/overview/today/t3 -> 200 (3ms)", "detail": ""}
+{"id": "log-1785068029085-34", "timestamp": "12:13:49.085", "level": "INFO", "source": "API", "message": "GET /api/overview/today -> 200 (13ms)", "detail": ""}
+{"id": "log-1785068029103-35", "timestamp": "12:13:49.103", "level": "INFO", "source": "API", "message": "GET /api/activity -> 200 (13ms)", "detail": ""}
+{"id": "log-1785068030929-36", "timestamp": "12:13:50.929", "level": "INFO", "source": "API", "message": "OPTIONS /api/overview/today/t4 -> 200 (0ms)", "detail": ""}
+{"id": "log-1785068030935-37", "timestamp": "12:13:50.935", "level": "INFO", "source": "API", "message": "DELETE /api/overview/today/t4 -> 200 (2ms)", "detail": ""}
+{"id": "log-1785068030940-38", "timestamp": "12:13:50.940", "level": "INFO", "source": "API", "message": "GET /api/overview/today -> 200 (1ms)", "detail": ""}
+{"id": "log-1785068030960-39", "timestamp": "12:13:50.960", "level": "INFO", "source": "API", "message": "GET /api/activity -> 200 (16ms)", "detail": ""}
+{"id": "log-1785068033050-40", "timestamp": "12:13:53.050", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1ms)", "detail": ""}
+{"id": "log-1785068038418-41", "timestamp": "12:13:58.418", "level": "INFO", "source": "API", "message": "OPTIONS /api/tts/server/start -> 200 (0ms)", "detail": ""}
+{"id": "log-1785068038420-42", "timestamp": "12:13:58.420", "level": "INFO", "source": "API", "message": "OPTIONS /api/tts/server/start -> 200 (0ms)", "detail": ""}
+{"id": "log-1785068038424-43", "timestamp": "12:13:58.424", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (1ms)", "detail": ""}
+{"id": "log-1785068038439-44", "timestamp": "12:13:58.439", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (14ms)", "detail": ""}
+{"id": "log-1785068039397-45", "timestamp": "12:13:59.397", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (26ms)", "detail": ""}
+{"id": "log-1785068039398-46", "timestamp": "12:13:59.398", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (27ms)", "detail": ""}
+{"id": "log-1785068039956-47", "timestamp": "12:13:59.956", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (13ms)", "detail": ""}
+{"id": "log-1785068039972-48", "timestamp": "12:13:59.972", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (12ms)", "detail": ""}
+{"id": "log-1785068040242-49", "timestamp": "12:14:00.242", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (1ms)", "detail": ""}
+{"id": "log-1785068040266-50", "timestamp": "12:14:00.266", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (26ms)", "detail": ""}
+{"id": "log-1785068040419-51", "timestamp": "12:14:00.419", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (1ms)", "detail": ""}
+{"id": "log-1785068040438-52", "timestamp": "12:14:00.438", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (20ms)", "detail": ""}
+{"id": "log-1785068040596-53", "timestamp": "12:14:00.596", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (1ms)", "detail": ""}
+{"id": "log-1785068040609-54", "timestamp": "12:14:00.609", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (15ms)", "detail": ""}
+{"id": "log-1785068040846-55", "timestamp": "12:14:00.846", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (1ms)", "detail": ""}
+{"id": "log-1785068040855-56", "timestamp": "12:14:00.855", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (10ms)", "detail": ""}
+{"id": "log-1785068040906-57", "timestamp": "12:14:00.906", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1ms)", "detail": ""}
+{"id": "log-1785068040932-58", "timestamp": "12:14:00.932", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (23ms)", "detail": ""}
+{"id": "log-1785068041112-59", "timestamp": "12:14:01.112", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (2ms)", "detail": ""}
+{"id": "log-1785068041113-60", "timestamp": "12:14:01.113", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (3ms)", "detail": ""}
+{"id": "log-1785068041283-61", "timestamp": "12:14:01.283", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (0ms)", "detail": ""}
+{"id": "log-1785068041284-62", "timestamp": "12:14:01.284", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (1ms)", "detail": ""}
+{"id": "log-1785068041756-63", "timestamp": "12:14:01.756", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1ms)", "detail": ""}
+{"id": "log-1785068041789-64", "timestamp": "12:14:01.789", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (17ms)", "detail": ""}
+{"id": "log-1785068041943-65", "timestamp": "12:14:01.943", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (18ms)", "detail": ""}
+{"id": "log-1785068041958-66", "timestamp": "12:14:01.958", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (12ms)", "detail": ""}
+{"id": "log-1785068042103-67", "timestamp": "12:14:02.103", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (0ms)", "detail": ""}
+{"id": "log-1785068042131-68", "timestamp": "12:14:02.131", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (16ms)", "detail": ""}
+{"id": "log-1785068042363-69", "timestamp": "12:14:02.363", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (12ms)", "detail": ""}
+{"id": "log-1785068042366-70", "timestamp": "12:14:02.366", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1ms)", "detail": ""}
+{"id": "log-1785068042440-71", "timestamp": "12:14:02.440", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (11ms)", "detail": ""}
+{"id": "log-1785068042470-72", "timestamp": "12:14:02.470", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (24ms)", "detail": ""}
+{"id": "log-1785068042502-73", "timestamp": "12:14:02.502", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (25ms)", "detail": ""}
+{"id": "log-1785068042502-74", "timestamp": "12:14:02.502", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (26ms)", "detail": ""}
+{"id": "log-1785068042642-75", "timestamp": "12:14:02.642", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (20ms)", "detail": ""}
+{"id": "log-1785068042657-76", "timestamp": "12:14:02.657", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (25ms)", "detail": ""}
+{"id": "log-1785068042658-77", "timestamp": "12:14:02.658", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (14ms)", "detail": ""}
+{"id": "log-1785068042658-78", "timestamp": "12:14:02.658", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (27ms)", "detail": ""}
+{"id": "log-1785068042811-79", "timestamp": "12:14:02.811", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (20ms)", "detail": ""}
+{"id": "log-1785068042827-80", "timestamp": "12:14:02.827", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (13ms)", "detail": ""}
+{"id": "log-1785068043433-81", "timestamp": "12:14:03.433", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (18ms)", "detail": ""}
+{"id": "log-1785068043438-82", "timestamp": "12:14:03.438", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1ms)", "detail": ""}
+{"id": "log-1785068044010-83", "timestamp": "12:14:04.010", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1ms)", "detail": ""}
+{"id": "log-1785068044014-84", "timestamp": "12:14:04.014", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1ms)", "detail": ""}
+{"id": "log-1785068044171-85", "timestamp": "12:14:04.171", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (0ms)", "detail": ""}
+{"id": "log-1785068044192-86", "timestamp": "12:14:04.192", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (19ms)", "detail": ""}
+{"id": "log-1785068044270-87", "timestamp": "12:14:04.270", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (23ms)", "detail": ""}
+{"id": "log-1785068044286-88", "timestamp": "12:14:04.286", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (12ms)", "detail": ""}
+{"id": "log-1785068044442-89", "timestamp": "12:14:04.442", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (16ms)", "detail": ""}
+{"id": "log-1785068044457-90", "timestamp": "12:14:04.457", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (11ms)", "detail": ""}
+{"id": "log-1785068044626-91", "timestamp": "12:14:04.626", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (13ms)", "detail": ""}
+{"id": "log-1785068044642-92", "timestamp": "12:14:04.642", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (13ms)", "detail": ""}
+{"id": "log-1785068044863-93", "timestamp": "12:14:04.863", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1ms)", "detail": ""}
+{"id": "log-1785068044890-94", "timestamp": "12:14:04.890", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (24ms)", "detail": ""}
+{"id": "log-1785068045139-95", "timestamp": "12:14:05.139", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (13ms)", "detail": ""}
+{"id": "log-1785068045142-96", "timestamp": "12:14:05.142", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (0ms)", "detail": ""}
+{"id": "log-1785068045308-97", "timestamp": "12:14:05.308", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (12ms)", "detail": ""}
+{"id": "log-1785068045312-98", "timestamp": "12:14:05.312", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1ms)", "detail": ""}
+{"id": "log-1785068046541-99", "timestamp": "12:14:06.541", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (23ms)", "detail": ""}
+{"id": "log-1785068046547-100", "timestamp": "12:14:06.547", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (2ms)", "detail": ""}
+{"id": "log-1785068046680-101", "timestamp": "12:14:06.680", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (14ms)", "detail": ""}
+{"id": "log-1785068046685-102", "timestamp": "12:14:06.685", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1ms)", "detail": ""}
+{"id": "log-1785068176363-0", "timestamp": "12:16:16.363", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785068181887-0", "timestamp": "12:16:21.887", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785068181957-1", "timestamp": "12:16:21.957", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068198801-0", "timestamp": "12:16:38.801", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785068230097-0", "timestamp": "12:17:10.097", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785068266532-0", "timestamp": "12:17:46.532", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785068345959-0", "timestamp": "12:19:05.959", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785068371093-0", "timestamp": "12:19:31.093", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785068389541-0", "timestamp": "12:19:49.541", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785068389651-1", "timestamp": "12:19:49.651", "level": "SUCCESS", "source": "SYSTEM", "message": "Backend FastAPI server started successfully.", "detail": ""}
+{"id": "log-1785068393728-2", "timestamp": "12:19:53.728", "level": "INFO", "source": "HYPERFRAME", "message": "HyperFrame studio auto-start initiated.", "detail": ""}
+{"id": "log-1785068445716-3", "timestamp": "12:20:45.716", "level": "INFO", "source": "API", "message": "GET /api/pipeline/status -> 200 (16ms)", "detail": ""}
+{"id": "log-1785068445721-4", "timestamp": "12:20:45.721", "level": "INFO", "source": "API", "message": "GET /api/wiki/tree -> 200 (22ms)", "detail": ""}
+{"id": "log-1785068445727-5", "timestamp": "12:20:45.728", "level": "INFO", "source": "API", "message": "GET /api/assets-vault/tree -> 200 (27ms)", "detail": ""}
+{"id": "log-1785068445730-6", "timestamp": "12:20:45.730", "level": "INFO", "source": "API", "message": "GET /api/overview/today -> 200 (11ms)", "detail": ""}
+{"id": "log-1785068445734-7", "timestamp": "12:20:45.734", "level": "INFO", "source": "API", "message": "GET /api/activity -> 200 (11ms)", "detail": ""}
+{"id": "log-1785068445737-8", "timestamp": "12:20:45.737", "level": "INFO", "source": "API", "message": "GET /api/projects -> 200 (7ms)", "detail": ""}
+{"id": "log-1785068445742-9", "timestamp": "12:20:45.742", "level": "INFO", "source": "API", "message": "GET /api/research -> 200 (3ms)", "detail": ""}
+{"id": "log-1785068445755-10", "timestamp": "12:20:45.755", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (3ms)", "detail": ""}
+{"id": "log-1785068445855-11", "timestamp": "12:20:45.855", "level": "INFO", "source": "API", "message": "GET /api/system/stats -> 200 (155ms)", "detail": ""}
+{"id": "log-1785068445930-12", "timestamp": "12:20:45.930", "level": "INFO", "source": "API", "message": "GET /api/assets-vault/stream/audio/tts_chatterbox_1785067278.wav -> 206 (77ms)", "detail": ""}
+{"id": "log-1785068447712-13", "timestamp": "12:20:47.712", "level": "INFO", "source": "API", "message": "GET /api/hyperframe/server/status -> 200 (2012ms)", "detail": ""}
+{"id": "log-1785068449438-14", "timestamp": "12:20:49.438", "level": "INFO", "source": "API", "message": "GET /api/assets-vault/tree -> 200 (3ms)", "detail": ""}
+{"id": "log-1785068450369-15", "timestamp": "12:20:50.369", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (14ms)", "detail": ""}
+{"id": "log-1785068450832-16", "timestamp": "12:20:50.832", "level": "INFO", "source": "API", "message": "GET /api/hyperframe/server/status -> 200 (2033ms)", "detail": ""}
+{"id": "log-1785068722617-0", "timestamp": "12:25:22.617", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785068762790-0", "timestamp": "12:26:02.790", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785068762899-1", "timestamp": "12:26:02.899", "level": "SUCCESS", "source": "SYSTEM", "message": "Backend FastAPI server started successfully.", "detail": ""}
+{"id": "log-1785068766967-2", "timestamp": "12:26:06.967", "level": "INFO", "source": "HYPERFRAME", "message": "HyperFrame studio auto-start initiated.", "detail": ""}
+{"id": "log-1785068808441-3", "timestamp": "12:26:48.441", "level": "INFO", "source": "API", "message": "OPTIONS /api/assets-vault/tree -> 200 (0ms)", "detail": ""}
+{"id": "log-1785068808442-4", "timestamp": "12:26:48.442", "level": "INFO", "source": "API", "message": "OPTIONS /api/hyperframe/server/status -> 200 (2ms)", "detail": ""}
+{"id": "log-1785068808444-5", "timestamp": "12:26:48.444", "level": "INFO", "source": "API", "message": "OPTIONS /api/wiki/tree -> 200 (3ms)", "detail": ""}
+{"id": "log-1785068808446-6", "timestamp": "12:26:48.446", "level": "INFO", "source": "API", "message": "OPTIONS /api/system/stats -> 200 (5ms)", "detail": ""}
+{"id": "log-1785068808448-7", "timestamp": "12:26:48.448", "level": "INFO", "source": "API", "message": "OPTIONS /api/pipeline/status -> 200 (0ms)", "detail": ""}
+{"id": "log-1785068808460-8", "timestamp": "12:26:48.460", "level": "INFO", "source": "API", "message": "OPTIONS /api/overview/today -> 200 (0ms)", "detail": ""}
+{"id": "log-1785068808476-9", "timestamp": "12:26:48.476", "level": "INFO", "source": "API", "message": "GET /api/overview/today -> 200 (3ms)", "detail": ""}
+{"id": "log-1785068808498-10", "timestamp": "12:26:48.498", "level": "INFO", "source": "API", "message": "OPTIONS /api/activity -> 200 (0ms)", "detail": ""}
+{"id": "log-1785068808499-11", "timestamp": "12:26:48.499", "level": "INFO", "source": "API", "message": "OPTIONS /api/projects -> 200 (0ms)", "detail": ""}
+{"id": "log-1785068808511-12", "timestamp": "12:26:48.511", "level": "INFO", "source": "API", "message": "OPTIONS /api/research -> 200 (0ms)", "detail": ""}
+{"id": "log-1785068808523-13", "timestamp": "12:26:48.523", "level": "INFO", "source": "API", "message": "OPTIONS /api/tts/server/status -> 200 (0ms)", "detail": ""}
+{"id": "log-1785068808568-14", "timestamp": "12:26:48.568", "level": "INFO", "source": "API", "message": "GET /api/assets-vault/tree -> 200 (6ms)", "detail": ""}
+{"id": "log-1785068808600-15", "timestamp": "12:26:48.600", "level": "INFO", "source": "API", "message": "GET /api/wiki/tree -> 200 (2ms)", "detail": ""}
+{"id": "log-1785068808612-16", "timestamp": "12:26:48.612", "level": "INFO", "source": "API", "message": "GET /api/pipeline/status -> 200 (1ms)", "detail": ""}
+{"id": "log-1785068808661-17", "timestamp": "12:26:48.661", "level": "INFO", "source": "API", "message": "GET /api/activity -> 200 (1ms)", "detail": ""}
+{"id": "log-1785068808687-18", "timestamp": "12:26:48.687", "level": "INFO", "source": "API", "message": "GET /api/projects -> 200 (3ms)", "detail": ""}
+{"id": "log-1785068808700-19", "timestamp": "12:26:48.700", "level": "INFO", "source": "API", "message": "GET /api/research -> 200 (1ms)", "detail": ""}
+{"id": "log-1785068808713-20", "timestamp": "12:26:48.713", "level": "INFO", "source": "API", "message": "GET /api/system/stats -> 200 (112ms)", "detail": ""}
+{"id": "log-1785068808797-21", "timestamp": "12:26:48.797", "level": "INFO", "source": "API", "message": "GET /api/assets-vault/stream/audio/tts_chatterbox_1785067278.wav -> 206 (73ms)", "detail": ""}
+{"id": "log-1785068809718-22", "timestamp": "12:26:49.718", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1008ms)", "detail": ""}
+{"id": "log-1785068810599-23", "timestamp": "12:26:50.599", "level": "INFO", "source": "API", "message": "GET /api/hyperframe/server/status -> 200 (2027ms)", "detail": ""}
+{"id": "log-1785068812400-24", "timestamp": "12:26:52.400", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1009ms)", "detail": ""}
+{"id": "log-1785068812870-25", "timestamp": "12:26:52.870", "level": "INFO", "source": "API", "message": "OPTIONS /api/tts/server/start -> 200 (0ms)", "detail": ""}
+{"id": "log-1785068812871-26", "timestamp": "12:26:52.871", "level": "INFO", "source": "API", "message": "OPTIONS /api/tts/server/start -> 200 (1ms)", "detail": ""}
+{"id": "log-1785068812938-27", "timestamp": "12:26:52.938", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068812944-28", "timestamp": "12:26:52.944", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (71ms)", "detail": ""}
+{"id": "log-1785068812946-29", "timestamp": "12:26:52.946", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068812949-30", "timestamp": "12:26:52.949", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (75ms)", "detail": ""}
+{"id": "log-1785068814574-31", "timestamp": "12:26:54.574", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068814579-32", "timestamp": "12:26:54.579", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (53ms)", "detail": ""}
+{"id": "log-1785068814583-33", "timestamp": "12:26:54.583", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068814585-34", "timestamp": "12:26:54.585", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (58ms)", "detail": ""}
+{"id": "log-1785068815753-35", "timestamp": "12:26:55.753", "level": "INFO", "source": "API", "message": "GET /api/assets-vault/tree -> 200 (0ms)", "detail": ""}
+{"id": "log-1785068815954-36", "timestamp": "12:26:55.954", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1005ms)", "detail": ""}
+{"id": "log-1785068816964-37", "timestamp": "12:26:56.964", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1009ms)", "detail": ""}
+{"id": "log-1785068817977-38", "timestamp": "12:26:57.977", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1008ms)", "detail": ""}
+{"id": "log-1785068818353-39", "timestamp": "12:26:58.353", "level": "INFO", "source": "API", "message": "GET /api/hyperframe/server/status -> 200 (2026ms)", "detail": ""}
+{"id": "log-1785068818981-40", "timestamp": "12:26:58.981", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1001ms)", "detail": ""}
+{"id": "log-1785068819994-41", "timestamp": "12:26:59.994", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1009ms)", "detail": ""}
+{"id": "log-1785068821003-42", "timestamp": "12:27:01.003", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1005ms)", "detail": ""}
+{"id": "log-1785068821358-43", "timestamp": "12:27:01.358", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068821365-44", "timestamp": "12:27:01.365", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (67ms)", "detail": ""}
+{"id": "log-1785068821388-46", "timestamp": "12:27:01.388", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068821388-47", "timestamp": "12:27:01.388", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068821388-45", "timestamp": "12:27:01.388", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068821396-48", "timestamp": "12:27:01.396", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (98ms)", "detail": ""}
+{"id": "log-1785068821397-49", "timestamp": "12:27:01.397", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (99ms)", "detail": ""}
+{"id": "log-1785068821397-50", "timestamp": "12:27:01.397", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (99ms)", "detail": ""}
+{"id": "log-1785068821590-51", "timestamp": "12:27:01.590", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068821600-52", "timestamp": "12:27:01.600", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068821600-53", "timestamp": "12:27:01.600", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (78ms)", "detail": ""}
+{"id": "log-1785068821607-54", "timestamp": "12:27:01.607", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (85ms)", "detail": ""}
+{"id": "log-1785068821616-55", "timestamp": "12:27:01.616", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068821616-56", "timestamp": "12:27:01.616", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068821623-57", "timestamp": "12:27:01.623", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (101ms)", "detail": ""}
+{"id": "log-1785068821624-58", "timestamp": "12:27:01.624", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (102ms)", "detail": ""}
+{"id": "log-1785068822010-59", "timestamp": "12:27:02.010", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1003ms)", "detail": ""}
+{"id": "log-1785068822322-60", "timestamp": "12:27:02.326", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068822330-61", "timestamp": "12:27:02.330", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (65ms)", "detail": ""}
+{"id": "log-1785068822336-63", "timestamp": "12:27:02.336", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068822336-62", "timestamp": "12:27:02.336", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068822336-64", "timestamp": "12:27:02.336", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068822348-65", "timestamp": "12:27:02.348", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (84ms)", "detail": ""}
+{"id": "log-1785068822349-66", "timestamp": "12:27:02.349", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (85ms)", "detail": ""}
+{"id": "log-1785068822349-67", "timestamp": "12:27:02.349", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (85ms)", "detail": ""}
+{"id": "log-1785068822483-68", "timestamp": "12:27:02.483", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068822488-69", "timestamp": "12:27:02.488", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (63ms)", "detail": ""}
+{"id": "log-1785068822492-70", "timestamp": "12:27:02.492", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068822492-71", "timestamp": "12:27:02.492", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068822504-72", "timestamp": "12:27:02.504", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (80ms)", "detail": ""}
+{"id": "log-1785068822506-73", "timestamp": "12:27:02.506", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (81ms)", "detail": ""}
+{"id": "log-1785068822517-74", "timestamp": "12:27:02.517", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068822521-75", "timestamp": "12:27:02.521", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (96ms)", "detail": ""}
+{"id": "log-1785068823015-76", "timestamp": "12:27:03.015", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1002ms)", "detail": ""}
+{"id": "log-1785068823285-77", "timestamp": "12:27:03.285", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068823289-78", "timestamp": "12:27:03.289", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (67ms)", "detail": ""}
+{"id": "log-1785068823301-79", "timestamp": "12:27:03.301", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068823301-81", "timestamp": "12:27:03.301", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068823301-80", "timestamp": "12:27:03.301", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068823304-82", "timestamp": "12:27:03.304", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (81ms)", "detail": ""}
+{"id": "log-1785068823306-83", "timestamp": "12:27:03.306", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (84ms)", "detail": ""}
+{"id": "log-1785068823308-84", "timestamp": "12:27:03.308", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (86ms)", "detail": ""}
+{"id": "log-1785068824029-85", "timestamp": "12:27:04.029", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1009ms)", "detail": ""}
+{"id": "log-1785068824204-86", "timestamp": "12:27:04.204", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068824210-87", "timestamp": "12:27:04.210", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (67ms)", "detail": ""}
+{"id": "log-1785068824220-88", "timestamp": "12:27:04.220", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068824220-89", "timestamp": "12:27:04.220", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068824220-90", "timestamp": "12:27:04.220", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068824228-91", "timestamp": "12:27:04.228", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (85ms)", "detail": ""}
+{"id": "log-1785068824229-92", "timestamp": "12:27:04.229", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (86ms)", "detail": ""}
+{"id": "log-1785068824229-93", "timestamp": "12:27:04.229", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (86ms)", "detail": ""}
+{"id": "log-1785068824428-94", "timestamp": "12:27:04.428", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068824438-95", "timestamp": "12:27:04.438", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (62ms)", "detail": ""}
+{"id": "log-1785068824449-96", "timestamp": "12:27:04.449", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068824449-98", "timestamp": "12:27:04.449", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068824457-99", "timestamp": "12:27:04.457", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (81ms)", "detail": ""}
+{"id": "log-1785068824458-100", "timestamp": "12:27:04.458", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (82ms)", "detail": ""}
+{"id": "log-1785068824458-101", "timestamp": "12:27:04.458", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (82ms)", "detail": ""}
+{"id": "log-1785068825041-102", "timestamp": "12:27:05.041", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1009ms)", "detail": ""}
+{"id": "log-1785068825619-103", "timestamp": "12:27:05.619", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068825624-104", "timestamp": "12:27:05.624", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (70ms)", "detail": ""}
+{"id": "log-1785068825637-106", "timestamp": "12:27:05.637", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068825637-105", "timestamp": "12:27:05.637", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068825637-107", "timestamp": "12:27:05.637", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068825643-108", "timestamp": "12:27:05.643", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (89ms)", "detail": ""}
+{"id": "log-1785068825644-109", "timestamp": "12:27:05.644", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (90ms)", "detail": ""}
+{"id": "log-1785068825645-110", "timestamp": "12:27:05.645", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (90ms)", "detail": ""}
+{"id": "log-1785068826053-111", "timestamp": "12:27:06.053", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1008ms)", "detail": ""}
+{"id": "log-1785068826626-112", "timestamp": "12:27:06.626", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068826630-113", "timestamp": "12:27:06.630", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (64ms)", "detail": ""}
+{"id": "log-1785068826642-114", "timestamp": "12:27:06.642", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068826642-116", "timestamp": "12:27:06.642", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068826649-117", "timestamp": "12:27:06.649", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (83ms)", "detail": ""}
+{"id": "log-1785068826650-118", "timestamp": "12:27:06.650", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (84ms)", "detail": ""}
+{"id": "log-1785068826652-119", "timestamp": "12:27:06.652", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (86ms)", "detail": ""}
+{"id": "log-1785068827065-120", "timestamp": "12:27:07.065", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1007ms)", "detail": ""}
+{"id": "log-1785068827497-121", "timestamp": "12:27:07.497", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068827510-122", "timestamp": "12:27:07.510", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (68ms)", "detail": ""}
+{"id": "log-1785068827528-123", "timestamp": "12:27:07.528", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068827528-124", "timestamp": "12:27:07.528", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068827528-125", "timestamp": "12:27:07.528", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068827538-126", "timestamp": "12:27:07.538", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (95ms)", "detail": ""}
+{"id": "log-1785068827541-127", "timestamp": "12:27:07.541", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (99ms)", "detail": ""}
+{"id": "log-1785068827542-128", "timestamp": "12:27:07.542", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (100ms)", "detail": ""}
+{"id": "log-1785068828080-129", "timestamp": "12:27:08.080", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1011ms)", "detail": ""}
+{"id": "log-1785068828304-130", "timestamp": "12:27:08.304", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068828309-131", "timestamp": "12:27:08.309", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (65ms)", "detail": ""}
+{"id": "log-1785068828322-132", "timestamp": "12:27:08.322", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068828329-133", "timestamp": "12:27:08.329", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (85ms)", "detail": ""}
+{"id": "log-1785068828341-134", "timestamp": "12:27:08.341", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068828345-135", "timestamp": "12:27:08.345", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068828348-136", "timestamp": "12:27:08.348", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (104ms)", "detail": ""}
+{"id": "log-1785068828350-137", "timestamp": "12:27:08.350", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (105ms)", "detail": ""}
+{"id": "log-1785068829092-138", "timestamp": "12:27:09.092", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1009ms)", "detail": ""}
+{"id": "log-1785068829329-139", "timestamp": "12:27:09.329", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068829339-140", "timestamp": "12:27:09.339", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (67ms)", "detail": ""}
+{"id": "log-1785068829350-141", "timestamp": "12:27:09.350", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068829350-142", "timestamp": "12:27:09.350", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068829350-143", "timestamp": "12:27:09.350", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068829359-144", "timestamp": "12:27:09.359", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (86ms)", "detail": ""}
+{"id": "log-1785068829360-145", "timestamp": "12:27:09.360", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (89ms)", "detail": ""}
+{"id": "log-1785068829362-146", "timestamp": "12:27:09.362", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (91ms)", "detail": ""}
+{"id": "log-1785068830104-147", "timestamp": "12:27:10.104", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1008ms)", "detail": ""}
+{"id": "log-1785068830189-148", "timestamp": "12:27:10.189", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068830199-149", "timestamp": "12:27:10.199", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (68ms)", "detail": ""}
+{"id": "log-1785068830215-150", "timestamp": "12:27:10.215", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068830215-152", "timestamp": "12:27:10.215", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068830215-151", "timestamp": "12:27:10.215", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068830221-153", "timestamp": "12:27:10.221", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (89ms)", "detail": ""}
+{"id": "log-1785068830225-154", "timestamp": "12:27:10.225", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (93ms)", "detail": ""}
+{"id": "log-1785068830225-155", "timestamp": "12:27:10.225", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (93ms)", "detail": ""}
+{"id": "log-1785068831117-156", "timestamp": "12:27:11.117", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1008ms)", "detail": ""}
+{"id": "log-1785068832129-157", "timestamp": "12:27:12.129", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1007ms)", "detail": ""}
+{"id": "log-1785068833142-158", "timestamp": "12:27:13.142", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1007ms)", "detail": ""}
+{"id": "log-1785068834153-159", "timestamp": "12:27:14.153", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1007ms)", "detail": ""}
+{"id": "log-1785068835161-160", "timestamp": "12:27:15.161", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1005ms)", "detail": ""}
+{"id": "log-1785068836173-161", "timestamp": "12:27:16.173", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1006ms)", "detail": ""}
+{"id": "log-1785068837175-162", "timestamp": "12:27:17.175", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1002ms)", "detail": ""}
+{"id": "log-1785068838181-163", "timestamp": "12:27:18.181", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1001ms)", "detail": ""}
+{"id": "log-1785068839266-164", "timestamp": "12:27:19.266", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1010ms)", "detail": ""}
+{"id": "log-1785068840278-165", "timestamp": "12:27:20.278", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1011ms)", "detail": ""}
+{"id": "log-1785068841098-166", "timestamp": "12:27:21.098", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068841104-167", "timestamp": "12:27:21.104", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (70ms)", "detail": ""}
+{"id": "log-1785068841122-168", "timestamp": "12:27:21.122", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068841122-169", "timestamp": "12:27:21.122", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068841122-170", "timestamp": "12:27:21.122", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068841122-171", "timestamp": "12:27:21.122", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068841128-172", "timestamp": "12:27:21.128", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (96ms)", "detail": ""}
+{"id": "log-1785068841131-173", "timestamp": "12:27:21.131", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (98ms)", "detail": ""}
+{"id": "log-1785068841133-174", "timestamp": "12:27:21.133", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (100ms)", "detail": ""}
+{"id": "log-1785068841134-175", "timestamp": "12:27:21.134", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (102ms)", "detail": ""}
+{"id": "log-1785068841283-176", "timestamp": "12:27:21.283", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1000ms)", "detail": ""}
+{"id": "log-1785068842294-177", "timestamp": "12:27:22.294", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1005ms)", "detail": ""}
+{"id": "log-1785068842623-178", "timestamp": "12:27:22.623", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068842623-179", "timestamp": "12:27:22.623", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068842628-180", "timestamp": "12:27:22.628", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (104ms)", "detail": ""}
+{"id": "log-1785068842629-181", "timestamp": "12:27:22.629", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (105ms)", "detail": ""}
+{"id": "log-1785068842645-182", "timestamp": "12:27:22.645", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068842645-183", "timestamp": "12:27:22.645", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068842645-184", "timestamp": "12:27:22.645", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068842652-185", "timestamp": "12:27:22.652", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (128ms)", "detail": ""}
+{"id": "log-1785068842652-186", "timestamp": "12:27:22.652", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (129ms)", "detail": ""}
+{"id": "log-1785068842655-187", "timestamp": "12:27:22.655", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (131ms)", "detail": ""}
+{"id": "log-1785068843302-188", "timestamp": "12:27:23.302", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1005ms)", "detail": ""}
+{"id": "log-1785068844321-189", "timestamp": "12:27:24.321", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1015ms)", "detail": ""}
+{"id": "log-1785068845342-190", "timestamp": "12:27:25.342", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1016ms)", "detail": ""}
+{"id": "log-1785068846353-191", "timestamp": "12:27:26.353", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1006ms)", "detail": ""}
+{"id": "log-1785068847368-192", "timestamp": "12:27:27.368", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1011ms)", "detail": ""}
+{"id": "log-1785068848376-193", "timestamp": "12:27:28.376", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1004ms)", "detail": ""}
+{"id": "log-1785068849389-194", "timestamp": "12:27:29.389", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1006ms)", "detail": ""}
+{"id": "log-1785068850400-195", "timestamp": "12:27:30.400", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1005ms)", "detail": ""}
+{"id": "log-1785068851408-196", "timestamp": "12:27:31.408", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1003ms)", "detail": ""}
+{"id": "log-1785068852427-197", "timestamp": "12:27:32.427", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1013ms)", "detail": ""}
+{"id": "log-1785068853433-198", "timestamp": "12:27:33.433", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1003ms)", "detail": ""}
+{"id": "log-1785068854444-199", "timestamp": "12:27:34.444", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1006ms)", "detail": ""}
+{"id": "log-1785068855461-200", "timestamp": "12:27:35.461", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1013ms)", "detail": ""}
+{"id": "log-1785068856472-201", "timestamp": "12:27:36.472", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1007ms)", "detail": ""}
+{"id": "log-1785068857485-202", "timestamp": "12:27:37.485", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1008ms)", "detail": ""}
+{"id": "log-1785068858494-203", "timestamp": "12:27:38.494", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1005ms)", "detail": ""}
+{"id": "log-1785068859503-204", "timestamp": "12:27:39.503", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1004ms)", "detail": ""}
+{"id": "log-1785068860511-205", "timestamp": "12:27:40.511", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1005ms)", "detail": ""}
+{"id": "log-1785068861531-206", "timestamp": "12:27:41.531", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1015ms)", "detail": ""}
+{"id": "log-1785068862539-207", "timestamp": "12:27:42.539", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1002ms)", "detail": ""}
+{"id": "log-1785068863547-208", "timestamp": "12:27:43.547", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1002ms)", "detail": ""}
+{"id": "log-1785068864557-209", "timestamp": "12:27:44.557", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1006ms)", "detail": ""}
+{"id": "log-1785068865568-210", "timestamp": "12:27:45.568", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1007ms)", "detail": ""}
+{"id": "log-1785068866576-211", "timestamp": "12:27:46.576", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1004ms)", "detail": ""}
+{"id": "log-1785068867584-212", "timestamp": "12:27:47.584", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1004ms)", "detail": ""}
+{"id": "log-1785068868592-213", "timestamp": "12:27:48.592", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1004ms)", "detail": ""}
+{"id": "log-1785068869610-214", "timestamp": "12:27:49.610", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1015ms)", "detail": ""}
+{"id": "log-1785068870624-215", "timestamp": "12:27:50.624", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1009ms)", "detail": ""}
+{"id": "log-1785068871639-216", "timestamp": "12:27:51.639", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1011ms)", "detail": ""}
+{"id": "log-1785068872649-217", "timestamp": "12:27:52.649", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1007ms)", "detail": ""}
+{"id": "log-1785068873663-218", "timestamp": "12:27:53.663", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1008ms)", "detail": ""}
+{"id": "log-1785068874679-219", "timestamp": "12:27:54.679", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1010ms)", "detail": ""}
+{"id": "log-1785068875685-220", "timestamp": "12:27:55.685", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1003ms)", "detail": ""}
+{"id": "log-1785068876696-221", "timestamp": "12:27:56.696", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1006ms)", "detail": ""}
+{"id": "log-1785068877710-222", "timestamp": "12:27:57.710", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1011ms)", "detail": ""}
+{"id": "log-1785068878729-223", "timestamp": "12:27:58.729", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1015ms)", "detail": ""}
+{"id": "log-1785068879738-224", "timestamp": "12:27:59.738", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1005ms)", "detail": ""}
+{"id": "log-1785068880752-225", "timestamp": "12:28:00.752", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1008ms)", "detail": ""}
+{"id": "log-1785068881761-226", "timestamp": "12:28:01.761", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1005ms)", "detail": ""}
+{"id": "log-1785068882772-227", "timestamp": "12:28:02.772", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1007ms)", "detail": ""}
+{"id": "log-1785068883782-228", "timestamp": "12:28:03.782", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1007ms)", "detail": ""}
+{"id": "log-1785068884794-229", "timestamp": "12:28:04.794", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1008ms)", "detail": ""}
+{"id": "log-1785068885814-230", "timestamp": "12:28:05.814", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1016ms)", "detail": ""}
+{"id": "log-1785068886823-231", "timestamp": "12:28:06.823", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1005ms)", "detail": ""}
+{"id": "log-1785068886824-232", "timestamp": "12:28:06.824", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1006ms)", "detail": ""}
+{"id": "log-1785068887847-233", "timestamp": "12:28:07.847", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1017ms)", "detail": ""}
+{"id": "log-1785068887848-234", "timestamp": "12:28:07.848", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1017ms)", "detail": ""}
+{"id": "log-1785068887849-235", "timestamp": "12:28:07.849", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1019ms)", "detail": ""}
+{"id": "log-1785068887850-236", "timestamp": "12:28:07.850", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1020ms)", "detail": ""}
+{"id": "log-1785068887851-237", "timestamp": "12:28:07.851", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1021ms)", "detail": ""}
+{"id": "log-1785068888250-238", "timestamp": "12:28:08.250", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1007ms)", "detail": ""}
+{"id": "log-1785068888515-239", "timestamp": "12:28:08.515", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1009ms)", "detail": ""}
+{"id": "log-1785068888857-240", "timestamp": "12:28:08.857", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1004ms)", "detail": ""}
+{"id": "log-1785068888858-241", "timestamp": "12:28:08.858", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1007ms)", "detail": ""}
+{"id": "log-1785068888859-242", "timestamp": "12:28:08.859", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1006ms)", "detail": ""}
+{"id": "log-1785068889259-243", "timestamp": "12:28:09.259", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1007ms)", "detail": ""}
+{"id": "log-1785068889521-244", "timestamp": "12:28:09.521", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1005ms)", "detail": ""}
+{"id": "log-1785068889879-245", "timestamp": "12:28:09.879", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1015ms)", "detail": ""}
+{"id": "log-1785068889879-246", "timestamp": "12:28:09.879", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1016ms)", "detail": ""}
+{"id": "log-1785068889880-247", "timestamp": "12:28:09.880", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1018ms)", "detail": ""}
+{"id": "log-1785068890262-248", "timestamp": "12:28:10.262", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1001ms)", "detail": ""}
+{"id": "log-1785068890526-249", "timestamp": "12:28:10.526", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1002ms)", "detail": ""}
+{"id": "log-1785068890885-250", "timestamp": "12:28:10.885", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1004ms)", "detail": ""}
+{"id": "log-1785068890886-251", "timestamp": "12:28:10.886", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1004ms)", "detail": ""}
+{"id": "log-1785068890887-252", "timestamp": "12:28:10.887", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1006ms)", "detail": ""}
+{"id": "log-1785068891274-253", "timestamp": "12:28:11.274", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1011ms)", "detail": ""}
+{"id": "log-1785068891539-254", "timestamp": "12:28:11.539", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1011ms)", "detail": ""}
+{"id": "log-1785068891896-255", "timestamp": "12:28:11.896", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1008ms)", "detail": ""}
+{"id": "log-1785068891897-256", "timestamp": "12:28:11.897", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1008ms)", "detail": ""}
+{"id": "log-1785068891897-257", "timestamp": "12:28:11.897", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1008ms)", "detail": ""}
+{"id": "log-1785068892283-258", "timestamp": "12:28:12.283", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1006ms)", "detail": ""}
+{"id": "log-1785068892547-259", "timestamp": "12:28:12.547", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1006ms)", "detail": ""}
+{"id": "log-1785068892906-260", "timestamp": "12:28:12.906", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1007ms)", "detail": ""}
+{"id": "log-1785068892907-261", "timestamp": "12:28:12.907", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1008ms)", "detail": ""}
+{"id": "log-1785068892907-262", "timestamp": "12:28:12.907", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1008ms)", "detail": ""}
+{"id": "log-1785068893293-263", "timestamp": "12:28:13.293", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1009ms)", "detail": ""}
+{"id": "log-1785068893558-264", "timestamp": "12:28:13.558", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1009ms)", "detail": ""}
+{"id": "log-1785068893916-265", "timestamp": "12:28:13.916", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1006ms)", "detail": ""}
+{"id": "log-1785068893917-266", "timestamp": "12:28:13.917", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1008ms)", "detail": ""}
+{"id": "log-1785068893917-267", "timestamp": "12:28:13.917", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1008ms)", "detail": ""}
+{"id": "log-1785068894304-268", "timestamp": "12:28:14.304", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1008ms)", "detail": ""}
+{"id": "log-1785068894566-269", "timestamp": "12:28:14.566", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1007ms)", "detail": ""}
+{"id": "log-1785068894926-270", "timestamp": "12:28:14.926", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1006ms)", "detail": ""}
+{"id": "log-1785068894927-271", "timestamp": "12:28:14.927", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1008ms)", "detail": ""}
+{"id": "log-1785068894928-272", "timestamp": "12:28:14.928", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1008ms)", "detail": ""}
+{"id": "log-1785068895311-273", "timestamp": "12:28:15.311", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1006ms)", "detail": ""}
+{"id": "log-1785068895577-274", "timestamp": "12:28:15.577", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1009ms)", "detail": ""}
+{"id": "log-1785068895934-275", "timestamp": "12:28:15.934", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1005ms)", "detail": ""}
+{"id": "log-1785068895934-276", "timestamp": "12:28:15.934", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1005ms)", "detail": ""}
+{"id": "log-1785068895936-277", "timestamp": "12:28:15.936", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1006ms)", "detail": ""}
+{"id": "log-1785068896326-278", "timestamp": "12:28:16.326", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1013ms)", "detail": ""}
+{"id": "log-1785068896580-279", "timestamp": "12:28:16.580", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1001ms)", "detail": ""}
+{"id": "log-1785068896945-280", "timestamp": "12:28:16.945", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1008ms)", "detail": ""}
+{"id": "log-1785068896945-281", "timestamp": "12:28:16.945", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1008ms)", "detail": ""}
+{"id": "log-1785068896945-282", "timestamp": "12:28:16.945", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1008ms)", "detail": ""}
+{"id": "log-1785068897342-283", "timestamp": "12:28:17.342", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1014ms)", "detail": ""}
+{"id": "log-1785068897582-284", "timestamp": "12:28:17.582", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1001ms)", "detail": ""}
+{"id": "log-1785068897963-285", "timestamp": "12:28:17.963", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1012ms)", "detail": ""}
+{"id": "log-1785068897963-286", "timestamp": "12:28:17.963", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1017ms)", "detail": ""}
+{"id": "log-1785068897963-287", "timestamp": "12:28:17.963", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1017ms)", "detail": ""}
+{"id": "log-1785068898343-288", "timestamp": "12:28:18.343", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1000ms)", "detail": ""}
+{"id": "log-1785068898597-289", "timestamp": "12:28:18.597", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1015ms)", "detail": ""}
+{"id": "log-1785068898977-290", "timestamp": "12:28:18.977", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1009ms)", "detail": ""}
+{"id": "log-1785068898977-291", "timestamp": "12:28:18.977", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1009ms)", "detail": ""}
+{"id": "log-1785068898977-292", "timestamp": "12:28:18.977", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1009ms)", "detail": ""}
+{"id": "log-1785068899359-293", "timestamp": "12:28:19.359", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1015ms)", "detail": ""}
+{"id": "log-1785068899612-294", "timestamp": "12:28:19.612", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1015ms)", "detail": ""}
+{"id": "log-1785068899992-295", "timestamp": "12:28:19.992", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1014ms)", "detail": ""}
+{"id": "log-1785068899992-296", "timestamp": "12:28:19.992", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1014ms)", "detail": ""}
+{"id": "log-1785068921190-297", "timestamp": "12:28:41.190", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068921197-298", "timestamp": "12:28:41.197", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (79ms)", "detail": ""}
+{"id": "log-1785068921203-299", "timestamp": "12:28:41.203", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068921203-300", "timestamp": "12:28:41.203", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068921203-301", "timestamp": "12:28:41.203", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068921203-303", "timestamp": "12:28:41.203", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068921203-302", "timestamp": "12:28:41.203", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068921223-304", "timestamp": "12:28:41.223", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (105ms)", "detail": ""}
+{"id": "log-1785068921224-305", "timestamp": "12:28:41.224", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (106ms)", "detail": ""}
+{"id": "log-1785068921226-306", "timestamp": "12:28:41.226", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (108ms)", "detail": ""}
+{"id": "log-1785068921229-307", "timestamp": "12:28:41.229", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (111ms)", "detail": ""}
+{"id": "log-1785068921230-308", "timestamp": "12:28:41.230", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (112ms)", "detail": ""}
+{"id": "log-1785068922216-309", "timestamp": "12:28:42.216", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068922216-310", "timestamp": "12:28:42.216", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (65ms)", "detail": ""}
+{"id": "log-1785068922241-311", "timestamp": "12:28:42.241", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068922241-312", "timestamp": "12:28:42.241", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068922241-314", "timestamp": "12:28:42.241", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068922241-313", "timestamp": "12:28:42.241", "level": "INFO", "source": "TTS", "message": "Starting Chatterbox Multilingual Web Studio on port 8001...", "detail": ""}
+{"id": "log-1785068922253-316", "timestamp": "12:28:42.253", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (103ms)", "detail": ""}
+{"id": "log-1785068922253-317", "timestamp": "12:28:42.253", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (102ms)", "detail": ""}
+{"id": "log-1785068922256-318", "timestamp": "12:28:42.256", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (105ms)", "detail": ""}
+{"id": "log-1785068922256-319", "timestamp": "12:28:42.256", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (105ms)", "detail": ""}
+{"id": "log-1785068922256-320", "timestamp": "12:28:42.256", "level": "INFO", "source": "API", "message": "POST /api/tts/server/start -> 200 (114ms)", "detail": ""}
+{"id": "log-1785068924273-321", "timestamp": "12:28:44.273", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1002ms)", "detail": ""}
+{"id": "log-1785068925293-322", "timestamp": "12:28:45.293", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1008ms)", "detail": ""}
+{"id": "log-1785068926302-323", "timestamp": "12:28:46.302", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1005ms)", "detail": ""}
+{"id": "log-1785068927312-324", "timestamp": "12:28:47.312", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1005ms)", "detail": ""}
+{"id": "log-1785068928339-325", "timestamp": "12:28:48.339", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1010ms)", "detail": ""}
+{"id": "log-1785068929347-326", "timestamp": "12:28:49.347", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1005ms)", "detail": ""}
+{"id": "log-1785068930353-327", "timestamp": "12:28:50.353", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1002ms)", "detail": ""}
+{"id": "log-1785068931367-328", "timestamp": "12:28:51.367", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1013ms)", "detail": ""}
+{"id": "log-1785068932374-329", "timestamp": "12:28:52.374", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1005ms)", "detail": ""}
+{"id": "log-1785068933392-330", "timestamp": "12:28:53.392", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1017ms)", "detail": ""}
+{"id": "log-1785068934405-331", "timestamp": "12:28:54.405", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1009ms)", "detail": ""}
+{"id": "log-1785068935417-332", "timestamp": "12:28:55.417", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1008ms)", "detail": ""}
+{"id": "log-1785068936428-333", "timestamp": "12:28:56.428", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1008ms)", "detail": ""}
+{"id": "log-1785068937434-334", "timestamp": "12:28:57.434", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1002ms)", "detail": ""}
+{"id": "log-1785068938443-335", "timestamp": "12:28:58.443", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1008ms)", "detail": ""}
+{"id": "log-1785068939458-336", "timestamp": "12:28:59.458", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1014ms)", "detail": ""}
+{"id": "log-1785068940471-337", "timestamp": "12:29:00.471", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1009ms)", "detail": ""}
+{"id": "log-1785068941495-338", "timestamp": "12:29:01.495", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1021ms)", "detail": ""}
+{"id": "log-1785068942505-339", "timestamp": "12:29:02.505", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1006ms)", "detail": ""}
+{"id": "log-1785068943516-340", "timestamp": "12:29:03.516", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1007ms)", "detail": ""}
+{"id": "log-1785068943516-341", "timestamp": "12:29:03.516", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1007ms)", "detail": ""}
+{"id": "log-1785068944525-342", "timestamp": "12:29:04.525", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1004ms)", "detail": ""}
+{"id": "log-1785068944527-343", "timestamp": "12:29:04.527", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1005ms)", "detail": ""}
+{"id": "log-1785068944528-344", "timestamp": "12:29:04.528", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1006ms)", "detail": ""}
+{"id": "log-1785069079986-0", "timestamp": "12:31:19.986", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785069120837-0", "timestamp": "12:32:00.837", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785069134621-0", "timestamp": "12:32:14.621", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785069161749-0", "timestamp": "12:32:41.749", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785069184364-0", "timestamp": "12:33:04.364", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785069204041-0", "timestamp": "12:33:24.041", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785069248591-0", "timestamp": "12:34:08.591", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785069266447-0", "timestamp": "12:34:26.447", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785069283731-0", "timestamp": "12:34:43.731", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785069283827-1", "timestamp": "12:34:43.827", "level": "SUCCESS", "source": "SYSTEM", "message": "Backend FastAPI server started successfully.", "detail": ""}
+{"id": "log-1785069287895-2", "timestamp": "12:34:47.895", "level": "INFO", "source": "HYPERFRAME", "message": "HyperFrame studio auto-start initiated.", "detail": ""}
+{"id": "log-1785069324475-3", "timestamp": "12:35:24.475", "level": "INFO", "source": "API", "message": "GET /api/assets-vault/tree -> 200 (14ms)", "detail": ""}
+{"id": "log-1785069324479-4", "timestamp": "12:35:24.479", "level": "INFO", "source": "API", "message": "GET /api/wiki/tree -> 200 (9ms)", "detail": ""}
+{"id": "log-1785069324497-5", "timestamp": "12:35:24.497", "level": "INFO", "source": "API", "message": "GET /api/pipeline/status -> 200 (3ms)", "detail": ""}
+{"id": "log-1785069324508-6", "timestamp": "12:35:24.508", "level": "INFO", "source": "API", "message": "GET /api/overview/today -> 200 (2ms)", "detail": ""}
+{"id": "log-1785069324521-7", "timestamp": "12:35:24.521", "level": "INFO", "source": "API", "message": "GET /api/activity -> 200 (2ms)", "detail": ""}
+{"id": "log-1785069324548-8", "timestamp": "12:35:24.548", "level": "INFO", "source": "API", "message": "GET /api/projects -> 200 (4ms)", "detail": ""}
+{"id": "log-1785069324557-9", "timestamp": "12:35:24.557", "level": "INFO", "source": "API", "message": "GET /api/research -> 200 (1ms)", "detail": ""}
+{"id": "log-1785069324584-10", "timestamp": "12:35:24.584", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (3ms)", "detail": ""}
+{"id": "log-1785069324590-11", "timestamp": "12:35:24.590", "level": "INFO", "source": "API", "message": "GET /api/assets-vault/stream/audio/tts_chatterbox_1785067278.wav -> 206 (59ms)", "detail": ""}
+{"id": "log-1785069324641-12", "timestamp": "12:35:24.641", "level": "INFO", "source": "API", "message": "GET /api/system/stats -> 200 (161ms)", "detail": ""}
+{"id": "log-1785069326493-13", "timestamp": "12:35:26.493", "level": "INFO", "source": "API", "message": "GET /api/hyperframe/server/status -> 200 (2037ms)", "detail": ""}
+{"id": "log-1785069353243-14", "timestamp": "12:35:53.243", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (0ms)", "detail": ""}
+{"id": "log-1785069847972-0", "timestamp": "12:44:07.972", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785069872717-0", "timestamp": "12:44:32.717", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785070024103-0", "timestamp": "12:47:04.103", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785070034810-0", "timestamp": "12:47:14.810", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785070042153-0", "timestamp": "12:47:22.153", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785070110919-0", "timestamp": "12:48:30.919", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785070111012-1", "timestamp": "12:48:31.012", "level": "SUCCESS", "source": "SYSTEM", "message": "Backend FastAPI server started successfully.", "detail": ""}
+{"id": "log-1785070115105-2", "timestamp": "12:48:35.105", "level": "INFO", "source": "HYPERFRAME", "message": "HyperFrame studio auto-start initiated.", "detail": ""}
+{"id": "log-1785070161251-3", "timestamp": "12:49:21.251", "level": "INFO", "source": "API", "message": "OPTIONS /api/wiki/tree -> 200 (0ms)", "detail": ""}
+{"id": "log-1785070161254-4", "timestamp": "12:49:21.254", "level": "INFO", "source": "API", "message": "OPTIONS /api/assets-vault/tree -> 200 (3ms)", "detail": ""}
+{"id": "log-1785070161255-5", "timestamp": "12:49:21.255", "level": "INFO", "source": "API", "message": "OPTIONS /api/system/stats -> 200 (4ms)", "detail": ""}
+{"id": "log-1785070161256-6", "timestamp": "12:49:21.256", "level": "INFO", "source": "API", "message": "OPTIONS /api/hyperframe/server/status -> 200 (2ms)", "detail": ""}
+{"id": "log-1785070161257-7", "timestamp": "12:49:21.257", "level": "INFO", "source": "API", "message": "OPTIONS /api/projects -> 200 (0ms)", "detail": ""}
+{"id": "log-1785070161259-8", "timestamp": "12:49:21.259", "level": "INFO", "source": "API", "message": "OPTIONS /api/research -> 200 (1ms)", "detail": ""}
+{"id": "log-1785070161260-9", "timestamp": "12:49:21.260", "level": "INFO", "source": "API", "message": "OPTIONS /api/tts/server/status -> 200 (0ms)", "detail": ""}
+{"id": "log-1785070161261-10", "timestamp": "12:49:21.261", "level": "INFO", "source": "API", "message": "OPTIONS /api/overview/today -> 200 (1ms)", "detail": ""}
+{"id": "log-1785070161262-11", "timestamp": "12:49:21.262", "level": "INFO", "source": "API", "message": "OPTIONS /api/pipeline/status -> 200 (2ms)", "detail": ""}
+{"id": "log-1785070161263-12", "timestamp": "12:49:21.263", "level": "INFO", "source": "API", "message": "OPTIONS /api/activity -> 200 (0ms)", "detail": ""}
+{"id": "log-1785070161296-13", "timestamp": "12:49:21.296", "level": "INFO", "source": "API", "message": "GET /api/wiki/tree -> 200 (7ms)", "detail": ""}
+{"id": "log-1785070161301-14", "timestamp": "12:49:21.301", "level": "INFO", "source": "API", "message": "GET /api/assets-vault/tree -> 200 (12ms)", "detail": ""}
+{"id": "log-1785070161303-15", "timestamp": "12:49:21.303", "level": "INFO", "source": "API", "message": "GET /api/pipeline/status -> 200 (1ms)", "detail": ""}
+{"id": "log-1785070161305-16", "timestamp": "12:49:21.305", "level": "INFO", "source": "API", "message": "GET /api/research -> 200 (0ms)", "detail": ""}
+{"id": "log-1785070161309-17", "timestamp": "12:49:21.309", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (1ms)", "detail": ""}
+{"id": "log-1785070161339-18", "timestamp": "12:49:21.339", "level": "INFO", "source": "API", "message": "GET /api/projects -> 200 (2ms)", "detail": ""}
+{"id": "log-1785070161350-19", "timestamp": "12:49:21.350", "level": "INFO", "source": "API", "message": "GET /api/overview/today -> 200 (2ms)", "detail": ""}
+{"id": "log-1785070161363-20", "timestamp": "12:49:21.363", "level": "INFO", "source": "API", "message": "GET /api/activity -> 200 (2ms)", "detail": ""}
+{"id": "log-1785070161385-21", "timestamp": "12:49:21.385", "level": "INFO", "source": "API", "message": "GET /api/system/stats -> 200 (88ms)", "detail": ""}
+{"id": "log-1785070161495-22", "timestamp": "12:49:21.495", "level": "INFO", "source": "API", "message": "GET /api/assets-vault/stream/audio/tts_chatterbox_en_1785069961.wav -> 206 (96ms)", "detail": ""}
+{"id": "log-1785070161502-23", "timestamp": "12:49:21.502", "level": "INFO", "source": "API", "message": "GET /api/assets-vault/stream/hyperframes/hyperframes_studio_2026-07-26_05-08-17.mp4 -> 206 (1ms)", "detail": ""}
+{"id": "log-1785070161552-24", "timestamp": "12:49:21.552", "level": "INFO", "source": "API", "message": "GET /api/assets-vault/stream/audio/tts_chatterbox_en_1785069946.wav -> 206 (141ms)", "detail": ""}
+{"id": "log-1785070161587-25", "timestamp": "12:49:21.587", "level": "INFO", "source": "API", "message": "GET /api/assets-vault/stream/audio/tts_chatterbox_1785069488.wav -> 206 (163ms)", "detail": ""}
+{"id": "log-1785070161601-26", "timestamp": "12:49:21.601", "level": "INFO", "source": "API", "message": "GET /api/assets-vault/stream/audio/tts_chatterbox_1785069447.wav -> 206 (164ms)", "detail": ""}
+{"id": "log-1785070161605-27", "timestamp": "12:49:21.605", "level": "INFO", "source": "API", "message": "GET /api/assets-vault/stream/audio/tts_chatterbox_1785069387.wav -> 206 (155ms)", "detail": ""}
+{"id": "log-1785070161608-28", "timestamp": "12:49:21.608", "level": "INFO", "source": "API", "message": "GET /api/assets-vault/stream/audio/tts_chatterbox_1785067278.wav -> 206 (146ms)", "detail": ""}
+{"id": "log-1785070163340-29", "timestamp": "12:49:23.340", "level": "INFO", "source": "API", "message": "GET /api/hyperframe/server/status -> 200 (2031ms)", "detail": ""}
+{"id": "log-1785070165336-30", "timestamp": "12:49:25.336", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (0ms)", "detail": ""}
+{"id": "log-1785070166887-31", "timestamp": "12:49:26.887", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (0ms)", "detail": ""}
+{"id": "log-1785070178451-32", "timestamp": "12:49:38.451", "level": "INFO", "source": "API", "message": "GET /api/assets-vault/tree -> 200 (13ms)", "detail": ""}
+{"id": "log-1785070185012-33", "timestamp": "12:49:45.012", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (0ms)", "detail": ""}
+{"id": "log-1785070626137-0", "timestamp": "12:57:06.137", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785070637823-0", "timestamp": "12:57:17.823", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785070647560-0", "timestamp": "12:57:27.560", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785070781528-0", "timestamp": "12:59:41.528", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785070905913-0", "timestamp": "13:01:45.913", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785070913536-0", "timestamp": "13:01:53.536", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785070934141-0", "timestamp": "13:02:14.141", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785070944939-0", "timestamp": "13:02:24.939", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785070953002-0", "timestamp": "13:02:33.002", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785070953100-1", "timestamp": "13:02:33.100", "level": "SUCCESS", "source": "SYSTEM", "message": "Backend FastAPI server started successfully.", "detail": ""}
+{"id": "log-1785070957169-2", "timestamp": "13:02:37.169", "level": "INFO", "source": "HYPERFRAME", "message": "HyperFrame studio auto-start initiated.", "detail": ""}
+{"id": "log-1785070968506-3", "timestamp": "13:02:48.506", "level": "ERROR", "source": "API", "message": "GET /api/system/status -> 404 (0ms)", "detail": ""}
+{"id": "log-1785070976012-4", "timestamp": "13:02:56.012", "level": "INFO", "source": "API", "message": "GET /api/projects -> 200 (41ms)", "detail": ""}
+{"id": "log-1785070988983-0", "timestamp": "13:03:08.983", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785070989085-1", "timestamp": "13:03:09.085", "level": "SUCCESS", "source": "SYSTEM", "message": "Backend FastAPI server started successfully.", "detail": ""}
+{"id": "log-1785070991122-2", "timestamp": "13:03:11.122", "level": "INFO", "source": "HYPERFRAME", "message": "HyperFrame studio auto-start initiated.", "detail": ""}
+{"id": "log-1785070994958-5", "timestamp": "13:03:14.958", "level": "INFO", "source": "API", "message": "OPTIONS /api/hyperframe/server/status -> 200 (2ms)", "detail": ""}
+{"id": "log-1785070994960-6", "timestamp": "13:03:14.960", "level": "INFO", "source": "API", "message": "OPTIONS /api/assets-vault/tree -> 200 (2ms)", "detail": ""}
+{"id": "log-1785070994964-7", "timestamp": "13:03:14.964", "level": "INFO", "source": "API", "message": "OPTIONS /api/system/stats -> 200 (2ms)", "detail": ""}
+{"id": "log-1785070994965-8", "timestamp": "13:03:14.965", "level": "INFO", "source": "API", "message": "OPTIONS /api/pipeline/status -> 200 (3ms)", "detail": ""}
+{"id": "log-1785070994966-9", "timestamp": "13:03:14.966", "level": "INFO", "source": "API", "message": "OPTIONS /api/wiki/tree -> 200 (5ms)", "detail": ""}
+{"id": "log-1785070994967-10", "timestamp": "13:03:14.967", "level": "INFO", "source": "API", "message": "OPTIONS /api/overview/today -> 200 (5ms)", "detail": ""}
+{"id": "log-1785070994969-11", "timestamp": "13:03:14.969", "level": "INFO", "source": "API", "message": "OPTIONS /api/activity -> 200 (1ms)", "detail": ""}
+{"id": "log-1785070994972-12", "timestamp": "13:03:14.972", "level": "INFO", "source": "API", "message": "OPTIONS /api/projects -> 200 (0ms)", "detail": ""}
+{"id": "log-1785070994973-13", "timestamp": "13:03:14.973", "level": "INFO", "source": "API", "message": "OPTIONS /api/research -> 200 (1ms)", "detail": ""}
+{"id": "log-1785070994974-14", "timestamp": "13:03:14.974", "level": "INFO", "source": "API", "message": "OPTIONS /api/tts/server/status -> 200 (2ms)", "detail": ""}
+{"id": "log-1785070994987-15", "timestamp": "13:03:14.987", "level": "INFO", "source": "API", "message": "GET /api/pipeline/status -> 200 (10ms)", "detail": ""}
+{"id": "log-1785070994993-16", "timestamp": "13:03:14.993", "level": "INFO", "source": "API", "message": "GET /api/wiki/tree -> 200 (14ms)", "detail": ""}
+{"id": "log-1785070995209-17", "timestamp": "13:03:15.209", "level": "INFO", "source": "API", "message": "GET /api/overview/today -> 200 (218ms)", "detail": ""}
+{"id": "log-1785070995210-18", "timestamp": "13:03:15.210", "level": "INFO", "source": "API", "message": "GET /api/system/stats -> 200 (232ms)", "detail": ""}
+{"id": "log-1785070995215-19", "timestamp": "13:03:15.215", "level": "INFO", "source": "API", "message": "GET /api/projects -> 200 (7ms)", "detail": ""}
+{"id": "log-1785070995217-20", "timestamp": "13:03:15.217", "level": "INFO", "source": "API", "message": "GET /api/research -> 200 (6ms)", "detail": ""}
+{"id": "log-1785070995219-21", "timestamp": "13:03:15.219", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (6ms)", "detail": ""}
+{"id": "log-1785070995224-22", "timestamp": "13:03:15.224", "level": "INFO", "source": "API", "message": "GET /api/activity -> 200 (11ms)", "detail": ""}
+{"id": "log-1785070996981-23", "timestamp": "13:03:16.981", "level": "INFO", "source": "API", "message": "GET /api/hyperframe/server/status -> 200 (2008ms)", "detail": ""}
+{"id": "log-1785070998425-24", "timestamp": "13:03:18.425", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (2ms)", "detail": ""}
+{"id": "log-1785071045419-25", "timestamp": "13:04:05.419", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (4ms)", "detail": ""}
+{"id": "log-1785071701584-0", "timestamp": "13:15:01.584", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785071701694-1", "timestamp": "13:15:01.694", "level": "SUCCESS", "source": "SYSTEM", "message": "Backend FastAPI server started successfully.", "detail": ""}
+{"id": "log-1785071705774-2", "timestamp": "13:15:05.774", "level": "INFO", "source": "HYPERFRAME", "message": "HyperFrame studio auto-start initiated.", "detail": ""}
+{"id": "log-1785071752897-3", "timestamp": "13:15:52.897", "level": "INFO", "source": "API", "message": "OPTIONS /api/assets-vault/tree -> 200 (0ms)", "detail": ""}
+{"id": "log-1785071752897-4", "timestamp": "13:15:52.897", "level": "INFO", "source": "API", "message": "OPTIONS /api/hyperframe/server/status -> 200 (0ms)", "detail": ""}
+{"id": "log-1785071752897-5", "timestamp": "13:15:52.897", "level": "INFO", "source": "API", "message": "OPTIONS /api/overview/today -> 200 (0ms)", "detail": ""}
+{"id": "log-1785071752897-6", "timestamp": "13:15:52.897", "level": "INFO", "source": "API", "message": "OPTIONS /api/activity -> 200 (0ms)", "detail": ""}
+{"id": "log-1785071752897-7", "timestamp": "13:15:52.897", "level": "INFO", "source": "API", "message": "OPTIONS /api/system/stats -> 200 (0ms)", "detail": ""}
+{"id": "log-1785071752897-8", "timestamp": "13:15:52.897", "level": "INFO", "source": "API", "message": "OPTIONS /api/pipeline/status -> 200 (0ms)", "detail": ""}
+{"id": "log-1785071752897-9", "timestamp": "13:15:52.897", "level": "INFO", "source": "API", "message": "OPTIONS /api/wiki/tree -> 200 (0ms)", "detail": ""}
+{"id": "log-1785071752905-10", "timestamp": "13:15:52.905", "level": "INFO", "source": "API", "message": "OPTIONS /api/projects -> 200 (0ms)", "detail": ""}
+{"id": "log-1785071752905-11", "timestamp": "13:15:52.905", "level": "INFO", "source": "API", "message": "OPTIONS /api/research -> 200 (0ms)", "detail": ""}
+{"id": "log-1785071752905-12", "timestamp": "13:15:52.905", "level": "INFO", "source": "API", "message": "OPTIONS /api/tts/server/status -> 200 (0ms)", "detail": ""}
+{"id": "log-1785071752957-13", "timestamp": "13:15:52.957", "level": "INFO", "source": "API", "message": "GET /api/overview/today -> 200 (22ms)", "detail": ""}
+{"id": "log-1785071752959-14", "timestamp": "13:15:52.959", "level": "INFO", "source": "API", "message": "GET /api/activity -> 200 (5ms)", "detail": ""}
+{"id": "log-1785071752977-15", "timestamp": "13:15:52.977", "level": "INFO", "source": "API", "message": "GET /api/pipeline/status -> 200 (4ms)", "detail": ""}
+{"id": "log-1785071752988-16", "timestamp": "13:15:52.988", "level": "INFO", "source": "API", "message": "GET /api/wiki/tree -> 200 (3ms)", "detail": ""}
+{"id": "log-1785071753001-17", "timestamp": "13:15:53.001", "level": "INFO", "source": "API", "message": "GET /api/projects -> 200 (3ms)", "detail": ""}
+{"id": "log-1785071753012-18", "timestamp": "13:15:53.012", "level": "INFO", "source": "API", "message": "GET /api/research -> 200 (2ms)", "detail": ""}
+{"id": "log-1785071753035-19", "timestamp": "13:15:53.035", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (12ms)", "detail": ""}
+{"id": "log-1785071753059-20", "timestamp": "13:15:53.059", "level": "INFO", "source": "API", "message": "GET /api/system/stats -> 200 (98ms)", "detail": ""}
+{"id": "log-1785071754941-21", "timestamp": "13:15:54.941", "level": "INFO", "source": "API", "message": "GET /api/hyperframe/server/status -> 200 (2015ms)", "detail": ""}
+{"id": "log-1785071765068-22", "timestamp": "13:16:05.068", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (10ms)", "detail": ""}
+{"id": "log-1785071768282-23", "timestamp": "13:16:08.282", "level": "INFO", "source": "API", "message": "GET /api/tts/server/status -> 200 (2ms)", "detail": ""}
+{"id": "log-1785071769065-24", "timestamp": "13:16:09.065", "level": "INFO", "source": "API", "message": "GET /api/hyperframe/server/status -> 200 (2006ms)", "detail": ""}

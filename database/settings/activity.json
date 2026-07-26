@@ -1,5 +1,33 @@
 [
   {
+    "id": "act-20260726174350934025",
+    "action": "Task removed",
+    "title": "Schedule",
+    "detail": "Deleted task t4",
+    "timestamp": "2026-07-26T12:13:50.934025+00:00"
+  },
+  {
+    "id": "act-20260726174349062381",
+    "action": "Task removed",
+    "title": "Schedule",
+    "detail": "Deleted task t3",
+    "timestamp": "2026-07-26T12:13:49.063898+00:00"
+  },
+  {
+    "id": "act-20260726174347391825",
+    "action": "Task removed",
+    "title": "Schedule",
+    "detail": "Deleted task t2",
+    "timestamp": "2026-07-26T12:13:47.391825+00:00"
+  },
+  {
+    "id": "act-20260726174343355895",
+    "action": "Task removed",
+    "title": "Schedule",
+    "detail": "Deleted task t1",
+    "timestamp": "2026-07-26T12:13:43.355895+00:00"
+  },
+  {
     "id": "act-20260726173036182125",
     "action": "asset_deleted",
     "title": "Deleted asset audio/tts_chatterbox_1785066124.wav",
@@ -180,33 +208,5 @@
     "title": "scriptwriter",
     "detail": "write me a script",
     "timestamp": "2026-07-25T19:12:45.918168+00:00"
-  },
-  {
-    "id": "act-20260726003654873832",
-    "action": "Wiki Item deleted",
-    "title": "test",
-    "detail": "Deleted test",
-    "timestamp": "2026-07-25T19:06:54.873832+00:00"
-  },
-  {
-    "id": "act-20260726003625834101",
-    "action": "Agent Executed",
-    "title": "scriptwriter",
-    "detail": "write a funny script",
-    "timestamp": "2026-07-25T19:06:25.834101+00:00"
-  },
-  {
-    "id": "act-20260726003542554643",
-    "action": "Live News Fetched",
-    "title": "researcher",
-    "detail": "find me some latest tech news",
-    "timestamp": "2026-07-25T19:05:42.554643+00:00"
-  },
-  {
-    "id": "act-20260726003252713602",
-    "action": "Wiki Item deleted",
-    "title": "agent-outputs",
-    "detail": "Deleted agent-outputs",
-    "timestamp": "2026-07-25T19:02:52.713602+00:00"
   }
 ]

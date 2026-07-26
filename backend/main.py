@@ -9,6 +9,12 @@ import urllib.request
 import urllib.error
 from datetime import UTC, datetime
 from pathlib import Path
+import sys
+
+ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
 from typing import Literal, Optional
 
 from fastapi import FastAPI, HTTPException, Request
@@ -17,7 +23,7 @@ from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, HttpUrl
 
-from backend.logger import (
+from backend.logger import (  # type: ignore
     push_log,
     get_recent_logs,
     clear_logs,
@@ -25,7 +31,7 @@ from backend.logger import (
     SystemLogHandler,
 )
 
-from backend.database.core import (
+from backend.database.core import (  # type: ignore
     DB_DIR,
     SYSTEM_DB_PATH,
     PROJECT_VAULT_DIR,
@@ -35,18 +41,18 @@ from backend.database.core import (
     init_database_structure,
     search_universal_index,
 )
-from backend.database.agent_memory import (
+from backend.database.agent_memory import (  # type: ignore
     save_agent_session_memory,
     get_agent_session_memory,
     list_agent_sessions,
 )
-from backend.database.vault import (
+from backend.database.vault import (  # type: ignore
     list_knowledge_vault_tree,
     read_vault_file,
     write_vault_file,
     list_projects,
 )
-from backend.database.hyperframe import (
+from backend.database.hyperframe import (  # type: ignore
     check_hyperframes_server_status,
     start_hyperframe_studio_server,
     render_hyperframe_mp4,
@@ -54,14 +60,14 @@ from backend.database.hyperframe import (
     save_hyperframe_render,
     delete_hyperframe_render,
 )
-from backend.database.assets_vault import (
+from backend.database.assets_vault import (  # type: ignore
     list_assets_vault_contents,
     create_custom_assets_folder,
     save_imported_asset_file,
     delete_vault_asset_file,
 )
-from backend.tts_engine import list_available_voices, generate_tts_audio
-from backend.database.tts_studio import check_chatterbox_server_status, start_chatterbox_server
+from backend.tts_engine import list_available_voices, generate_tts_audio  # type: ignore
+from backend.database.tts_studio import check_chatterbox_server_status, start_chatterbox_server  # type: ignore
 
 ROOT = Path(__file__).resolve().parent.parent
 DB_ROOT = ROOT / "database"
