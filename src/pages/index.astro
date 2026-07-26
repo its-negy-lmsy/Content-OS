@@ -815,15 +815,51 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
       <!-- View 15: System Logs -->
       <section id="v-logs" class="view-panel">
-        <div class="view-header">
-          <h1>System Logs</h1>
-          <p>Real-time execution logs for local API and subprocess runners.</p>
+        <div class="view-header" style="display: flex; justify-content: space-between; align-items: flex-end;">
+          <div>
+            <h1>System Logs</h1>
+            <p>Real-time execution logs for local API, agent subprocesses, and background runners.</p>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span id="log-status-pill" class="badge-live" style="background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 4px 12px; border-radius: 999px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.5px;">
+              <i class="ph-bold ph-circle" style="font-size: 0.6rem; margin-right: 4px; color: #10b981;"></i> STREAMING LIVE
+            </span>
+          </div>
         </div>
-        <div class="panel-card">
-          <h3><i class="ph-bold ph-terminal-window"></i> Backend Log Stream</h3>
-          <pre style="font-family: var(--font-mono); font-size: 0.85rem; background: var(--bg-input); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">[INFO] Local API running at http://localhost:8000
-[INFO] Storage path: data/
-[INFO] Systems operational.</pre>
+
+        <div class="panel-card" style="padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+          <!-- Controls & Toolbar -->
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+            <div style="display: flex; align-items: center; gap: 6px;" id="log-filter-bar">
+              <button class="log-filter-btn active" data-filter="ALL">All</button>
+              <button class="log-filter-btn" data-filter="API">API</button>
+              <button class="log-filter-btn" data-filter="AGENT">Agents</button>
+              <button class="log-filter-btn" data-filter="PIPELINE">Pipeline</button>
+              <button class="log-filter-btn" data-filter="HYPERFRAME">Hyperframe</button>
+              <button class="log-filter-btn" data-filter="ERROR">Errors</button>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <label style="font-size: 0.8rem; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                <input type="checkbox" id="log-autoscroll-chk" checked /> Auto-scroll
+              </label>
+              <button id="log-copy-btn" class="btn btn-secondary btn-sm" title="Copy log text">
+                <i class="ph-bold ph-copy"></i> Copy
+              </button>
+              <button id="log-clear-btn" class="btn btn-secondary btn-sm" title="Clear console buffer">
+                <i class="ph-bold ph-trash"></i> Clear
+              </button>
+            </div>
+          </div>
+
+          <!-- Log Console Display -->
+          <div id="sys-log-console" class="log-console-container">
+            <div class="log-entry log-entry-info">
+              <span class="log-time">[00:00:00.000]</span>
+              <span class="log-tag tag-system">SYSTEM</span>
+              <span class="log-text">Connecting to real-time log stream...</span>
+            </div>
+          </div>
         </div>
       </section>
     </main>

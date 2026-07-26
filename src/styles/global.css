@@ -2602,5 +2602,94 @@ button {
   justify-content: space-between;
 }
 
+/* ==================== SYSTEM LOG STREAM TERMINAL ==================== */
+.log-console-container {
+  background: #090a0f;
+  border: 1px solid #27272a;
+  border-radius: 8px;
+  padding: 14px;
+  height: 520px;
+  overflow-y: auto;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: #d4d4d8;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.log-entry {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 3px 6px;
+  border-radius: 4px;
+  transition: background 0.15s ease;
+  word-break: break-word;
+}
+
+.log-entry:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.log-time {
+  color: #71717a;
+  font-size: 0.76rem;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.log-tag {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
+.log-tag.tag-system { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+.log-tag.tag-api { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+.log-tag.tag-agent { background: rgba(249, 115, 22, 0.15); color: #fb923c; border: 1px solid rgba(249, 115, 22, 0.3); }
+.log-tag.tag-pipeline { background: rgba(236, 72, 153, 0.15); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.3); }
+.log-tag.tag-hyperframe { background: rgba(234, 179, 8, 0.15); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.3); }
+.log-tag.tag-error { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+
+.log-text {
+  flex: 1;
+}
+
+.log-entry-info .log-text { color: #e4e4e7; }
+.log-entry-success .log-text { color: #34d399; }
+.log-entry-warn .log-text { color: #fbbf24; }
+.log-entry-error .log-text { color: #f87171; font-weight: 600; }
+
+.log-filter-btn {
+  background: #18181b;
+  border: 1px solid #27272a;
+  color: #a1a1aa;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.log-filter-btn:hover {
+  background: #27272a;
+  color: #ffffff;
+}
+
+.log-filter-btn.active {
+  background: var(--accent-orange);
+  color: #000000;
+  border-color: var(--accent-orange);
+}
+
+
 
 

@@ -6,6 +6,8 @@ import time
 import urllib.request
 from pathlib import Path
 
+from backend.database.core import save_fts_document
+
 DB_ROOT = Path(r"d:\Content OS\database")
 ASSETS_VAULT_VIDEOS = DB_ROOT / "assets_vault" / "videos"
 ASSETS_VAULT_HYPERFRAMES = DB_ROOT / "assets_vault" / "hyperframes"
@@ -41,19 +43,23 @@ def start_hyperframe_studio_server() -> dict:
         return {"status": "already_running", "port": HYPERFRAMES_PORT, "url": f"http://localhost:{HYPERFRAMES_PORT}"}
 
     try:
-        cmd = [
-            "npx.cmd" if os.name == "nt" else "npx",
-            "hyperframes",
-            "preview",
-            f"--port={HYPERFRAMES_PORT}",
-            "--no-open"
-        ]
+        root_dir = Path(__file__).resolve().parent.parent.parent
+        local_bin = root_dir / "node_modules" / ".bin" / ("hyperframes.cmd" if os.name == "nt" else "hyperframes")
         
-        target_dir = STUDIO_PROJECT_DIR if (STUDIO_PROJECT_DIR / "index.html").exists() else Path(r"d:\Content OS")
+        if local_bin.exists():
+            cmd = [str(local_bin), "preview", f"--port={HYPERFRAMES_PORT}", "--no-open"]
+        else:
+            cmd = [
+                "npx.cmd" if os.name == "nt" else "npx",
+                "hyperframes",
+                "preview",
+                f"--port={HYPERFRAMES_PORT}",
+                "--no-open"
+            ]
 
         SERVER_PROCESS = subprocess.Popen(
             cmd,
-            cwd=str(target_dir),
+            cwd=str(STUDIO_PROJECT_DIR),
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
             creationflags=subprocess.CREATE_NEW_PROCESS_GROUP if os.name == "nt" else 0
@@ -61,6 +67,7 @@ def start_hyperframe_studio_server() -> dict:
         return {"status": "started", "port": HYPERFRAMES_PORT, "url": f"http://localhost:{HYPERFRAMES_PORT}"}
     except Exception as e:
         return {"status": "error", "message": str(e)}
+
 
 
 def save_hyperframe_render(title: str, template_type: str, aspect_ratio: str, html_content: str, config: dict = None) -> dict:

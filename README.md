@@ -2,21 +2,34 @@
 
 Local-first command center for research, content projects, AI-runner discovery, and transparent production workflows.
 
-## Start it
+## Quick Start (Single Command)
 
-1. Create and activate a Python virtual environment, then install the backend:
+Run the entire application (FastAPI backend + Astro frontend + HyperFrames Studio) with a single command:
+
+```powershell
+.\content os
+# OR
+npm start
+```
+
+This automatically spins up the backend (port 8000), frontend (port 4321), background services, and opens `http://localhost:4321` in your browser.
+
+### Manual / Developer Setup
+
+1. Create and activate virtual environment & install requirements:
    ```powershell
    python -m venv .venv
    .\.venv\Scripts\Activate.ps1
    pip install -r backend\requirements.txt
-   uvicorn backend.main:app --reload --port 8000
    ```
-2. In another terminal, install and run the Astro shell:
+2. Install frontend dependencies:
    ```powershell
    npm install
-   npm run dev
    ```
-3. Open `http://localhost:4321`.
+3. Run single command launcher:
+   ```powershell
+   .\content os
+   ```
 
 All generated research and project documents live under `data/` as Markdown and JSON. The folder is intentionally ignored by Git: your ideas stay local by default.
 

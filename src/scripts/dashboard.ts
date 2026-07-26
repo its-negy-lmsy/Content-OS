@@ -87,6 +87,12 @@ function initNavigation() {
     if (targetId === 'v-templates') {
       loadAssetsVault();
     }
+    if (targetId === 'v-assets') {
+      initHyperframeStudio();
+    }
+    if (targetId === 'v-logs') {
+      initSystemLogs();
+    }
   }
 
   navItems.forEach((item) => {
@@ -2413,10 +2419,157 @@ function initWorkflowStudio() {
   });
 }
 
-// Auto-initialize Workflow Studio Engine on load
+// ==================== REAL-TIME SYSTEM LOG STREAM ====================
+interface LogEntry {
+  id: string;
+  timestamp: string;
+  level: string;
+  source: string;
+  message: string;
+  detail?: string;
+}
+
+let activeLogFilter = 'ALL';
+let isAutoScrollEnabled = true;
+let eventSource: EventSource | null = null;
+let allLogsStore: LogEntry[] = [];
+
+function initSystemLogs() {
+  const consoleEl = $('#sys-log-console');
+  if (!consoleEl) return;
+
+  const filterBtns = $$('.log-filter-btn');
+  const autoscrollChk = $('#log-autoscroll-chk') as HTMLInputElement | null;
+  const copyBtn = $('#log-copy-btn');
+  const clearBtn = $('#log-clear-btn');
+  const statusPill = $('#log-status-pill') as HTMLElement | null;
+
+  if (autoscrollChk) {
+    autoscrollChk.addEventListener('change', () => {
+      isAutoScrollEnabled = autoscrollChk.checked;
+    });
+  }
+
+  filterBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeLogFilter = btn.getAttribute('data-filter') || 'ALL';
+      renderLogsConsole();
+    });
+  });
+
+  if (clearBtn) {
+    clearBtn.addEventListener('click', async () => {
+      allLogsStore = [];
+      renderLogsConsole();
+      try {
+        await apiRequest('/api/system/logs', { method: 'DELETE' });
+      } catch (e) {}
+    });
+  }
+
+  if (copyBtn) {
+    copyBtn.addEventListener('click', () => {
+      const text = allLogsStore
+        .map((l) => `[${l.timestamp}] [${l.level}] [${l.source}] ${l.message}`)
+        .join('\n');
+      navigator.clipboard.writeText(text);
+      copyBtn.innerHTML = `<i class="ph-bold ph-check"></i> Copied!`;
+      setTimeout(() => {
+        copyBtn.innerHTML = `<i class="ph-bold ph-copy"></i> Copy`;
+      }, 2000);
+    });
+  }
+
+  // Connect SSE Live Stream
+  if (!eventSource) {
+    try {
+      eventSource = new EventSource(`${API_BASE}/api/system/logs/stream`);
+
+      eventSource.onmessage = (event) => {
+        try {
+          const payload = JSON.parse(event.data);
+          if (payload.type === 'backlog' && Array.isArray(payload.logs)) {
+            allLogsStore = payload.logs;
+            renderLogsConsole();
+          } else if (payload.type === 'log' && payload.log) {
+            allLogsStore.push(payload.log);
+            if (allLogsStore.length > 500) allLogsStore.shift();
+            renderLogsConsole();
+          }
+        } catch (e) {}
+      };
+
+      eventSource.onerror = () => {
+        if (statusPill) {
+          statusPill.style.background = 'rgba(239, 68, 68, 0.15)';
+          statusPill.style.color = '#f87171';
+          statusPill.innerHTML = `<i class="ph-bold ph-warning"></i> RECONNECTING...`;
+        }
+      };
+
+      eventSource.onopen = () => {
+        if (statusPill) {
+          statusPill.style.background = 'rgba(16, 185, 129, 0.15)';
+          statusPill.style.color = '#10b981';
+          statusPill.innerHTML = `<i class="ph-bold ph-circle" style="font-size: 0.6rem; margin-right: 4px; color: #10b981;"></i> STREAMING LIVE`;
+        }
+      };
+    } catch (err) {
+      console.error('Failed to connect log stream:', err);
+    }
+  }
+
+  function renderLogsConsole() {
+    if (!consoleEl) return;
+
+    let filtered = allLogsStore;
+    if (activeLogFilter === 'ERROR') {
+      filtered = allLogsStore.filter((l) => l.level === 'ERROR' || l.level === 'WARN');
+    } else if (activeLogFilter !== 'ALL') {
+      filtered = allLogsStore.filter((l) => l.source === activeLogFilter);
+    }
+
+    if (filtered.length === 0) {
+      consoleEl.innerHTML = `
+        <div class="log-entry log-entry-info">
+          <span class="log-time">[${new Date().toLocaleTimeString()}]</span>
+          <span class="log-tag tag-system">SYSTEM</span>
+          <span class="log-text">No logs matching filter "${activeLogFilter}". Waiting for live events...</span>
+        </div>
+      `;
+      return;
+    }
+
+    consoleEl.innerHTML = filtered
+      .map((l) => {
+        const levelClass = l.level === 'ERROR' ? 'log-entry-error' : l.level === 'SUCCESS' ? 'log-entry-success' : l.level === 'WARN' ? 'log-entry-warn' : 'log-entry-info';
+        const tagClass = `tag-${l.source.toLowerCase()}`;
+        return `
+          <div class="log-entry ${levelClass}">
+            <span class="log-time">[${l.timestamp}]</span>
+            <span class="log-tag ${tagClass}">${escapeHtml(l.source)}</span>
+            <span class="log-text">${escapeHtml(l.message)}</span>
+          </div>
+        `;
+      })
+      .join('');
+
+    if (isAutoScrollEnabled) {
+      consoleEl.scrollTop = consoleEl.scrollHeight;
+    }
+  }
+
+  renderLogsConsole();
+}
+
+// Auto-initialize Workflow Studio & System Logs Engine on load
 if (typeof window !== 'undefined') {
   document.addEventListener('DOMContentLoaded', () => {
     initWorkflowStudio();
+    initSystemLogs();
   });
   setTimeout(initWorkflowStudio, 200);
 }
+

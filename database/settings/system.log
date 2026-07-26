@@ -1,0 +1,43 @@
+{"id": "log-1785061492590-0", "timestamp": "10:24:52.590", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785061536589-0", "timestamp": "10:25:36.589", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785061536675-1", "timestamp": "10:25:36.675", "level": "SUCCESS", "source": "SYSTEM", "message": "Backend FastAPI server started successfully.", "detail": ""}
+{"id": "log-1785061540720-2", "timestamp": "10:25:40.720", "level": "INFO", "source": "HYPERFRAME", "message": "HyperFrame studio auto-start initiated.", "detail": ""}
+{"id": "log-1785061540929-3", "timestamp": "10:25:40.929", "level": "INFO", "source": "API", "message": "GET /api/overview/today -> 200 (6ms)", "detail": ""}
+{"id": "log-1785061540930-4", "timestamp": "10:25:40.930", "level": "INFO", "source": "API", "message": "GET /api/pipeline/status -> 200 (7ms)", "detail": ""}
+{"id": "log-1785061540932-5", "timestamp": "10:25:40.932", "level": "INFO", "source": "API", "message": "GET /api/activity -> 200 (9ms)", "detail": ""}
+{"id": "log-1785061540933-6", "timestamp": "10:25:40.933", "level": "INFO", "source": "API", "message": "OPTIONS /api/system/stats -> 200 (1ms)", "detail": ""}
+{"id": "log-1785061540935-7", "timestamp": "10:25:40.935", "level": "INFO", "source": "API", "message": "GET /api/projects -> 200 (12ms)", "detail": ""}
+{"id": "log-1785061540946-8", "timestamp": "10:25:40.946", "level": "INFO", "source": "API", "message": "GET /api/research -> 200 (12ms)", "detail": ""}
+{"id": "log-1785061540967-9", "timestamp": "10:25:40.967", "level": "INFO", "source": "API", "message": "GET /api/wiki/tree -> 200 (33ms)", "detail": ""}
+{"id": "log-1785061540970-10", "timestamp": "10:25:40.970", "level": "INFO", "source": "API", "message": "GET /api/assets-vault/tree -> 200 (31ms)", "detail": ""}
+{"id": "log-1785061542949-11", "timestamp": "10:25:42.949", "level": "INFO", "source": "API", "message": "GET /api/hyperframe/server/status -> 200 (2009ms)", "detail": ""}
+{"id": "log-1785061647026-12", "timestamp": "10:27:27.026", "level": "INFO", "source": "API", "message": "GET /api/assets-vault/tree -> 200 (3ms)", "detail": ""}
+{"id": "log-1785061648172-13", "timestamp": "10:27:28.172", "level": "INFO", "source": "API", "message": "GET /api/hyperframe/server/status -> 200 (2012ms)", "detail": ""}
+{"id": "log-1785061670508-0", "timestamp": "10:27:50.508", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785061706702-0", "timestamp": "10:28:26.702", "level": "INFO", "source": "SYSTEM", "message": "Content OS System Log Stream Initialized.", "detail": ""}
+{"id": "log-1785061706785-1", "timestamp": "10:28:26.785", "level": "SUCCESS", "source": "SYSTEM", "message": "Backend FastAPI server started successfully.", "detail": ""}
+{"id": "log-1785061710824-2", "timestamp": "10:28:30.824", "level": "INFO", "source": "HYPERFRAME", "message": "HyperFrame studio auto-start initiated.", "detail": ""}
+{"id": "log-1785061711120-3", "timestamp": "10:28:31.120", "level": "INFO", "source": "API", "message": "GET /api/overview/today -> 200 (7ms)", "detail": ""}
+{"id": "log-1785061711120-4", "timestamp": "10:28:31.120", "level": "INFO", "source": "API", "message": "GET /api/pipeline/status -> 200 (7ms)", "detail": ""}
+{"id": "log-1785061711122-5", "timestamp": "10:28:31.122", "level": "INFO", "source": "API", "message": "GET /api/projects -> 200 (9ms)", "detail": ""}
+{"id": "log-1785061711124-6", "timestamp": "10:28:31.124", "level": "INFO", "source": "API", "message": "GET /api/wiki/tree -> 200 (11ms)", "detail": ""}
+{"id": "log-1785061711126-7", "timestamp": "10:28:31.126", "level": "INFO", "source": "API", "message": "OPTIONS /api/system/stats -> 200 (2ms)", "detail": ""}
+{"id": "log-1785061711130-8", "timestamp": "10:28:31.130", "level": "INFO", "source": "API", "message": "GET /api/activity -> 200 (6ms)", "detail": ""}
+{"id": "log-1785061711135-9", "timestamp": "10:28:31.135", "level": "INFO", "source": "API", "message": "GET /api/research -> 200 (8ms)", "detail": ""}
+{"id": "log-1785061711140-10", "timestamp": "10:28:31.140", "level": "INFO", "source": "API", "message": "GET /api/assets-vault/tree -> 200 (10ms)", "detail": ""}
+{"id": "log-1785061711223-11", "timestamp": "10:28:31.223", "level": "INFO", "source": "API", "message": "GET /api/system/stats -> 200 (92ms)", "detail": ""}
+{"id": "log-1785061712911-12", "timestamp": "10:28:32.911", "level": "INFO", "source": "API", "message": "GET /api/hyperframe/server/status -> 200 (2020ms)", "detail": ""}
+{"id": "log-1785061745641-13", "timestamp": "10:29:05.641", "level": "INFO", "source": "API", "message": "OPTIONS /api/assets-vault/tree -> 200 (0ms)", "detail": ""}
+{"id": "log-1785061745648-14", "timestamp": "10:29:05.648", "level": "INFO", "source": "API", "message": "GET /api/assets-vault/tree -> 200 (3ms)", "detail": ""}
+{"id": "log-1785061746362-15", "timestamp": "10:29:06.362", "level": "INFO", "source": "API", "message": "OPTIONS /api/hyperframe/server/status -> 200 (0ms)", "detail": ""}
+{"id": "log-1785061748387-16", "timestamp": "10:29:08.387", "level": "INFO", "source": "API", "message": "GET /api/hyperframe/server/status -> 200 (2024ms)", "detail": ""}
+{"id": "log-1785061754892-17", "timestamp": "10:29:14.892", "level": "INFO", "source": "API", "message": "GET /api/assets-vault/tree -> 200 (3ms)", "detail": ""}
+{"id": "log-1785061936818-18", "timestamp": "10:32:16.818", "level": "INFO", "source": "API", "message": "GET /api/assets-vault/tree -> 200 (4ms)", "detail": ""}
+{"id": "log-1785061938069-19", "timestamp": "10:32:18.069", "level": "INFO", "source": "API", "message": "GET /api/hyperframe/server/status -> 200 (2021ms)", "detail": ""}
+{"id": "log-1785061938253-20", "timestamp": "10:32:18.253", "level": "INFO", "source": "API", "message": "GET /api/assets-vault/tree -> 200 (2ms)", "detail": ""}
+{"id": "log-1785061940092-21", "timestamp": "10:32:20.092", "level": "INFO", "source": "API", "message": "GET /api/hyperframe/server/status -> 200 (2020ms)", "detail": ""}
+{"id": "log-1785061942123-22", "timestamp": "10:32:22.123", "level": "INFO", "source": "API", "message": "GET /api/hyperframe/server/status -> 200 (2028ms)", "detail": ""}
+{"id": "log-1785061943230-23", "timestamp": "10:32:23.230", "level": "INFO", "source": "API", "message": "GET /api/assets-vault/tree -> 200 (4ms)", "detail": ""}
+{"id": "log-1785061946032-24", "timestamp": "10:32:26.032", "level": "INFO", "source": "API", "message": "GET /api/assets-vault/tree -> 200 (4ms)", "detail": ""}
+{"id": "log-1785061946564-25", "timestamp": "10:32:26.564", "level": "INFO", "source": "API", "message": "GET /api/hyperframe/server/status -> 200 (2012ms)", "detail": ""}
+{"id": "log-1785061963364-26", "timestamp": "10:32:43.364", "level": "INFO", "source": "API", "message": "GET /api/hyperframe/server/status -> 200 (2022ms)", "detail": ""}

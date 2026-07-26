@@ -4,6 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "start": "node run-all.js",
+    "content-os": "node run-all.js",
+    "content os": "node run-all.js",
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",

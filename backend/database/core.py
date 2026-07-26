@@ -188,6 +188,14 @@ def index_text_for_search(title: str, content: str, entity_type: str, entity_id:
         conn.commit()
 
 
+def save_fts_document(doc_id: str, category: str, title: str, content: str, filepath: str = "") -> None:
+    """
+    Alias wrapper for index_text_for_search.
+    """
+    index_text_for_search(title=title, content=content, entity_type=category, entity_id=doc_id, rel_path=filepath)
+
+
+
 def search_universal_index(query: str, limit: int = 20) -> List[Dict[str, Any]]:
     """
     Full-text search across all agent memories, knowledge notes, and projects.

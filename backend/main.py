@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import re
 import shutil
 import subprocess
@@ -10,9 +11,19 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Literal, Optional
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, HttpUrl
+
+from backend.logger import (
+    push_log,
+    get_recent_logs,
+    clear_logs,
+    log_stream_generator,
+    SystemLogHandler,
+)
 
 from backend.database.core import (
     DB_DIR,
@@ -72,12 +83,128 @@ app.add_middleware(
 )
 
 
+import time
+
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    start_time = time.time()
+    response = await call_next(request)
+    duration_ms = int((time.time() - start_time) * 1000)
+    
+    path = request.url.path
+    if not (path.startswith("/api/system/logs") or path == "/health"):
+        level = "ERROR" if response.status_code >= 400 else "INFO"
+        push_log(level, "API", f"{request.method} {path} -> {response.status_code} ({duration_ms}ms)")
+        
+    return response
+
+
 @app.on_event("startup")
 def startup_event():
+    # Hook python logging
+    root_logger = logging.getLogger()
+    root_logger.addHandler(SystemLogHandler())
+    push_log("SUCCESS", "SYSTEM", "Backend FastAPI server started successfully.")
+    
     try:
         start_hyperframe_studio_server()
+        push_log("INFO", "HYPERFRAME", "HyperFrame studio auto-start initiated.")
     except Exception as e:
-        print(f"Hyperframe server auto-start warning: {e}")
+        push_log("WARN", "HYPERFRAME", f"Hyperframe server auto-start warning: {e}")
+
+
+# ==================== SYSTEM LOGS API ====================
+@app.get("/api/system/logs")
+def get_logs(limit: int = 200) -> dict:
+    return {"logs": get_recent_logs(limit=limit)}
+
+
+@app.get("/api/system/logs/stream")
+async def stream_logs():
+    return StreamingResponse(log_stream_generator(), media_type="text/event-stream")
+
+
+@app.delete("/api/system/logs")
+def clear_system_logs() -> dict:
+    clear_logs()
+    push_log("INFO", "SYSTEM", "System log buffer cleared.")
+    return {"status": "cleared"}
+
+
+# Mount static Assets Vault directory
+assets_vault_dir = DB_ROOT / "assets_vault"
+assets_vault_dir.mkdir(parents=True, exist_ok=True)
+app.mount("/assets-vault-static", StaticFiles(directory=str(assets_vault_dir)), name="assets_vault_static")
+
+
+# ==================== HEYGEN HYPERFRAMES STUDIO API ====================
+@app.get("/api/hyperframe/server/status")
+def hyperframe_status() -> dict:
+    return check_hyperframes_server_status()
+
+
+@app.post("/api/hyperframe/server/start")
+def hyperframe_start() -> dict:
+    return start_hyperframe_studio_server()
+
+
+@app.post("/api/hyperframe/render-mp4")
+def hyperframe_render_mp4_endpoint(payload: dict) -> dict:
+    project_name = payload.get("project_name", "hyperframe-project")
+    composition = payload.get("composition", "index.html")
+    return render_hyperframe_mp4(project_name=project_name, composition=composition)
+
+
+@app.get("/api/hyperframe/renders")
+def hyperframe_renders() -> list:
+    return list_hyperframe_renders()
+
+
+@app.post("/api/hyperframe/save")
+def hyperframe_save(payload: dict) -> dict:
+    title = payload.get("title", "Untitled Hyperframe")
+    template_type = payload.get("template_type", "custom")
+    aspect_ratio = payload.get("aspect_ratio", "16:9")
+    html_content = payload.get("html_content", "")
+    config = payload.get("config", {})
+    return save_hyperframe_render(title, template_type, aspect_ratio, html_content, config)
+
+
+@app.delete("/api/hyperframe/render/{render_id}")
+def hyperframe_delete(render_id: str) -> dict:
+    success = delete_hyperframe_render(render_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Render not found")
+    return {"status": "success", "id": render_id}
+
+
+# ==================== ASSETS VAULT API ====================
+@app.get("/api/assets-vault/tree")
+def assets_vault_tree() -> dict:
+    return list_assets_vault_contents()
+
+
+@app.get("/api/assets-vault/stream/{rel_path:path}")
+def assets_vault_stream(rel_path: str):
+    file_path = assets_vault_dir / rel_path
+    if not file_path.exists() or not file_path.is_file():
+        raise HTTPException(status_code=404, detail="Asset file not found")
+    return FileResponse(str(file_path))
+
+
+@app.post("/api/assets-vault/folder")
+def assets_vault_create_folder(payload: dict) -> dict:
+    folder_name = payload.get("name", "")
+    return create_custom_assets_folder(folder_name)
+
+
+@app.delete("/api/assets-vault/file")
+def assets_vault_delete_file(rel_path: str) -> dict:
+    success = delete_vault_asset_file(rel_path)
+    if not success:
+        raise HTTPException(status_code=404, detail="File not found or failed to delete")
+    return {"status": "success", "rel_path": rel_path}
+
 
 
 class RunnerSettings(BaseModel):
@@ -174,7 +301,7 @@ def health() -> dict:
 def system_stats() -> dict:
     projects_list = list_projects()
     active_projects = len(projects_list)
-    in_progress = sum(1 for p in projects_list if p.get("stage") in ["Idea", "Research", "Scripting", "In Production"])
+    in_progress = sum(1 for p in projects_list if isinstance(p, dict) and p.get("stage") in ["Idea", "Research", "Scripting", "In Production"])
     
     # Calculate total generated asset files
     assets_count = 0
