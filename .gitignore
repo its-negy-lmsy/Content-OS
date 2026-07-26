@@ -6,11 +6,32 @@ __pycache__/
 data/
 .env
 
-# Database runtime files & logs
+# Database runtime user media, cache & generated assets
 database/cache/
+database/assets_vault/*
+!database/assets_vault/.gitkeep
+database/hyperframes_studio/*
+!database/hyperframes_studio/.gitkeep
+database/obsidian_vault/*
+!database/obsidian_vault/.gitkeep
+database/project_vault/*
+!database/project_vault/.gitkeep
 database/settings/*.log
 database/settings/*.db
+database/settings/*.json
 database/settings/chatterbox.log
-database/assets_vault/
-database/hyperframes_studio/
+database/settings/system.log
+
+# Media & AI model file binary safeguards
+*.wav
+*.mp3
+*.mp4
+*.webm
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.pt
+*.safetensors
+*.bin
 *.log
