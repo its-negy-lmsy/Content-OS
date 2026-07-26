@@ -2688,8 +2688,106 @@ function initVideoStudio() {
   const stageBadge = $('#ae-stage-badge');
   const previewCanvas = $<HTMLCanvasElement>('#ae-preview-canvas');
   const infoRes = $('#ae-info-res');
+  const timecodeDisplay = $('#ae-timecode-display');
+  const playBtn = $('#ae-btn-play');
+  const playIcon = $('#ae-play-icon');
+  const exportBtn = $('#ae-btn-export');
+  const playheadLine = $<HTMLElement>('#ae-playhead-line');
+  const toolBtns = $$('.ae-tool-btn');
 
-  // 1. Dynamic Composition Stage Aspect Ratio Switcher
+  // Video State
+  let isPlaying = false;
+  let playheadTime = 0.0; // in seconds
+  let timelineDuration = 30.0;
+  let activeTool: 'select' | 'split' | 'hand' | 'zoom' = 'select';
+  let animationFrameId: number | null = null;
+
+  // 1. Tool Selection Handlers
+  toolBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      toolBtns.forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      const title = btn.getAttribute('title') || '';
+      if (title.includes('Selection')) activeTool = 'select';
+      else if (title.includes('Orbit') || title.includes('Razor') || title.includes('Camera')) activeTool = 'split';
+    });
+  });
+
+  // 2. Playhead & Timecode Formatter
+  function formatTimecode(seconds: number): string {
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = Math.floor(seconds % 60);
+    const frames = Math.floor((seconds % 1) * 30);
+    const pad = (n: number) => String(n).padStart(2, '0');
+    return `${pad(hrs)};${pad(mins)};${pad(secs)};${pad(frames)}`;
+  }
+
+  function updatePlayheadUI() {
+    if (timecodeDisplay) timecodeDisplay.textContent = formatTimecode(playheadTime);
+
+    if (playheadLine) {
+      const pixelsPerSec = 50; // 50px per second on timeline
+      const leftPx = Math.max(0, playheadTime * pixelsPerSec);
+      playheadLine.style.left = `${leftPx}px`;
+    }
+  }
+
+  function togglePlayPause() {
+    isPlaying = !isPlaying;
+    if (playIcon) {
+      playIcon.className = isPlaying ? 'ph-bold ph-pause' : 'ph-bold ph-play';
+    }
+
+    if (isPlaying) {
+      let lastTimestamp = performance.now();
+      const loop = (now: number) => {
+        if (!isPlaying) return;
+        const deltaSec = (now - lastTimestamp) / 1000;
+        lastTimestamp = now;
+
+        playheadTime += deltaSec;
+        if (playheadTime >= timelineDuration) {
+          playheadTime = 0.0;
+        }
+
+        updatePlayheadUI();
+        drawCompositionGuide();
+        animationFrameId = requestAnimationFrame(loop);
+      };
+      animationFrameId = requestAnimationFrame(loop);
+    } else if (animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
+    }
+  }
+
+  if (playBtn) {
+    playBtn.addEventListener('click', togglePlayPause);
+  }
+
+  // Keyboard Shortcuts (Spacebar Play/Pause, C Razor, V Select)
+  window.addEventListener('keydown', (e) => {
+    const activeEl = document.activeElement;
+    if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'SELECT')) {
+      return;
+    }
+
+    const videoPanel = $('#v-video');
+    if (!videoPanel || !videoPanel.classList.contains('active')) return;
+
+    if (e.code === 'Space') {
+      e.preventDefault();
+      togglePlayPause();
+    } else if (e.key === 'v' || e.key === 'V') {
+      activeTool = 'select';
+      toolBtns.forEach((b) => b.classList.toggle('active', (b.getAttribute('title') || '').includes('Selection')));
+    } else if (e.key === 'c' || e.key === 'C') {
+      activeTool = 'split';
+      toolBtns.forEach((b) => b.classList.toggle('active', (b.getAttribute('title') || '').includes('Camera') || (b.getAttribute('title') || '').includes('Orbit')));
+    }
+  });
+
+  // 3. Dynamic Composition Stage Aspect Ratio Switcher
   function updateCompositionStage() {
     if (!aspectSelect || !stageBox) return;
     const ratio = aspectSelect.value;
@@ -2723,6 +2821,61 @@ function initVideoStudio() {
     drawCompositionGuide();
   }
 
+  // 2.5 Right Panel Inspector Tabs
+  const tabTransform = $<HTMLElement>('#ae-tab-transform');
+  const tabLumetri = $<HTMLElement>('#ae-tab-lumetri');
+  const tabFx = $<HTMLElement>('#ae-tab-fx');
+
+  const paneTransform = $<HTMLElement>('#ae-pane-transform');
+  const paneLumetri = $<HTMLElement>('#ae-pane-lumetri');
+  const paneFx = $<HTMLElement>('#ae-pane-fx');
+
+  function switchInspectorTab(target: 'transform' | 'lumetri' | 'fx') {
+    if (tabTransform) tabTransform.style.background = target === 'transform' ? '#1a1a1e' : 'transparent';
+    if (tabTransform) tabTransform.style.color = target === 'transform' ? '#ffffff' : '#a1a1aa';
+    if (tabLumetri) tabLumetri.style.background = target === 'lumetri' ? '#1a1a1e' : 'transparent';
+    if (tabLumetri) tabLumetri.style.color = target === 'lumetri' ? '#ffffff' : '#a1a1aa';
+    if (tabFx) tabFx.style.background = target === 'fx' ? '#1a1a1e' : 'transparent';
+    if (tabFx) tabFx.style.color = target === 'fx' ? '#ffffff' : '#a1a1aa';
+
+    if (paneTransform) paneTransform.style.display = target === 'transform' ? 'flex' : 'none';
+    if (paneLumetri) paneLumetri.style.display = target === 'lumetri' ? 'flex' : 'none';
+    if (paneFx) paneFx.style.display = target === 'fx' ? 'flex' : 'none';
+  }
+
+  tabTransform?.addEventListener('click', () => switchInspectorTab('transform'));
+  tabLumetri?.addEventListener('click', () => switchInspectorTab('lumetri'));
+  tabFx?.addEventListener('click', () => switchInspectorTab('fx'));
+
+  // Transform & Lumetri Live Controls
+  const inpScale = $<HTMLInputElement>('#ae-inp-scale');
+  const valScale = $('#ae-val-scale');
+  const inpRotation = $<HTMLInputElement>('#ae-inp-rotation');
+  const valRotation = $('#ae-val-rotation');
+  const inpOpacity = $<HTMLInputElement>('#ae-inp-opacity');
+  const valOpacity = $('#ae-val-opacity');
+
+  const lumExp = $<HTMLInputElement>('#lum-inp-exp');
+  const lumValExp = $('#lum-val-exp');
+  const lumContrast = $<HTMLInputElement>('#lum-inp-contrast');
+  const lumValContrast = $('#lum-val-contrast');
+  const lumSat = $<HTMLInputElement>('#lum-inp-sat');
+  const lumValSat = $('#lum-val-sat');
+  const lumPreset = $<HTMLSelectElement>('#lum-lut-preset');
+
+  [inpScale, inpRotation, inpOpacity, lumExp, lumContrast, lumSat, lumPreset].forEach((ctrl) => {
+    ctrl?.addEventListener('input', () => {
+      if (valScale && inpScale) valScale.textContent = `${inpScale.value}%`;
+      if (valRotation && inpRotation) valRotation.textContent = `${inpRotation.value}°`;
+      if (valOpacity && inpOpacity) valOpacity.textContent = `${inpOpacity.value}%`;
+      if (lumValExp && lumExp) lumValExp.textContent = lumExp.value;
+      if (lumValContrast && lumContrast) lumValContrast.textContent = `${lumContrast.value}%`;
+      if (lumValSat && lumSat) lumValSat.textContent = `${lumSat.value}%`;
+
+      drawCompositionGuide();
+    });
+  });
+
   function drawCompositionGuide() {
     if (!previewCanvas) return;
     const ctx = previewCanvas.getContext('2d');
@@ -2750,8 +2903,63 @@ function initVideoStudio() {
       ctx.stroke();
     }
 
+    // Transform State
+    const scale = (inpScale ? parseFloat(inpScale.value) : 100) / 100;
+    const rotDeg = inpRotation ? parseFloat(inpRotation.value) : 0;
+    const opacity = (inpOpacity ? parseFloat(inpOpacity.value) : 100) / 100;
+
+    // Lumetri Filter state
+    const expVal = lumExp ? parseFloat(lumExp.value) : 0;
+    const contrastVal = lumContrast ? parseFloat(lumContrast.value) : 100;
+    const satVal = lumSat ? parseFloat(lumSat.value) : 100;
+    const lut = lumPreset ? lumPreset.value : 'none';
+
+    ctx.save();
+    ctx.globalAlpha = opacity;
+
+    // Apply CSS Canvas Filter for Lumetri Grading
+    let filterStr = `brightness(${100 + expVal * 25}%) contrast(${contrastVal}%) saturate(${satVal}%)`;
+    if (lut === 'bw') filterStr += ' grayscale(100%)';
+    else if (lut === 'cyberpunk') filterStr += ' hue-rotate(180deg) saturate(180%)';
+    else if (lut === 'vintage') filterStr += ' sepia(50%) contrast(120%)';
+
+    ctx.filter = filterStr;
+
+    // Dynamic Animating Preview Layer
+    const t = playheadTime;
+    const rectX = (w / 2) + Math.sin(t * 2) * 200;
+    const rectY = (h / 2) + Math.cos(t * 2) * 100;
+
+    // Render Main Footage Box with Transform Scale and Rotation
+    ctx.translate(rectX, rectY);
+    ctx.rotate((rotDeg * Math.PI) / 180);
+    ctx.scale(scale, scale);
+
+    // Background Layer Box
+    const grad = ctx.createLinearGradient(-300, -200, 300, 200);
+    grad.addColorStop(0, '#1e1b4b');
+    grad.addColorStop(1, '#0f172a');
+    ctx.fillStyle = grad;
+    ctx.fillRect(-300, -200, 600, 400);
+
+    // Sample Animated Motion Shape
+    ctx.fillStyle = '#ff5500';
+    ctx.shadowColor = '#ff5500';
+    ctx.shadowBlur = 20;
+    ctx.fillRect(-100, -100, 200, 200);
+    ctx.shadowBlur = 0;
+
+    // Text Overlay
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 36px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('CONTENT OS — VIDEO ENGINE', 0, 140);
+
+    ctx.restore();
+    ctx.filter = 'none';
+
     // Center Crosshair Guidelines
-    ctx.strokeStyle = '#272730';
+    ctx.strokeStyle = '#383842';
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(w / 2 - 30, h / 2);
@@ -2766,7 +2974,34 @@ function initVideoStudio() {
     updateCompositionStage();
   }
 
-  // 2. Interactive Workspace Panel Resizers (Mouse Dragging)
+  // 4. Export Render Handler (FastAPI / Native Engine)
+  if (exportBtn) {
+    exportBtn.addEventListener('click', async () => {
+      exportBtn.setAttribute('disabled', 'true');
+      exportBtn.innerHTML = `<i class="ph-bold ph-spinner spinner"></i> Rendering GPU...`;
+
+      try {
+        const res = await apiRequest<{ status: string; url?: string; message?: string; filename?: string }>('/api/video/render', {
+          method: 'POST',
+          body: JSON.stringify({ use_gpu: true }),
+        });
+
+        if (res.status === 'success') {
+          alert(`🎉 Composition Rendered Successfully!\nSaved to Assets Vault: ${res.filename || 'Render Output'}`);
+          loadAssetsVault();
+        } else {
+          alert(`Render Failed: ${res.message || 'Unknown error'}`);
+        }
+      } catch (err) {
+        alert(`Render API Error: ${(err as Error).message}`);
+      } finally {
+        exportBtn.removeAttribute('disabled');
+        exportBtn.innerHTML = `<i class="ph-bold ph-lightning"></i> Render Comp`;
+      }
+    });
+  }
+
+  // 5. Interactive Workspace Panel Resizers (Mouse Dragging)
   const splitCol1 = $('#ae-split-col-1');
   const splitCol2 = $('#ae-split-col-2');
   const splitRowBottom = $('#ae-split-row-bottom');
@@ -2858,6 +3093,8 @@ function initVideoStudio() {
       window.addEventListener('mouseup', onMouseUp);
     });
   }
+
+  updatePlayheadUI();
 }
 
 

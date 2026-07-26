@@ -234,12 +234,38 @@ async def assets_vault_upload_file(file: UploadFile = File(...), category: str =
     return save_imported_asset_file(file.filename or "file", content, category=category)
 
 
+from backend.database.video_editor import (  # type: ignore
+    get_timeline_state,
+    save_timeline_state,
+    render_timeline_video,
+)
+
+
 @app.delete("/api/assets-vault/file")
 def assets_vault_delete_file(path: str = "") -> dict:
     result = delete_vault_asset_file(path)
     if result.get("status") == "error":
         raise HTTPException(status_code=404, detail=result.get("message", "File not found"))
     return result
+
+
+# ==================== VIDEO EDITOR API ====================
+@app.get("/api/video/timeline")
+def video_get_timeline() -> dict:
+    return get_timeline_state()
+
+
+@app.post("/api/video/timeline")
+def video_save_timeline(payload: dict) -> dict:
+    return save_timeline_state(payload)
+
+
+@app.post("/api/video/render")
+def video_render_timeline(payload: dict) -> dict:
+    output_name = payload.get("output_name")
+    use_gpu = payload.get("use_gpu", True)
+    return render_timeline_video(output_name=output_name, use_gpu=use_gpu)
+
 
 
 class TTSGenerateInput(BaseModel):

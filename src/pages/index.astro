@@ -898,71 +898,125 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <!-- VERTICAL SPLITTER 2 (MONITOR | RIGHT STACK) -->
             <div id="ae-split-col-2" class="ae-resizer-v" title="Drag to resize Inspector Panel"></div>
 
-            <!-- RIGHT: STACKED PANELS (CHARACTER/PARAGRAPH & EFFECTS) -->
-            <div id="ae-panel-right" style="width: 280px; min-width: 200px; max-width: 500px; background: #1a1a1e; display: flex; flex-direction: column; flex-shrink: 0; overflow: hidden;">
+            <!-- RIGHT: STACKED PANELS (INSPECTOR, LUMETRI COLOR & EFFECTS) -->
+            <div id="ae-panel-right" style="width: 300px; min-width: 220px; max-width: 500px; background: #1a1a1e; display: flex; flex-direction: column; flex-shrink: 0; overflow: hidden;">
               
-              <!-- Top Right: Character & Paragraph Panel -->
-              <div style="flex: 1; border-bottom: 1px solid #27272a; display: flex; flex-direction: column;">
-                <div style="height: 26px; background: #25252b; border-bottom: 1px solid #111; display: flex; align-items: center; padding: 0 10px; font-size: 0.72rem; font-weight: 700; color: #d4d4d8;">
-                  Character & Paragraph
+              <!-- Tab Header Bar -->
+              <div style="height: 28px; background: #25252b; border-bottom: 1px solid #111; display: flex; align-items: center; padding: 0 4px; gap: 2px;">
+                <button class="ae-right-tab active" id="ae-tab-transform" style="flex: 1; background: #1a1a1e; border: none; color: #ffffff; padding: 4px 6px; font-size: 0.7rem; font-weight: 700; border-radius: 3px 3px 0 0; cursor: pointer;">Transform</button>
+                <button class="ae-right-tab" id="ae-tab-lumetri" style="flex: 1; background: transparent; border: none; color: #a1a1aa; padding: 4px 6px; font-size: 0.7rem; font-weight: 700; border-radius: 3px 3px 0 0; cursor: pointer;">Lumetri Color</button>
+                <button class="ae-right-tab" id="ae-tab-fx" style="flex: 1; background: transparent; border: none; color: #a1a1aa; padding: 4px 6px; font-size: 0.7rem; font-weight: 700; border-radius: 3px 3px 0 0; cursor: pointer;">Effects</button>
+              </div>
+
+              <!-- Tab 1: Transform & Keyframe Controls -->
+              <div id="ae-pane-transform" style="flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 10px; font-size: 0.72rem; color: #ccc;">
+                <div style="font-weight: 700; color: #ffffff; border-bottom: 1px solid #27272a; padding-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
+                  <span>Selected Clip: <strong id="ae-inspect-clip-name" style="color: var(--accent-orange);">Footage_01.mp4</strong></span>
+                  <span style="font-size: 0.65rem; color: #71717a;">V1 • Track 1</span>
                 </div>
-                <div style="padding: 10px; display: flex; flex-direction: column; gap: 10px; font-size: 0.72rem; color: #aaa;">
-                  <!-- Font Family -->
+
+                <!-- Position X / Y -->
+                <div>
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+                    <span>⏱️ Position X / Y</span>
+                    <button class="ae-kf-toggle" id="kf-btn-pos" title="Toggle Position Keyframe">◆</button>
+                  </div>
                   <div style="display: flex; gap: 6px;">
-                    <select style="flex: 1; background: #121215; border: 1px solid #333; color: #fff; padding: 4px; border-radius: 3px; font-size: 0.72rem;">
-                      <option>Helvetica Neue</option>
-                      <option>Inter</option>
-                      <option>Roboto</option>
-                    </select>
-                    <select style="width: 70px; background: #121215; border: 1px solid #333; color: #fff; padding: 4px; border-radius: 3px; font-size: 0.72rem;">
-                      <option>Regular</option>
-                      <option>Bold</option>
-                    </select>
+                    <input type="number" id="ae-inp-pos-x" value="0" style="width: 50%; background: #121215; border: 1px solid #333; color: #ff5500; padding: 3px 6px; border-radius: 3px; font-size: 0.72rem;" />
+                    <input type="number" id="ae-inp-pos-y" value="0" style="width: 50%; background: #121215; border: 1px solid #333; color: #ff5500; padding: 3px 6px; border-radius: 3px; font-size: 0.72rem;" />
                   </div>
+                </div>
 
-                  <!-- Size & Tracking -->
-                  <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span><i class="ph-bold ph-text-t"></i> 36 px</span>
-                    <span><i class="ph-bold ph-arrows-out-line-horizontal"></i> Auto</span>
-                    <span><i class="ph-bold ph-text-h"></i> 0</span>
+                <!-- Scale X / Y -->
+                <div>
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+                    <span>⏱️ Scale (%)</span>
+                    <button class="ae-kf-toggle" id="kf-btn-scale" title="Toggle Scale Keyframe">◆</button>
                   </div>
+                  <input type="range" id="ae-inp-scale" min="10" max="300" value="100" style="width: 100%; accent-color: var(--accent-orange);" />
+                  <div style="text-align: right; font-size: 0.68rem; color: #a1a1aa;" id="ae-val-scale">100%</div>
+                </div>
 
-                  <!-- Text Formatting Options -->
-                  <div style="display: flex; gap: 4px; justify-content: center; background: #141416; padding: 4px; border-radius: 4px;">
-                    <button class="ae-text-toggle active"><b>B</b></button>
-                    <button class="ae-text-toggle"><i>I</i></button>
-                    <button class="ae-text-toggle">TT</button>
-                    <button class="ae-text-toggle">Tt</button>
-                    <button class="ae-text-toggle">T¹</button>
-                    <button class="ae-text-toggle">T₁</button>
+                <!-- Rotation -->
+                <div>
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+                    <span>⏱️ Rotation (deg)</span>
+                    <button class="ae-kf-toggle" id="kf-btn-rot" title="Toggle Rotation Keyframe">◆</button>
                   </div>
+                  <input type="range" id="ae-inp-rotation" min="-180" max="180" value="0" style="width: 100%; accent-color: var(--accent-orange);" />
+                  <div style="text-align: right; font-size: 0.68rem; color: #a1a1aa;" id="ae-val-rotation">0°</div>
+                </div>
+
+                <!-- Opacity -->
+                <div>
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+                    <span>⏱️ Opacity (%)</span>
+                    <button class="ae-kf-toggle" id="kf-btn-opacity" title="Toggle Opacity Keyframe">◆</button>
+                  </div>
+                  <input type="range" id="ae-inp-opacity" min="0" max="100" value="100" style="width: 100%; accent-color: var(--accent-orange);" />
+                  <div style="text-align: right; font-size: 0.68rem; color: #a1a1aa;" id="ae-val-opacity">100%</div>
                 </div>
               </div>
 
-              <!-- Bottom Right: Effects & Presets Panel -->
-              <div style="flex: 1.2; display: flex; flex-direction: column;">
-                <div style="height: 26px; background: #25252b; border-bottom: 1px solid #111; display: flex; align-items: center; padding: 0 10px; font-size: 0.72rem; font-weight: 700; color: #d4d4d8;">
-                  Effects & Presets ≡
+              <!-- Tab 2: Lumetri Color Grading Panel -->
+              <div id="ae-pane-lumetri" style="flex: 1; overflow-y: auto; padding: 10px; display: none; flex-direction: column; gap: 10px; font-size: 0.72rem; color: #ccc;">
+                <div style="font-weight: 700; color: #ffffff; border-bottom: 1px solid #27272a; padding-bottom: 4px;">
+                  🎨 Lumetri Color Correction
                 </div>
+
+                <!-- Exposure -->
+                <div>
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 2px;"><span>Exposure</span><span id="lum-val-exp">0.0</span></div>
+                  <input type="range" id="lum-inp-exp" min="-3" max="3" step="0.1" value="0" style="width: 100%; accent-color: #3b82f6;" />
+                </div>
+
+                <!-- Contrast -->
+                <div>
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 2px;"><span>Contrast</span><span id="lum-val-contrast">100%</span></div>
+                  <input type="range" id="lum-inp-contrast" min="0" max="200" value="100" style="width: 100%; accent-color: #3b82f6;" />
+                </div>
+
+                <!-- Saturation -->
+                <div>
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 2px;"><span>Saturation</span><span id="lum-val-sat">100%</span></div>
+                  <input type="range" id="lum-inp-sat" min="0" max="200" value="100" style="width: 100%; accent-color: #10b981;" />
+                </div>
+
+                <!-- Temperature & Tint -->
+                <div>
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 2px;"><span>Temperature (Warmth)</span><span id="lum-val-temp">0</span></div>
+                  <input type="range" id="lum-inp-temp" min="-50" max="50" value="0" style="width: 100%; accent-color: #f59e0b;" />
+                </div>
+
+                <!-- LUT Presets -->
+                <div>
+                  <label style="display: block; margin-bottom: 4px; font-weight: 700;">Preset LUT Look:</label>
+                  <select id="lum-lut-preset" style="width: 100%; background: #121215; border: 1px solid #333; color: #ffffff; padding: 4px; border-radius: 3px; font-size: 0.72rem;">
+                    <option value="none">None (Rec.709 Standard)</option>
+                    <option value="cinematic">Cinematic Teal & Orange</option>
+                    <option value="vintage">Vintage Film 35mm</option>
+                    <option value="bw">High Contrast Monochrome</option>
+                    <option value="cyberpunk">Cyberpunk Neon Night</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Tab 3: Effects & Presets Panel -->
+              <div id="ae-pane-fx" style="flex: 1; display: none; flex-direction: column; overflow: hidden;">
                 <div style="padding: 4px 6px; background: #1f1f24; border-bottom: 1px solid #27272a;">
                   <input type="text" placeholder="🔍 Search effects..." style="width: 100%; background: #121215; border: 1px solid #2d2d33; color: #ffffff; padding: 3px 8px; border-radius: 3px; font-size: 0.72rem;" />
                 </div>
-                <div style="flex: 1; overflow-y: auto; padding: 4px 6px; font-size: 0.72rem; color: #aaa; display: flex; flex-direction: column; gap: 2px;">
-                  <div class="ae-fx-cat">▶ Animation Presets</div>
-                  <div class="ae-fx-cat">▶ 3D Channel</div>
-                  <div class="ae-fx-cat">▶ Audio</div>
-                  <div class="ae-fx-cat">▶ Blur & Sharpen</div>
-                  <div class="ae-fx-cat">▶ Channel</div>
-                  <div class="ae-fx-cat">▶ Color Correction</div>
-                  <div class="ae-fx-cat">▶ Distort</div>
-                  <div class="ae-fx-cat">▶ Keying</div>
-                  <div class="ae-fx-cat">▶ Perspective</div>
-                  <div class="ae-fx-cat">▶ Simulation</div>
-                  <div class="ae-fx-cat">▶ Stylize</div>
-                  <div class="ae-fx-cat">▶ Text</div>
-                  <div class="ae-fx-cat">▶ Transition</div>
+                <div style="flex: 1; overflow-y: auto; padding: 6px; font-size: 0.72rem; color: #aaa; display: flex; flex-direction: column; gap: 4px;">
+                  <div class="ae-fx-cat" style="font-weight: 700; color: #ffffff;">▶ Animation Presets</div>
+                  <div class="ae-fx-cat">▶ Gaussian Blur & Sharpen</div>
+                  <div class="ae-fx-cat">▶ Lumetri Color Correction</div>
+                  <div class="ae-fx-cat">▶ Chroma Key (Green Screen)</div>
+                  <div class="ae-fx-cat">▶ Directional Motion Blur</div>
+                  <div class="ae-fx-cat">▶ Audio Equalizer & Reverb</div>
+                  <div class="ae-fx-cat">▶ Crossfade Video Transition</div>
                 </div>
               </div>
+
             </div>
 
           </div> <!-- END OF ae-top-row -->
