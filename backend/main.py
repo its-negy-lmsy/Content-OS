@@ -60,6 +60,8 @@ from backend.database.assets_vault import (
     save_imported_asset_file,
     delete_vault_asset_file,
 )
+from backend.tts_engine import list_available_voices, generate_tts_audio
+from backend.database.tts_studio import check_chatterbox_server_status, start_chatterbox_server
 
 ROOT = Path(__file__).resolve().parent.parent
 DB_ROOT = ROOT / "database"
@@ -204,6 +206,59 @@ def assets_vault_delete_file(rel_path: str) -> dict:
     if not success:
         raise HTTPException(status_code=404, detail="File not found or failed to delete")
     return {"status": "success", "rel_path": rel_path}
+
+
+class TTSGenerateInput(BaseModel):
+    text: str = Field(min_length=1, max_length=10000)
+    voice_id: str = "chatterbox-female-1"
+    speed: float = Field(default=1.0, ge=0.25, le=3.0)
+    pitch: float = Field(default=0.0, ge=-50.0, le=50.0)
+
+
+# ==================== TTS STUDIO API (CHATTERBOX TTS) ====================
+@app.get("/api/tts/server/status")
+def tts_server_status() -> dict:
+    return check_chatterbox_server_status()
+
+
+@app.post("/api/tts/server/start")
+def tts_server_start() -> dict:
+    return start_chatterbox_server()
+
+
+@app.get("/api/tts/voices")
+def tts_voices() -> dict:
+    return {"voices": list_available_voices()}
+
+
+@app.post("/api/tts/generate")
+def tts_generate(payload: TTSGenerateInput) -> dict:
+    return generate_tts_audio(
+        text=payload.text,
+        voice_id=payload.voice_id,
+        speed=payload.speed,
+        pitch=payload.pitch
+    )
+
+
+@app.get("/api/tts/history")
+def tts_history() -> dict:
+    audio_files = []
+    audio_dir = DB_ROOT / "assets_vault" / "audio"
+    if audio_dir.exists():
+        for p in sorted(audio_dir.glob("*.wav"), key=lambda x: x.stat().st_mtime, reverse=True):
+            stat = p.stat()
+            rel_path = f"audio/{p.name}"
+            audio_files.append({
+                "filename": p.name,
+                "rel_path": rel_path,
+                "abs_path": str(p),
+                "stream_url": f"/api/assets-vault/stream/{rel_path}",
+                "size_bytes": stat.st_size,
+                "created_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.localtime(stat.st_mtime))
+            })
+    return {"items": audio_files}
+
 
 
 

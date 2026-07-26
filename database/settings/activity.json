@@ -1,5 +1,68 @@
 [
   {
+    "id": "act-20260726173036182125",
+    "action": "asset_deleted",
+    "title": "Deleted asset audio/tts_chatterbox_1785066124.wav",
+    "detail": "",
+    "timestamp": "2026-07-26T12:00:36.182125+00:00"
+  },
+  {
+    "id": "act-20260726173034449989",
+    "action": "asset_deleted",
+    "title": "Deleted asset audio/tts_chatterbox_1785066132.wav",
+    "detail": "",
+    "timestamp": "2026-07-26T12:00:34.449989+00:00"
+  },
+  {
+    "id": "act-20260726173031831243",
+    "action": "asset_deleted",
+    "title": "Deleted asset audio/tts_chatterbox_1785066528.wav",
+    "detail": "",
+    "timestamp": "2026-07-26T12:00:31.831243+00:00"
+  },
+  {
+    "id": "act-20260726173029642202",
+    "action": "asset_deleted",
+    "title": "Deleted asset audio/tts_chatterbox_1785065775.wav",
+    "detail": "",
+    "timestamp": "2026-07-26T12:00:29.642202+00:00"
+  },
+  {
+    "id": "act-20260726171201571010",
+    "action": "asset_deleted",
+    "title": "Deleted asset audio/tts_chatterbox_1785065822.wav",
+    "detail": "",
+    "timestamp": "2026-07-26T11:42:01.571010+00:00"
+  },
+  {
+    "id": "act-20260726171159687755",
+    "action": "asset_deleted",
+    "title": "Deleted asset audio/test_speech_audible.wav",
+    "detail": "",
+    "timestamp": "2026-07-26T11:41:59.687755+00:00"
+  },
+  {
+    "id": "act-20260726171158088751",
+    "action": "asset_deleted",
+    "title": "Deleted asset audio/test_audio.wav",
+    "detail": "",
+    "timestamp": "2026-07-26T11:41:58.088751+00:00"
+  },
+  {
+    "id": "act-20260726170136499518",
+    "action": "asset_deleted",
+    "title": "Deleted asset audio/tts_chatterbox_1785065360.wav",
+    "detail": "",
+    "timestamp": "2026-07-26T11:31:36.499518+00:00"
+  },
+  {
+    "id": "act-20260726170134589982",
+    "action": "asset_deleted",
+    "title": "Deleted asset audio/tts_chatterbox_1785065380.wav",
+    "detail": "",
+    "timestamp": "2026-07-26T11:31:34.589982+00:00"
+  },
+  {
     "id": "act-20260726052657029959",
     "action": "asset_deleted",
     "title": "Deleted asset videos/test_project.mp4",
@@ -145,68 +208,5 @@
     "title": "agent-outputs",
     "detail": "Deleted agent-outputs",
     "timestamp": "2026-07-25T19:02:52.713602+00:00"
-  },
-  {
-    "id": "act-20260726003241034214",
-    "action": "Wiki Note created",
-    "title": "find-me-some-tech-news",
-    "detail": "Path: agent-outputs/find-me-some-tech-news.md",
-    "timestamp": "2026-07-25T19:02:41.034214+00:00"
-  },
-  {
-    "id": "act-20260726003238048085",
-    "action": "Agent Executed",
-    "title": "Role: researcher",
-    "detail": "find me some tech news",
-    "timestamp": "2026-07-25T19:02:38.048085+00:00"
-  },
-  {
-    "id": "act-20260726003211046225",
-    "action": "Agent Executed",
-    "title": "Role: scriptwriter",
-    "detail": "find me some tech news",
-    "timestamp": "2026-07-25T19:02:11.046225+00:00"
-  },
-  {
-    "id": "act-20260726003141535762",
-    "action": "Agent Executed",
-    "title": "Role: content_os",
-    "detail": "hi",
-    "timestamp": "2026-07-25T19:01:41.535762+00:00"
-  },
-  {
-    "id": "act-20260725234527651516",
-    "action": "Wiki Item deleted",
-    "title": "Canvas.md",
-    "detail": "Deleted Canvas.md",
-    "timestamp": "2026-07-25T18:15:27.651516+00:00"
-  },
-  {
-    "id": "act-20260725234524631001",
-    "action": "Wiki Note created",
-    "title": "Canvas",
-    "detail": "Path: Canvas.md",
-    "timestamp": "2026-07-25T18:15:24.631001+00:00"
-  },
-  {
-    "id": "act-20260725234523311554",
-    "action": "Wiki Item deleted",
-    "title": "Canvas.md",
-    "detail": "Deleted Canvas.md",
-    "timestamp": "2026-07-25T18:15:23.311554+00:00"
-  },
-  {
-    "id": "act-20260725234515783460",
-    "action": "Wiki Note created",
-    "title": "Canvas",
-    "detail": "Path: Canvas.md",
-    "timestamp": "2026-07-25T18:15:15.783460+00:00"
-  },
-  {
-    "id": "act-20260725232607688801",
-    "action": "Wiki Note created",
-    "title": "gfd",
-    "detail": "Path: test/gfd.md",
-    "timestamp": "2026-07-25T17:56:07.688801+00:00"
   }
 ]

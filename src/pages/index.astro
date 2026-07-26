@@ -49,7 +49,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <div class="nav-label">Tools</div>
         <a href="#voice" class="nav-item" data-target="v-voice">
           <i class="ph-bold ph-microphone"></i>
-          <span>Voice Studio</span>
+          <span>TTS Studio</span>
         </a>
         <a href="#video" class="nav-item" data-target="v-video">
           <i class="ph-bold ph-video-camera"></i>
@@ -723,15 +723,33 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         </div>
       </section>
 
-      <!-- View 8: Voice Studio -->
-      <section id="v-voice" class="view-panel">
-        <div class="view-header">
-          <h1>Voice Studio</h1>
-          <p>Local Text-to-Speech (Coqui / Bark) and ElevenLabs BYOK audio generation.</p>
+      <!-- View 8: TTS Studio (Chatterbox TTS Engine) -->
+      <section id="v-voice" class="view-panel" style="padding-bottom: 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <h2 style="font-size: 1.15rem; font-weight: 700; color: #ffffff; margin: 0; display: flex; align-items: center; gap: 8px;">
+            <i class="ph-bold ph-waveform" style="color: var(--accent-orange);"></i> TTS Studio
+          </h2>
+          <button id="tts-btn-start-server" class="btn btn-secondary btn-sm" style="display: flex; align-items: center; gap: 6px;">
+            <i class="ph-bold ph-power"></i> Reconnect Server
+          </button>
         </div>
-        <div class="panel-card">
-          <h3><i class="ph-bold ph-microphone"></i> TTS Engine Status</h3>
-          <p style="color: var(--text-muted); font-size: 0.9rem;">Local TTS voice synthesis models ready on GPU.</p>
+
+        <div style="width: 100%; height: calc(100vh - 125px); border-radius: 12px; overflow: hidden; background: #09090b; border: 1px solid var(--border-color); display: flex; flex-direction: column;">
+          <div id="tts-offline-notice" style="display: none; padding: 40px; text-align: center; margin: auto;">
+            <i class="ph-bold ph-warning-circle" style="font-size: 3rem; color: var(--accent-orange); margin-bottom: 16px; display: block;"></i>
+            <h3 style="color: #ffffff; margin-bottom: 8px;">Chatterbox TTS Local Web Server is Offline</h3>
+            <p style="color: #71717a; max-width: 460px; margin: 0 auto 20px; font-size: 0.9rem;">The local Chatterbox web studio server on port 8001 is starting up or disconnected.</p>
+            <button id="tts-btn-launch-offline" class="btn btn-primary" style="padding: 10px 24px; font-weight: 700;">
+              🚀 Launch Chatterbox Server (Port 8001)
+            </button>
+          </div>
+
+          <iframe
+            id="tts-studio-iframe"
+            src="http://localhost:8001"
+            style="width: 100%; height: 100%; border: none; background: #09090b;"
+            title="Chatterbox TTS Studio Interface"
+          ></iframe>
         </div>
       </section>
 

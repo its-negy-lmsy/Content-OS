@@ -62,6 +62,21 @@ const frontendProcess = spawn(
   { cwd: __dirname, shell: true }
 );
 
+// 3. Launch Chatterbox TTS Local Web Studio
+console.log(`\x1b[36m[System]\x1b[0m Starting Chatterbox TTS Local Web Studio on http://localhost:8001 ...`);
+const chatterboxProcess = spawn(
+  pythonCmd,
+  [path.join(__dirname, 'backend', 'chatterbox_server.py')],
+  { cwd: __dirname }
+);
+
+chatterboxProcess.stderr?.on('data', (data) => {
+  const str = data.toString();
+  if (str.includes('Traceback (most recent call last)')) {
+    console.error(`\x1b[31m[Chatterbox Error]\x1b[0m ${str.trim()}`);
+  }
+});
+
 frontendProcess.stdout?.on('data', (data) => {
   const str = data.toString();
   if (str.includes('http://localhost:4321') || str.includes('ready in')) {
@@ -76,10 +91,10 @@ frontendProcess.stderr?.on('data', (data) => {
   }
 });
 
-// Auto-fallback timer to open browser after 4 seconds
+// Auto-fallback timer to open browser after Astro finishes initialization (8 seconds)
 setTimeout(() => {
   openBrowser('http://localhost:4321');
-}, 4000);
+}, 8000);
 
 // Cleanup processes on termination
 function cleanup() {
@@ -87,6 +102,7 @@ function cleanup() {
   try {
     backendProcess.kill();
     frontendProcess.kill();
+    chatterboxProcess.kill();
   } catch (e) {}
   process.exit(0);
 }

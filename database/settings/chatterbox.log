@@ -1,0 +1,22 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+D:\Content OS\.venv\Lib\site-packages\diffusers\models\lora.py:393: FutureWarning: `LoRACompatibleLinear` is deprecated and will be removed in version 1.0.0. Use of `LoRACompatibleLinear` is deprecated. Please switch to PEFT backend by installing PEFT: `pip install peft`.
+  deprecate("LoRACompatibleLinear", "1.0.0", deprecation_message)
+[Chatterbox Server] Loading PyTorch Chatterbox TTS Neural Network...
+[Chatterbox Server] Running on device: cpu
+Traceback (most recent call last):
+  File "D:\Content OS\backend\chatterbox_server.py", line 23, in <module>
+    model = ChatterboxTTS.from_pretrained(device)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Content OS\.venv\Lib\site-packages\chatterbox\tts.py", line 180, in from_pretrained
+    return cls.from_local(Path(local_path).parent, device)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Content OS\.venv\Lib\site-packages\chatterbox\tts.py", line 165, in from_local
+    return cls(t3, s3gen, ve, tokenizer, device, conds=conds)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Content OS\.venv\Lib\site-packages\chatterbox\tts.py", line 126, in __init__
+    self.watermarker = perth.PerthImplicitWatermarker()
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not callable
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+D:\Content OS\.venv\Lib\site-packages\diffusers\models\lora.py:393: FutureWarning: `LoRACompatibleLinear` is deprecated and will be removed in version 1.0.0. Use of `LoRACompatibleLinear` is deprecated. Please switch to PEFT backend by installing PEFT: `pip install peft`.
+  deprecate("LoRACompatibleLinear", "1.0.0", deprecation_message)

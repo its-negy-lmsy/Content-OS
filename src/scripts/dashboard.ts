@@ -93,6 +93,9 @@ function initNavigation() {
     if (targetId === 'v-logs') {
       initSystemLogs();
     }
+    if (targetId === 'v-voice') {
+      initTTSStudio();
+    }
   }
 
   navItems.forEach((item) => {
@@ -2564,11 +2567,76 @@ function initSystemLogs() {
   renderLogsConsole();
 }
 
+// ==================== TTS STUDIO ENGINE (CHATTERBOX TTS) ====================
+
+function initTTSStudio() {
+  const statusBadge = $('#tts-server-status-badge') as HTMLElement | null;
+  const startBtn = $('#tts-btn-start-server') as HTMLElement | null;
+  const launchOfflineBtn = $('#tts-btn-launch-offline') as HTMLElement | null;
+  const offlineNotice = $('#tts-offline-notice') as HTMLElement | null;
+  const iframe = $('#tts-studio-iframe') as HTMLIFrameElement | null;
+
+  async function checkTTSStatus() {
+    try {
+      const res = await apiRequest<{ status: string; url: string }>('/api/tts/server/status');
+      if (res.status === 'online') {
+        if (statusBadge) {
+          statusBadge.textContent = '● ONLINE (PORT 8001)';
+          statusBadge.style.background = 'rgba(34, 197, 94, 0.15)';
+          statusBadge.style.color = '#22c55e';
+          statusBadge.style.borderColor = 'rgba(34, 197, 94, 0.3)';
+        }
+        if (offlineNotice) offlineNotice.style.display = 'none';
+        if (iframe) {
+          iframe.style.display = 'block';
+          if (!iframe.src || iframe.src === 'about:blank' || !iframe.src.includes('8001')) {
+            iframe.src = 'http://localhost:8001';
+          }
+        }
+      } else {
+        if (statusBadge) {
+          statusBadge.textContent = '○ STARTING / OFFLINE';
+          statusBadge.style.background = 'rgba(249, 115, 22, 0.15)';
+          statusBadge.style.color = '#f97316';
+          statusBadge.style.borderColor = 'rgba(249, 115, 22, 0.3)';
+        }
+        if (offlineNotice) offlineNotice.style.display = 'block';
+        if (iframe) iframe.style.display = 'none';
+      }
+    } catch (e) {
+      if (statusBadge) {
+        statusBadge.textContent = '○ OFFLINE';
+        statusBadge.style.background = 'rgba(239, 68, 68, 0.15)';
+        statusBadge.style.color = '#ef4444';
+      }
+    }
+  }
+
+  async function startTTSServer() {
+    if (statusBadge) statusBadge.textContent = '⏳ STARTING SERVER...';
+    try {
+      await apiRequest('/api/tts/server/start', { method: 'POST' });
+      setTimeout(checkTTSStatus, 1500);
+      setTimeout(checkTTSStatus, 4000);
+    } catch (e) {}
+  }
+
+  if (startBtn) {
+    startBtn.addEventListener('click', startTTSServer);
+  }
+  if (launchOfflineBtn) {
+    launchOfflineBtn.addEventListener('click', startTTSServer);
+  }
+
+  checkTTSStatus();
+}
+
 // Auto-initialize Workflow Studio & System Logs Engine on load
 if (typeof window !== 'undefined') {
   document.addEventListener('DOMContentLoaded', () => {
     initWorkflowStudio();
     initSystemLogs();
+    initTTSStudio();
   });
   setTimeout(initWorkflowStudio, 200);
 }
