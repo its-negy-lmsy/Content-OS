@@ -14,14 +14,53 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, HttpUrl
 
+from backend.database.core import (
+    DB_DIR,
+    SYSTEM_DB_PATH,
+    PROJECT_VAULT_DIR,
+    KNOWLEDGE_VAULT_DIR,
+    AGENT_MEMORY_DIR,
+    SETTINGS_DIR,
+    init_database_structure,
+    search_universal_index,
+)
+from backend.database.agent_memory import (
+    save_agent_session_memory,
+    get_agent_session_memory,
+    list_agent_sessions,
+)
+from backend.database.vault import (
+    list_knowledge_vault_tree,
+    read_vault_file,
+    write_vault_file,
+    list_projects,
+)
+from backend.database.hyperframe import (
+    check_hyperframes_server_status,
+    start_hyperframe_studio_server,
+    render_hyperframe_mp4,
+    list_hyperframe_renders,
+    save_hyperframe_render,
+    delete_hyperframe_render,
+)
+from backend.database.assets_vault import (
+    list_assets_vault_contents,
+    create_custom_assets_folder,
+    save_imported_asset_file,
+    delete_vault_asset_file,
+)
+
 ROOT = Path(__file__).resolve().parent.parent
-DATA = ROOT / "data"
-PROJECTS = DATA / "projects"
-WIKI = DATA / "wiki" / "research"
-AGENT_MEMORY = DATA / "agent_memory"
-SETTINGS = DATA / "settings.json"
-ACTIVITIES = DATA / "activity.json"
-SCHEDULE = DATA / "schedule.json"
+DB_ROOT = ROOT / "database"
+PROJECTS = PROJECT_VAULT_DIR
+WIKI = KNOWLEDGE_VAULT_DIR
+AGENT_MEMORY = AGENT_MEMORY_DIR
+SETTINGS = SETTINGS_DIR / "settings.json"
+ACTIVITIES = SETTINGS_DIR / "activity.json"
+SCHEDULE = SETTINGS_DIR / "schedule.json"
+
+# Initialize Universal Database Structure
+init_database_structure()
 
 app = FastAPI(title="Content OS Local API", version="0.1.0")
 app.add_middleware(
@@ -31,6 +70,14 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.on_event("startup")
+def startup_event():
+    try:
+        start_hyperframe_studio_server()
+    except Exception as e:
+        print(f"Hyperframe server auto-start warning: {e}")
 
 
 class RunnerSettings(BaseModel):
@@ -120,14 +167,14 @@ def get_default_schedule() -> list[dict]:
 
 @app.get("/health")
 def health() -> dict:
-    return {"status": "ok", "storage": str(DATA)}
+    return {"status": "ok", "storage": str(DB_ROOT)}
 
 
 @app.get("/api/system/stats")
 def system_stats() -> dict:
-    projects_list = list_projects()["projects"]
+    projects_list = list_projects()
     active_projects = len(projects_list)
-    in_progress = sum(1 for p in projects_list if p.get("status") in ["planned", "in_progress"])
+    in_progress = sum(1 for p in projects_list if p.get("stage") in ["Idea", "Research", "Scripting", "In Production"])
     
     # Calculate total generated asset files
     assets_count = 0
@@ -146,7 +193,7 @@ def system_stats() -> dict:
         "knowledge_notes": research_count,
         "active_runners_count": len(runners),
         "runners": runners,
-        "storage_dir": str(DATA),
+        "storage_dir": str(DB_ROOT),
         "status": "operational",
     }
 
@@ -205,6 +252,108 @@ def toggle_today_task(task_id: str) -> dict:
                 log_activity("Task status updated", t.get("title", "Task"), f"Marked {'done' if t['done'] else 'pending'}")
                 return {"task": t, "schedule": schedule}
     raise HTTPException(status_code=404, detail="Task not found")
+
+
+# ==================== HEYGEN HYPERFRAMES ENGINE API ====================
+
+@app.get("/api/hyperframe/server/status")
+def hyperframe_server_status() -> dict:
+    return check_hyperframes_server_status()
+
+
+@app.post("/api/hyperframe/server/start")
+def hyperframe_server_start() -> dict:
+    return start_hyperframe_studio_server()
+
+
+@app.post("/api/hyperframe/render-mp4")
+def hyperframe_render_video(payload: dict) -> dict:
+    project_name = payload.get("project_name", "hyperframe_composition")
+    composition = payload.get("composition", "index.html")
+    res = render_hyperframe_mp4(project_name, composition)
+    if res.get("status") == "error":
+        raise HTTPException(status_code=500, detail=res.get("message"))
+    log_activity("hyperframe_rendered", f"Rendered Hyperframe Video {res.get('filename')}", res.get("output_path"))
+    return res
+
+
+@app.get("/api/hyperframe/renders")
+def hyperframe_list_renders() -> dict:
+    return {"renders": list_hyperframe_renders()}
+
+
+# ==================== ASSETS VAULT API ====================
+
+@app.get("/api/assets-vault/tree")
+def get_assets_vault_tree() -> dict:
+    return list_assets_vault_contents()
+
+
+@app.post("/api/assets-vault/folders")
+def create_assets_folder(payload: dict) -> dict:
+    folder_name = payload.get("folder_name", "").strip()
+    if not folder_name:
+        raise HTTPException(status_code=400, detail="Folder name required")
+    res = create_custom_assets_folder(folder_name)
+    log_activity("folder_created", f"Created Assets Vault folder {folder_name}")
+    return res
+
+
+from fastapi import UploadFile, File, Form
+
+@app.post("/api/assets-vault/upload")
+async def upload_asset_file(
+    file: UploadFile = File(...),
+    category: str = Form("imports")
+) -> dict:
+    content = await file.read()
+    res = save_imported_asset_file(file.filename, content, category)
+    log_activity("asset_imported", f"Imported asset {file.filename} to {category}")
+    return res
+
+
+@app.delete("/api/assets-vault/files/{rel_path:path}")
+def delete_asset_file(rel_path: str) -> dict:
+    success = delete_vault_asset_file(rel_path)
+    if not success:
+        raise HTTPException(status_code=404, detail="File or folder not found")
+    log_activity("asset_deleted", f"Deleted asset {rel_path}")
+    return {"status": "deleted", "rel_path": rel_path}
+
+
+from fastapi import Query
+import mimetypes
+from fastapi.responses import FileResponse
+
+@app.get("/api/assets-vault/stream/{rel_path:path}")
+def stream_asset_file(rel_path: str, download: bool = Query(False)):
+    file_path = DB_ROOT / "assets_vault" / rel_path
+    if not file_path.exists() or not file_path.is_file():
+        alt_path = DB_ROOT / "hyperframes_studio" / "renders" / Path(rel_path).name
+        if alt_path.exists() and alt_path.is_file():
+            file_path = alt_path
+        else:
+            raise HTTPException(status_code=404, detail="Asset file not found")
+
+    mime_type, _ = mimetypes.guess_type(str(file_path))
+    if not mime_type:
+        ext = file_path.suffix.lower()
+        if ext == ".mp4":
+            mime_type = "video/mp4"
+        elif ext in [".webm", ".mov"]:
+            mime_type = f"video/{ext.strip('.')}"
+        elif ext in [".png", ".jpg", ".jpeg", ".webp"]:
+            mime_type = f"image/{ext.strip('.')}"
+        elif ext in [".mp3", ".wav", ".ogg"]:
+            mime_type = f"audio/{ext.strip('.')}"
+        else:
+            mime_type = "application/octet-stream"
+
+    headers = {}
+    if download:
+        headers["Content-Disposition"] = f'attachment; filename="{file_path.name}"'
+
+    return FileResponse(str(file_path), media_type=mime_type, filename=file_path.name if download else None, headers=headers)
 
 
 @app.get("/api/pipeline/status")
@@ -329,6 +478,14 @@ class ProjectUpdateInput(BaseModel):
     notes: Optional[str] = None
 
 
+class HyperframeRenderInput(BaseModel):
+    title: str
+    template_type: str = "title_card"
+    aspect_ratio: str = "16:9"
+    html_content: str
+    config: Optional[dict] = None
+
+
 class PipelineExecutionInput(BaseModel):
     topic: str
     platform: str = "YouTube"
@@ -337,10 +494,6 @@ class PipelineExecutionInput(BaseModel):
 
 class AgentChatInput(BaseModel):
     prompt: str
-    role: str = "content_os"
-    mode: str = "cli"
-    runner: Optional[str] = "hermes"
-    session_id: Optional[str] = None
 
 
 class ResearchInput(BaseModel):
@@ -864,191 +1017,77 @@ def call_9router_api(messages: list[dict], model: str = "hermes-3-llama-3.1-8b")
     return None
 
 
-@app.get("/api/agents/sessions")
-def list_agent_sessions() -> dict:
-    AGENT_MEMORY.mkdir(parents=True, exist_ok=True)
-    sessions = []
-    for p in sorted(AGENT_MEMORY.glob("*.json"), key=lambda f: f.stat().st_mtime, reverse=True):
-        data = safe_read_json(p, {})
-        if data and "id" in data:
-            sessions.append({
-                "id": data["id"],
-                "title": data.get("title", "Untitled Chat"),
-                "role": data.get("role", "content_os"),
-                "updated_at": data.get("updated_at", now()),
-                "message_count": len(data.get("messages", []))
-            })
-    return {"sessions": sessions}
+@app.get("/api/database/search")
+def search_database(q: str = "") -> dict:
+    """
+    Universal FTS5 search across all database/ subfolders (agent_memory, knowledge_vault, project_vault).
+    """
+    results = search_universal_index(q)
+    return {"query": q, "count": len(results), "results": results}
 
 
-@app.get("/api/agents/sessions/{session_id}")
-def get_agent_session(session_id: str) -> dict:
-    AGENT_MEMORY.mkdir(parents=True, exist_ok=True)
-    file_path = AGENT_MEMORY / f"{session_id}.json"
-    if not file_path.exists():
-        raise HTTPException(status_code=404, detail="Session memory not found")
-    return safe_read_json(file_path, {})
+@app.get("/api/database/stats")
+def get_database_stats() -> dict:
+    """
+    Returns storage statistics for database/ master directory.
+    """
+    return {
+        "db_path": str(SYSTEM_DB_PATH),
+        "db_size_kb": round(SYSTEM_DB_PATH.stat().st_size / 1024, 2) if SYSTEM_DB_PATH.exists() else 0,
+        "subfolders": {
+            "agent_memory": [p.name for p in AGENT_MEMORY_DIR.iterdir() if p.is_dir()] if AGENT_MEMORY_DIR.exists() else [],
+            "project_vault": len(list(PROJECT_VAULT_DIR.iterdir())) if PROJECT_VAULT_DIR.exists() else 0,
+            "knowledge_vault": len(list(KNOWLEDGE_VAULT_DIR.rglob("*.md"))) if KNOWLEDGE_VAULT_DIR.exists() else 0,
+        }
+    }
 
 
-@app.delete("/api/agents/sessions/{session_id}")
-def delete_agent_session(session_id: str) -> dict:
-    file_path = AGENT_MEMORY / f"{session_id}.json"
-    if file_path.exists():
-        file_path.unlink()
-    return {"status": "deleted", "id": session_id}
+@app.get("/api/hyperframe/renders")
+def get_hyperframe_renders() -> dict:
+    renders = list_hyperframe_renders()
+    return {"renders": renders, "count": len(renders)}
+
+
+@app.post("/api/hyperframe/renders")
+def create_hyperframe_render(item: HyperframeRenderInput) -> dict:
+    render = save_hyperframe_render(
+        title=item.title,
+        template_type=item.template_type,
+        aspect_ratio=item.aspect_ratio,
+        html_content=item.html_content,
+        config=item.config or {}
+    )
+    log_activity("Hyperframe Rendered", item.title, item.template_type)
+    return {"status": "success", "render": render}
+
+
+@app.delete("/api/hyperframe/renders/{render_id}")
+def remove_hyperframe_render(render_id: str) -> dict:
+    deleted = delete_hyperframe_render(render_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Hyperframe render not found")
+    log_activity("Hyperframe Render Deleted", render_id, "")
+    return {"status": "deleted", "id": render_id}
 
 
 @app.post("/api/agents/chat")
 def chat_with_agent(item: AgentChatInput) -> dict:
     """
-    Unified ReAct Agent Execution Loop:
-    1. Multi-Turn Session Memory Ingestion from data/agent_memory/<session_id>.json
-    2. Persona System Prompt Injection & Schema Enforcing
-    3. Silent Background Data Ingestion (Web/RSS Scraping & Vault Context)
-    4. Deterministic Priority Cascade: 9router REST -> Hermes CLI Subprocess -> Ollama API -> Synthesis Fallback
+    Minimal Clean Agent Studio Endpoint.
     """
-    AGENT_MEMORY.mkdir(parents=True, exist_ok=True)
     prompt = item.prompt.strip()
-    role = item.role or "content_os"
-    mode = item.mode or "cli"
-    runner = item.runner or "hermes"
-
-    session_id = item.session_id or f"session-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
-    session_file = AGENT_MEMORY / f"{session_id}.json"
-
-    # SPEC 1: Read multi-turn conversation session state
-    session_data = safe_read_json(session_file, {
-        "id": session_id,
-        "title": prompt[:35] or "New Conversation",
-        "role": role,
-        "created_at": now(),
-        "updated_at": now(),
-        "messages": []
-    })
-
-    # SPEC 3: Persona Stabilization & Enforced System Prompts
-    role_system_prompts = {
-        "scriptwriter": (
-            "You are the Content OS Scriptwriter Agent, a master of high-retention video engineering. "
-            "Take the provided research text, live transcripts, or vault data and synthesize them directly into a production-ready video script. "
-            "Format explicitly with: HOOK (0-5s, pattern interrupt), CORE NAVIGATIVE BEATS (with embedded visual cue markers in brackets like [Visual: Cinematic graphic overlay]), "
-            "and a seamless CALL TO ACTION. Do not output raw links or ask the user what news to cover if text context is present in your history."
-        ),
-        "seo": (
-            "You are the Content OS Growth Engineer. "
-            "Optimize titles, generate semantic description arrays, and output highly relevant tag sets for high click-through rate velocity."
-        ),
-        "content_os": (
-            "You are Content OS Master, an expert AI content architect and orchestrator. "
-            "Synthesize concepts, integrate research data, and generate actionable production blueprints."
-        ),
-        "researcher": (
-            "You are the Content OS Research Analyst. "
-            "Analyze provided live news feeds, Vault references, and evidence notes. Synthesize structured key insights, trend impacts, and core takeaways."
-        ),
-        "visual_prompts": (
-            "You are the Content OS Visual Prompt Crafter. "
-            "Design ultra-detailed Flux and Midjourney image specifications, thumbnail concepts, and cinematic B-roll prompts."
-        )
-    }
-
-    system_prompt_content = role_system_prompts.get(role, role_system_prompts["content_os"])
-
-    # Standardized message array schema
-    messages_payload: list[dict] = [{"role": "system", "content": system_prompt_content}]
-
-    # Ingest past conversation history
-    for m in session_data.get("messages", []):
-        if m.get("role") in ["user", "assistant", "system"] and m.get("content"):
-            messages_payload.append({"role": m["role"], "content": m["content"]})
-
-    # SPEC 2: Intelligent Data Ingestion & Silent Background Web Scraping
-    is_news_query = any(k in prompt.lower() for k in ["news", "trend", "trends", "hacker news", "latest", "what's new", "articles", "recent", "competitor"])
-
-    if is_news_query or (role == "researcher" and any(k in prompt.lower() for k in ["find", "search", "lookup"])):
-        print(f"[REACT ENGINE] Silent background data scraper activated for prompt: '{prompt}'")
-        live_news = fetch_live_tech_news()
-        if live_news:
-            messages_payload.append({
-                "role": "system",
-                "content": f"CRITICAL DATA FETCHED FOR CURRENT PIPELINE RUN:\n\n{live_news}"
-            })
-
-    # Ingest Knowledge Vault context silently
-    vault_context = search_local_vault(prompt)
-    if vault_context:
-        messages_payload.append({
-            "role": "system",
-            "content": f"KNOWLEDGE VAULT RELEVANT CONTEXT:\n\n{vault_context}"
-        })
-
-    # Append current user prompt to history payload
-    messages_payload.append({"role": "user", "content": prompt})
-
-    reply = None
-    runner_used = ""
-
-    # SPEC 4: Stable Protocol Cascade Execution Loop
-    # Priority Tier 1: Direct HTTP POST to 9router OpenAI endpoint (http://localhost:20128/v1/chat/completions)
-    try:
-        print("[REACT ENGINE] Priority 1: Querying 9router REST endpoint (:20128)...")
-        reply = call_9router_api(messages_payload)
-        if reply:
-            runner_used = "9ROUTER ENDPOINT (:20128)"
-    except Exception as err:
-        print(f"[REACT ENGINE] Priority 1 (9router) failed: {err}")
-
-    # Priority Tier 2: Native CLI Subprocess Runner (Hermes CLI) with Full Context Payload
-    if not reply:
-        try:
-            print(f"[REACT ENGINE] Priority 2: Querying {runner.upper()} CLI Subprocess with full context block...")
-            cli_res = execute_cli_agent(runner, role, messages_payload)
-            if cli_res and cli_res.get("output"):
-                reply = cli_res["output"]
-                runner_used = f"{runner.upper()} CLI PROCESS"
-        except Exception as err:
-            print(f"[REACT ENGINE] Priority 2 ({runner} CLI) failed: {err}")
-
-    # Priority Tier 3: Ollama Local REST API (http://localhost:11434/api/generate)
-    if not reply:
-        try:
-            print("[REACT ENGINE] Priority 3: Querying Ollama REST API (:11434)...")
-            reply = call_ollama_api(messages_payload)
-            if reply:
-                runner_used = "OLLAMA LOCAL (LLAMA3)"
-        except Exception as err:
-            print(f"[REACT ENGINE] Priority 3 (Ollama) failed: {err}")
-
-    # Priority Tier 4: Dynamic Synthesis Fallback Engine
-    if not reply:
-        print("[REACT ENGINE] Priority 4: Dynamic Synthesis Fallback Engine activated...")
-        reply = (
-            f"### 🎯 Synthesized Content Blueprint ({role.upper()})\n\n"
-            f"**Processed Instruction:** \"{prompt}\"\n\n"
-            f"*(Note: Local LLM tiers 9router, Hermes CLI, and Ollama were offline. Output synthesized via backend agent core.)*"
-        )
-        runner_used = f"{runner.upper()} SYNTHESIS"
-
-    # SPEC 1: Save updated multi-turn state to data/agent_memory/<session_id>.json
-    session_data["updated_at"] = now()
-    session_data["role"] = role
-    if not session_data.get("title") or session_data["title"] in ["New Conversation", "Untitled Chat"]:
-        session_data["title"] = prompt[:35]
-
-    session_data["messages"].append({"role": "user", "content": prompt, "timestamp": now()})
-    session_data["messages"].append({"role": "assistant", "content": reply, "runner": runner_used, "timestamp": now()})
-
-    write_json(session_file, session_data)
-    log_activity("ReAct Agent Loop Completed", f"{role} ({runner_used})", prompt[:30])
+    reply = (
+        f"### 🎯 Content OS Response\n\n"
+        f"Processed instruction: **\"{prompt}\"**\n\n"
+        f"- Clean frontend workspace connected to database/ master storage."
+    )
+    log_activity("Agent Message Received", "Studio", prompt[:30])
 
     return {
         "status": "success",
-        "session_id": session_id,
-        "role": role,
-        "mode": mode,
-        "runner": runner_used,
-        "response": reply,
-        "session": session_data
+        "role": "content_os",
+        "runner": "STUDIO",
+        "response": reply
     }
 
 

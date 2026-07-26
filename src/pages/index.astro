@@ -37,12 +37,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <span>Agents</span>
         </a>
         <a href="#assets" class="nav-item" data-target="v-assets">
-          <i class="ph-bold ph-image"></i>
-          <span>Assets</span>
+          <i class="ph-bold ph-frame-corners"></i>
+          <span>Hyperframe</span>
         </a>
         <a href="#templates" class="nav-item" data-target="v-templates">
-          <i class="ph-bold ph-layout"></i>
-          <span>Templates</span>
+          <i class="ph-bold ph-vault"></i>
+          <span>Assets Vault</span>
         </a>
 
         <!-- TOOLS -->
@@ -95,23 +95,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     <!-- Main Content Area -->
     <main class="app-main">
-      <!-- Top Header -->
-      <header class="app-header">
-        <div class="header-left">
-          <span class="current-view-title" id="view-title">Dashboard Overview</span>
-        </div>
-        <div class="header-right">
-          <div class="runner-badge">
-            <i class="ph-bold ph-cpu"></i>
-            <span>Active Runner: <strong id="active-runner-name">Codex CLI</strong></span>
-          </div>
-          <button class="btn-primary" id="quick-new-project-btn">
-            <i class="ph-bold ph-plus"></i>
-            <span>+ New Project</span>
-          </button>
-        </div>
-      </header>
-
       <!-- View 1: Dashboard (Matching Reference Image Layout) -->
       <section id="v-dashboard" class="view-panel active">
         <div class="view-header">
@@ -645,149 +628,98 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
       <!-- View 5: Agents (AI Studio) -->
       <section id="v-agents" class="view-panel">
-        <div class="agent-studio-header">
-          <div>
-            <h1 style="font-size: 1.8rem; font-weight: 800; color: #ffffff; letter-spacing: -0.02em; margin-bottom: 4px;">AI Agent Studio</h1>
-            <p style="font-size: 0.88rem; color: #a1a1aa;">Multi-turn conversational workspace connected to 9router & Hermes Agent.</p>
-          </div>
-          <div class="endpoint-status-pill" id="router-status-indicator">
-            <span class="status-dot green" id="router-dot"></span>
-            <span id="router-status-text">9router :20128 Active</span>
-          </div>
+        <div class="view-header" style="margin-bottom: 16px;">
+          <h1 style="font-size: 1.8rem; font-weight: 800; color: #ffffff; letter-spacing: -0.02em; margin-bottom: 4px;">AI Studio Workspace</h1>
+          <p style="font-size: 0.88rem; color: #a1a1aa;">Clean frontend interface ready for custom model execution engine.</p>
         </div>
 
-        <!-- Agent Personas Selection Bar -->
-        <div class="agent-personas-bar">
-          <button class="persona-card active" data-role="content_os">
-            <i class="ph-bold ph-lightbulb" style="color: #ff5500;"></i>
-            <div>
-              <div class="persona-name">Content OS Master</div>
-              <div class="persona-desc">Master Orchestrator</div>
-            </div>
-          </button>
-          <button class="persona-card" data-role="scriptwriter">
-            <i class="ph-bold ph-article" style="color: #10b981;"></i>
-            <div>
-              <div class="persona-name">Scriptwriter Agent</div>
-              <div class="persona-desc">Hooks, Story & CTAs</div>
-            </div>
-          </button>
-          <button class="persona-card" data-role="researcher">
-            <i class="ph-bold ph-magnifying-glass" style="color: #3b82f6;"></i>
-            <div>
-              <div class="persona-name">Research Analyst</div>
-              <div class="persona-desc">Vault Ingestion & Trends</div>
-            </div>
-          </button>
-          <button class="persona-card" data-role="visual_prompts">
-            <i class="ph-bold ph-palette" style="color: #8b5cf6;"></i>
-            <div>
-              <div class="persona-name">Visual Crafter</div>
-              <div class="persona-desc">Flux & Midjourney</div>
-            </div>
-          </button>
-          <button class="persona-card" data-role="seo">
-            <i class="ph-bold ph-chart-line-up" style="color: #f59e0b;"></i>
-            <div>
-              <div class="persona-name">SEO & Packaging</div>
-              <div class="persona-desc">Titles, Tags & Briefs</div>
-            </div>
-          </button>
-        </div>
-
-        <!-- 2-Column Agent Studio Workspace -->
-        <div class="agent-studio-layout">
-          <!-- Left Column: Session History Sidebar -->
-          <div class="agent-sessions-sidebar">
-            <button class="btn-new-chat" id="btn-new-session">
-              <i class="ph-bold ph-plus-circle"></i>
-              <span>New Conversation</span>
-            </button>
-
-            <div class="sessions-list-header">Conversation History</div>
-            <div class="sessions-history-list" id="sessions-history-list">
-              <p style="font-size: 0.8rem; color: var(--text-dim); padding: 12px;">Loading chat memory...</p>
+        <div class="agent-chat-window" style="height: calc(100vh - 200px); min-height: 520px;">
+          <div class="chat-stream-window" id="chat-stream">
+            <div class="chat-welcome" id="chat-welcome-card">
+              <div class="chat-welcome-icon">
+                <i class="ph-bold ph-robot"></i>
+              </div>
+              <h2>AI Studio Workspace</h2>
+              <p>Type your prompt or instruction below to send messages to the AI studio.</p>
+              <div class="prompt-chips">
+                <button class="chip-btn" data-prompt="Write a 60-second video script idea.">🎬 Short Script Idea</button>
+                <button class="chip-btn" data-prompt="Give me 5 viral YouTube title ideas for a tech tutorial.">📈 Title Ideas</button>
+                <button class="chip-btn" data-prompt="Generate visual B-roll prompts for a dark mode presentation.">🎨 Visual Prompts</button>
+              </div>
             </div>
           </div>
 
-          <!-- Right Column: Main Chat Studio -->
-          <div class="agent-chat-window">
-            <div class="chat-stream-window" id="chat-stream">
-              <div class="chat-welcome" id="chat-welcome-card">
-                <div class="chat-welcome-icon">
-                  <i class="ph-bold ph-robot"></i>
-                </div>
-                <h2 id="persona-welcome-title">What content will you build today?</h2>
-                <p id="persona-welcome-desc">Ask Hermes or 9router to write script outlines, analyze research trends, or generate visual prompt specifications.</p>
-                <div class="prompt-chips">
-                  <button class="chip-btn" data-prompt="Write a 60-second YouTube Short script about why local AI matters.">🎬 Write Short Script</button>
-                  <button class="chip-btn" data-prompt="Give me 5 viral YouTube title ideas and an SEO description seed for a tech tutorial.">📈 SEO & Title Ideas</button>
-                  <button class="chip-btn" data-prompt="Generate visual B-roll prompts for a high contrast dark minimalist UI presentation.">🎨 Visual Prompts</button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Bottom Composer Bar -->
-            <div class="composer-box">
-              <div class="composer-toolbar">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                  <div class="mode-pills">
-                    <button class="mode-btn active" data-mode="endpoint">9router (:20128)</button>
-                    <button class="mode-btn" data-mode="cli">Hermes CLI</button>
-                  </div>
-
-                  <select id="agent-runner-select" class="runner-select">
-                    <option value="hermes">Hermes Agent</option>
-                    <option value="codex">Codex CLI</option>
-                    <option value="claude">Claude Code</option>
-                    <option value="ollama">Ollama (Llama 3)</option>
-                  </select>
-                </div>
-
-                <div style="font-size: 0.78rem; color: var(--text-dim);">
-                  <i class="ph-bold ph-shield-check" style="color: var(--status-green);"></i> Persistent Memory Enabled
-                </div>
-              </div>
-
-              <div class="composer-input-row">
-                <textarea id="composer-textarea" class="composer-textarea" placeholder="Type your prompt or instruction... (Ctrl + Enter to send)"></textarea>
-                <button class="send-btn" id="composer-send-btn">
-                  <span>Send</span>
-                  <i class="ph-bold ph-paper-plane-right"></i>
-                </button>
-              </div>
+          <!-- Bottom Composer Bar -->
+          <div class="composer-box">
+            <div class="composer-input-row">
+              <textarea id="composer-textarea" class="composer-textarea" placeholder="Type your prompt or instruction... (Ctrl + Enter to send)"></textarea>
+              <button class="send-btn" id="composer-send-btn">
+                <span>Send</span>
+                <i class="ph-bold ph-paper-plane-right"></i>
+              </button>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- View 6: Assets Studio -->
+      <!-- View 6: Hyperframe Studio (Official HeyGen Engine) -->
       <section id="v-assets" class="view-panel">
-        <div class="view-header">
-          <h1>Assets Studio</h1>
-          <p>View and manage generated visual cards, HTML graphics, and prompt folders.</p>
-        </div>
-        <div class="panel-card">
-          <h3><i class="ph-bold ph-image"></i> Generated Asset Prompt Collections</h3>
-          <p style="color: var(--text-muted); font-size: 0.9rem;">Assets generated during project pack compilation are saved directly in project folders under <code>data/projects/</code>.</p>
+        <div class="hyperframes-studio-cockpit" style="grid-template-rows: 1fr;">
+          <!-- Studio Frame Container -->
+          <div id="hf-studio-viewport" style="width: 100%; height: 100%; position: relative; background: #09090b;">
+            <!-- Embedded Live Studio Iframe -->
+            <iframe id="hf-studio-iframe" src="http://localhost:3002" style="width: 100%; height: 100%; border: none; display: block;"></iframe>
+
+            <!-- Fallback Overlay when Server is Stopped -->
+            <div id="hf-server-offline-overlay" style="position: absolute; inset: 0; background: #09090b; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; text-align: center; display: none;">
+              <div style="width: 64px; height: 64px; border-radius: 50%; background: rgba(16,185,129,0.15); display: flex; align-items: center; justify-content: center; margin-bottom: 20px; border: 1px solid #10b981;">
+                <i class="ph-bold ph-frame-corners" style="color: #10b981; font-size: 2rem;"></i>
+              </div>
+              <h2 style="font-size: 1.5rem; font-weight: 800; color: #ffffff; margin-bottom: 8px;">HeyGen HyperFrames Studio Server Offline</h2>
+              <p style="font-size: 0.9rem; color: #a1a1aa; max-width: 500px; margin-bottom: 24px;">
+                Click below to launch the local <code style="color: #10b981;">npx hyperframes preview</code> web server on port 3002 and connect live studio editing!
+              </p>
+              <button class="hf-export-btn" id="hf-launch-overlay-btn" style="padding: 12px 24px; font-size: 0.95rem;">
+                <i class="ph-bold ph-rocket-launch"></i> Launch HyperFrames Web Studio Server
+              </button>
+            </div>
+          </div>
         </div>
       </section>
 
-      <!-- View 7: Templates -->
+      <!-- View 7: Assets Vault -->
       <section id="v-templates" class="view-panel">
-        <div class="view-header">
-          <h1>Content Templates</h1>
-          <p>Pre-configured structures for YouTube Videos, Shorts, X Threads, and Newsletters.</p>
+        <div class="view-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+          <div>
+            <h1 style="font-size: 1.8rem; font-weight: 800; color: #ffffff; letter-spacing: -0.02em; display: flex; align-items: center; gap: 10px;">
+              <i class="ph-bold ph-vault" style="color: var(--accent-orange);"></i> Assets Vault
+            </h1>
+            <p style="font-size: 0.88rem; color: #a1a1aa;">Master storage vault for videos, hyperframes, images, audio tracks, and user media imports (<code style="color: var(--accent-orange);">database/assets_vault/</code>).</p>
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <button class="btn-secondary" id="av-btn-new-folder" style="padding: 8px 14px; font-size: 0.84rem; display: flex; align-items: center; gap: 6px;">
+              <i class="ph-bold ph-folder-plus"></i> + New Folder
+            </button>
+            <button class="btn-primary" id="av-btn-import-file" style="padding: 8px 16px; font-size: 0.84rem; display: flex; align-items: center; gap: 6px;">
+              <i class="ph-bold ph-upload-simple"></i> + Import File
+            </button>
+            <input type="file" id="av-file-input" style="display: none;" />
+          </div>
         </div>
-        <div class="items-grid">
-          <div class="item-card">
-            <h3>YouTube Deep Dive</h3>
-            <p style="color: var(--text-muted); font-size: 0.85rem;">Hook (15s) → Problem → 3 Beats → Code Demo → Call to Action.</p>
-          </div>
-          <div class="item-card">
-            <h3>Short-Form Reel</h3>
-            <p style="color: var(--text-muted); font-size: 0.85rem;">Punchy Hook (3s) → High Contrast Visual → Single Takeaway.</p>
-          </div>
+
+        <!-- Folder Category Filter Pills -->
+        <div style="display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 4px;" id="av-folder-filters">
+          <button class="hf-tab-btn active" data-folder="all">All Assets</button>
+          <button class="hf-tab-btn" data-folder="videos">🎬 Videos</button>
+          <button class="hf-tab-btn" data-folder="images">🖼️ Images</button>
+          <button class="hf-tab-btn" data-folder="audio">🎵 Audio</button>
+          <button class="hf-tab-btn" data-folder="hyperframes">⚡ Hyperframes</button>
+          <button class="hf-tab-btn" data-folder="imports">📥 Imports</button>
+        </div>
+
+        <!-- Media Assets File Grid -->
+        <div id="av-assets-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px;">
+          <!-- Loaded dynamically from /api/assets-vault/tree -->
         </div>
       </section>
 

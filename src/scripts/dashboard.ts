@@ -84,6 +84,9 @@ function initNavigation() {
     if (targetId === 'v-canvas') {
       setTimeout(initWorkflowStudio, 100);
     }
+    if (targetId === 'v-templates') {
+      loadAssetsVault();
+    }
   }
 
   navItems.forEach((item) => {
@@ -424,200 +427,9 @@ async function loadResearch() {
 
 // Open Design AI Composer Handler
 function initAIComposer() {
-  let activeAgentRole = 'content_os';
-  let activeMode: 'cli' | 'endpoint' | 'byok' = 'endpoint';
-  let activeSessionId: string | null = null;
-
   const composerInput = $('#composer-textarea') as HTMLTextAreaElement | null;
   const sendBtn = $('#composer-send-btn');
   const chatStream = $('#chat-stream');
-  const runnerSelect = $('#agent-runner-select') as HTMLSelectElement | null;
-  const modeBtns = $$('.mode-btn');
-  const personaCards = $$('.persona-card');
-  const sessionsList = $('#sessions-history-list');
-  const btnNewSession = $('#btn-new-session');
-
-  const personaTitles: Record<string, { title: string; desc: string }> = {
-    content_os: {
-      title: 'Content OS Master Orchestrator',
-      desc: 'Ask your master agent to plan content topics, cross-link Knowledge Vault notes, or orchestrate full production pipelines.',
-    },
-    scriptwriter: {
-      title: 'Scriptwriter Agent',
-      desc: 'Ask your scriptwriter to generate viral hooks, narrative story arcs, video beat sheets, and call-to-actions.',
-    },
-    researcher: {
-      title: 'Research Analyst Agent',
-      desc: 'Ask your analyst to synthesize research notes, extract key takeaways, or summarize web articles.',
-    },
-    visual_prompts: {
-      title: 'Visual Prompt Crafter Agent',
-      desc: 'Ask your prompt crafter to generate cinematic Flux & Midjourney prompts or YouTube thumbnail specs.',
-    },
-    seo: {
-      title: 'SEO & Packaging Agent',
-      desc: 'Ask your packaging agent for high-CTR YouTube titles, SEO descriptions, tags, and search briefs.',
-    },
-  };
-
-  // Check 9router endpoint status
-  async function check9RouterStatus() {
-    const statusText = $('#router-status-text');
-    const statusDot = $('#router-dot');
-    try {
-      const resp = await fetch('http://localhost:20128/v1/models', { signal: AbortSignal.timeout(3000) });
-      if (resp.ok) {
-        if (statusText) statusText.textContent = '9router :20128 Connected';
-        if (statusDot) statusDot.className = 'status-dot green';
-      } else {
-        if (statusText) statusText.textContent = '9router Offline (CLI Fallback)';
-        if (statusDot) statusDot.className = 'status-dot orange';
-      }
-    } catch {
-      if (statusText) statusText.textContent = '9router Offline (CLI Fallback)';
-      if (statusDot) statusDot.className = 'status-dot orange';
-    }
-  }
-
-  check9RouterStatus();
-  setInterval(check9RouterStatus, 15000);
-
-  // Load Session History List
-  async function loadSessionsList() {
-    if (!sessionsList) return;
-    try {
-      const data = await apiRequest<{ sessions: Array<{ id: string; title: string; role: string; updated_at: string }> }>('/api/agents/sessions');
-      if (!data.sessions.length) {
-        sessionsList.innerHTML = `<p style="font-size: 0.8rem; color: var(--text-dim); padding: 10px;">No saved chats yet.</p>`;
-        return;
-      }
-
-      sessionsList.innerHTML = data.sessions.map((s) => `
-        <div class="session-item ${s.id === activeSessionId ? 'active' : ''}" data-id="${s.id}">
-          <div class="session-item-title">${escapeHtml(s.title)}</div>
-          <button class="session-delete-btn" data-id="${s.id}" title="Delete conversation"><i class="ph-bold ph-trash"></i></button>
-        </div>
-      `).join('');
-
-      $$('.session-item').forEach((item) => {
-        item.addEventListener('click', (e) => {
-          const target = e.target as HTMLElement;
-          if (target.closest('.session-delete-btn')) return;
-          const sid = item.getAttribute('data-id');
-          if (sid) switchSession(sid);
-        });
-      });
-
-      $$('.session-delete-btn').forEach((btn) => {
-        btn.addEventListener('click', async (e) => {
-          e.stopPropagation();
-          const sid = btn.getAttribute('data-id');
-          if (sid && confirm('Delete this conversation session?')) {
-            await apiRequest(`/api/agents/sessions/${sid}`, { method: 'DELETE' });
-            if (activeSessionId === sid) {
-              activeSessionId = null;
-              if (chatStream) chatStream.innerHTML = `<div class="chat-welcome"><h2>New Conversation Started</h2></div>`;
-            }
-            loadSessionsList();
-          }
-        });
-      });
-    } catch {
-      sessionsList.innerHTML = `<p style="font-size: 0.8rem; color: var(--status-red); padding: 10px;">Error loading memory.</p>`;
-    }
-  }
-
-  async function switchSession(sessionId: string) {
-    activeSessionId = sessionId;
-    loadSessionsList();
-    if (!chatStream) return;
-
-    try {
-      const data = await apiRequest<{ id: string; role: string; messages: Array<{ role: string; content: string; runner?: string }> }>(`/api/agents/sessions/${sessionId}`);
-      activeAgentRole = data.role || 'content_os';
-
-      personaCards.forEach((c) => {
-        c.classList.toggle('active', c.getAttribute('data-role') === activeAgentRole);
-      });
-
-      chatStream.innerHTML = data.messages.map((m) => {
-        if (m.role === 'user') {
-          return `
-            <div class="chat-msg user">
-              <div class="chat-avatar"><i class="ph-bold ph-user"></i></div>
-              <div class="chat-bubble">${escapeHtml(m.content)}</div>
-            </div>
-          `;
-        } else {
-          const formatted = escapeHtml(m.content)
-            .replace(/### (.*?)\n/g, '<h4 style="color:#fff; font-size:1rem; margin:6px 0;">$1</h4>')
-            .replace(/\*\*(.*?)\*\*/g, '<strong style="color:var(--accent-orange);">$1</strong>')
-            .replace(/`(.*?)`/g, '<code style="background:#27272a; padding:2px 6px; border-radius:4px; font-family:var(--font-mono);">$1</code>')
-            .replace(/\n/g, '<br>');
-
-          return `
-            <div class="chat-msg agent">
-              <div class="chat-avatar"><i class="ph-bold ph-robot"></i></div>
-              <div class="chat-bubble">
-                <div style="font-size: 0.75rem; color: var(--accent-orange); font-weight: 700; margin-bottom: 6px; text-transform: uppercase;">${escapeHtml(activeAgentRole.toUpperCase())} — ${escapeHtml(m.runner || 'AGENT')}</div>
-                ${formatted}
-                <div class="chat-actions-row">
-                  <button class="chat-action-btn save-to-vault-btn" data-title="Agent Note" data-content="${escapeHtml(m.content)}">
-                    <i class="ph-bold ph-bookmark-simple"></i> Save to Vault
-                  </button>
-                  <button class="chat-action-btn create-project-from-chat-btn" data-title="Agent Project">
-                    <i class="ph-bold ph-plus-circle"></i> Create Project
-                  </button>
-                </div>
-              </div>
-            </div>
-          `;
-        }
-      }).join('');
-      chatStream.scrollTop = chatStream.scrollHeight;
-    } catch {
-      chatStream.innerHTML = `<div class="chat-msg agent"><div class="chat-bubble" style="color:red;">Error loading session memory.</div></div>`;
-    }
-  }
-
-  btnNewSession?.addEventListener('click', () => {
-    activeSessionId = null;
-    loadSessionsList();
-    if (chatStream) {
-      chatStream.innerHTML = `
-        <div class="chat-welcome">
-          <div class="chat-welcome-icon"><i class="ph-bold ph-robot"></i></div>
-          <h2>New Conversation Started</h2>
-          <p>Send a prompt to begin chatting with Hermes or 9router.</p>
-        </div>
-      `;
-    }
-  });
-
-  loadSessionsList();
-
-  // Persona switching
-  personaCards.forEach((card) => {
-    card.addEventListener('click', () => {
-      personaCards.forEach((c) => c.classList.remove('active'));
-      card.classList.add('active');
-      activeAgentRole = card.getAttribute('data-role') || 'content_os';
-
-      const info = personaTitles[activeAgentRole];
-      const titleEl = $('#persona-welcome-title');
-      const descEl = $('#persona-welcome-desc');
-      if (titleEl && info) titleEl.textContent = info.title;
-      if (descEl && info) descEl.textContent = info.desc;
-    });
-  });
-
-  modeBtns.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      modeBtns.forEach((b) => b.classList.remove('active'));
-      btn.classList.add('active');
-      activeMode = (btn.getAttribute('data-mode') as 'cli' | 'endpoint' | 'byok') || 'endpoint';
-    });
-  });
 
   // Quick Prompt Chips
   $$('.chip-btn').forEach((chip) => {
@@ -652,26 +464,17 @@ function initAIComposer() {
       chatStream.innerHTML += `
         <div class="chat-msg agent" id="${thinkingId}">
           <div class="chat-avatar"><i class="ph-bold ph-robot"></i></div>
-          <div class="chat-bubble" style="color: var(--text-dim);"><i class="ph-bold ph-spinner" style="animation: spin 1s linear infinite;"></i> ${activeAgentRole.toUpperCase()} processing via 9router / Hermes...</div>
+          <div class="chat-bubble" style="color: var(--text-dim);"><i class="ph-bold ph-spinner" style="animation: spin 1s linear infinite;"></i> Processing prompt...</div>
         </div>
       `;
       chatStream.scrollTop = chatStream.scrollHeight;
     }
 
     try {
-      const result = await apiRequest<{ response: string; runner: string; role: string; session_id: string }>('/api/agents/chat', {
+      const result = await apiRequest<{ response: string }>('/api/agents/chat', {
         method: 'POST',
-        body: JSON.stringify({
-          prompt,
-          role: activeAgentRole,
-          mode: activeMode,
-          runner: runnerSelect?.value || 'hermes',
-          session_id: activeSessionId,
-        }),
+        body: JSON.stringify({ prompt }),
       });
-
-      activeSessionId = result.session_id;
-      loadSessionsList();
 
       const thinkingEl = $(`#${thinkingId}`);
       if (thinkingEl) {
@@ -684,7 +487,6 @@ function initAIComposer() {
         thinkingEl.innerHTML = `
           <div class="chat-avatar"><i class="ph-bold ph-robot"></i></div>
           <div class="chat-bubble">
-            <div style="font-size: 0.75rem; color: var(--accent-orange); font-weight: 700; margin-bottom: 6px; text-transform: uppercase;">${escapeHtml(result.role.toUpperCase())} — ${escapeHtml(result.runner.toUpperCase())}</div>
             ${formattedResp}
             <div class="chat-actions-row">
               <button class="chat-action-btn save-to-vault-btn" data-title="${escapeHtml(prompt.slice(0, 30))}" data-content="${escapeHtml(result.response)}">
@@ -1357,10 +1159,335 @@ document.addEventListener('click', async (e) => {
   }
 });
 
+// ==================== HEYGEN HYPERFRAMES STUDIO ENGINE ====================
+function initHyperframeStudio() {
+  const statusPill = $('#hf-server-status-pill') as HTMLElement | null;
+  const startServerBtn = $('#hf-btn-start-server');
+  const launchOverlayBtn = $('#hf-launch-overlay-btn');
+  const topExportBtn = $('#hf-btn-export');
+  const offlineOverlay = $('#hf-server-offline-overlay') as HTMLElement | null;
+  const studioIframe = $('#hf-studio-iframe') as HTMLIFrameElement | null;
+
+  async function checkServerHealth() {
+    try {
+      const res = await apiRequest<{ status: string; url: string }>('/api/hyperframe/server/status');
+      if (res.status === 'online') {
+        if (statusPill) {
+          statusPill.textContent = 'ONLINE :3002';
+          statusPill.style.background = '#10b981';
+          statusPill.style.color = '#000000';
+        }
+        if (offlineOverlay) offlineOverlay.style.display = 'none';
+        if (studioIframe) {
+          studioIframe.style.display = 'block';
+          if (!studioIframe.src || studioIframe.src.includes('about:blank')) {
+            studioIframe.src = 'http://localhost:3002';
+          }
+        }
+      } else {
+        if (statusPill) {
+          statusPill.textContent = 'STARTING...';
+          statusPill.style.background = '#eab308';
+          statusPill.style.color = '#000000';
+        }
+        await startLocalServer();
+      }
+    } catch {
+      await startLocalServer();
+    }
+  }
+
+  async function startLocalServer() {
+    if (startServerBtn) startServerBtn.innerHTML = `<i class="ph-bold ph-spinner" style="animation: spin 1s linear infinite;"></i> Starting Studio Server...`;
+    if (launchOverlayBtn) launchOverlayBtn.innerHTML = `<i class="ph-bold ph-spinner" style="animation: spin 1s linear infinite;"></i> Starting Studio Server...`;
+
+    try {
+      await apiRequest('/api/hyperframe/server/start', { method: 'POST' });
+      setTimeout(async () => {
+        await checkServerHealth();
+        if (studioIframe) studioIframe.src = studioIframe.src;
+      }, 3000);
+    } catch (err) {
+      alert(`Server Launch Error: ${(err as Error).message}`);
+    } finally {
+      if (startServerBtn) startServerBtn.innerHTML = `<i class="ph-bold ph-play"></i> Start Local Studio Server`;
+      if (launchOverlayBtn) launchOverlayBtn.innerHTML = `<i class="ph-bold ph-rocket-launch"></i> Launch HyperFrames Web Studio Server`;
+    }
+  }
+
+  // Export MP4 Video Action via CLI backend
+  async function triggerVideoExport() {
+    if (topExportBtn) topExportBtn.innerHTML = `<i class="ph-bold ph-spinner" style="animation: spin 1s linear infinite;"></i> Rendering MP4...`;
+
+    try {
+      const res = await apiRequest<{ status: string; filename: string; output_path: string }>('/api/hyperframe/render-mp4', {
+        method: 'POST',
+        body: JSON.stringify({
+          project_name: 'sleep-recharge-motion',
+          composition: 'index.html'
+        })
+      });
+
+      alert(`🎉 Rendered video asset "${res.filename}" saved to database/assets/hyperframes/ and database/project_vault/assets/!`);
+    } catch (err) {
+      alert(`Export Error: ${(err as Error).message}`);
+    } finally {
+      if (topExportBtn) topExportBtn.innerHTML = `<i class="ph-bold ph-export"></i> Render Video (MP4)`;
+    }
+  }
+
+  startServerBtn?.addEventListener('click', startLocalServer);
+  launchOverlayBtn?.addEventListener('click', startLocalServer);
+  topExportBtn?.addEventListener('click', triggerVideoExport);
+
+  checkServerHealth();
+}
+
+// ==================== ASSETS VAULT ENGINE ====================
+interface AssetFile {
+  name: string;
+  rel_path: string;
+  abs_path: string;
+  folder: string;
+  size_bytes: number;
+  size_formatted: string;
+  media_type: 'video' | 'image' | 'audio' | 'hyperframe' | 'unknown';
+  ext: string;
+  modified_at: string;
+}
+
+interface AssetsVaultTree {
+  categories: string[];
+  folders: { name: string; rel_path: string; is_category: boolean }[];
+  files: AssetFile[];
+}
+
+let currentAssetFilter = 'all';
+let assetsVaultData: AssetsVaultTree | null = null;
+
+async function loadAssetsVault() {
+  const grid = $('#av-assets-grid');
+  if (!grid) return;
+
+  try {
+    assetsVaultData = await apiRequest<AssetsVaultTree>('/api/assets-vault/tree');
+    renderAssetsGrid();
+  } catch (err) {
+    grid.innerHTML = `<div style="color: #ef4444; padding: 20px;">Failed to load assets vault: ${(err as Error).message}</div>`;
+  }
+}
+
+function renderAssetsGrid() {
+  const grid = $('#av-assets-grid');
+  if (!grid || !assetsVaultData) return;
+
+  let filteredFiles = assetsVaultData.files;
+  if (currentAssetFilter !== 'all') {
+    filteredFiles = assetsVaultData.files.filter(f => 
+      f.folder === currentAssetFilter || 
+      f.media_type === currentAssetFilter ||
+      currentAssetFilter.startsWith(f.media_type) ||
+      f.media_type.startsWith(currentAssetFilter.slice(0, 4))
+    );
+  }
+
+  if (filteredFiles.length === 0) {
+    grid.innerHTML = `
+      <div style="grid-column: 1 / -1; padding: 48px 24px; text-align: center; background: #121215; border: 1px dashed #27272a; border-radius: 12px; color: #a1a1aa;">
+        <i class="ph-bold ph-vault" style="font-size: 2.5rem; color: #52525b; margin-bottom: 12px;"></i>
+        <h3 style="color: #ffffff; font-size: 1.1rem; margin-bottom: 6px;">No assets found in "${currentAssetFilter}"</h3>
+        <p style="font-size: 0.85rem; max-width: 400px; margin: 0 auto 16px;">Render videos using Hyperframes or click "+ Import File" to add assets to your vault.</p>
+      </div>
+    `;
+    return;
+  }
+
+  grid.innerHTML = filteredFiles.map(file => {
+    let mediaIcon = 'ph-file';
+    let mediaBadgeColor = '#3f3f46';
+    let mediaPreview = '';
+    const streamUrl = `${API_BASE}/api/assets-vault/stream/${encodeURIComponent(file.rel_path)}`;
+
+    if (file.media_type === 'video' || file.ext === 'mp4' || file.ext === 'webm') {
+      mediaIcon = 'ph-video-camera';
+      mediaBadgeColor = '#8b5cf6';
+      mediaPreview = `
+        <video controls preload="metadata" style="width: 100%; height: 160px; object-fit: cover; border-radius: 8px; background: #000; margin: 6px 0; border: 1px solid #27272a;">
+          <source src="${streamUrl}" type="video/${file.ext === 'mp4' ? 'mp4' : 'webm'}">
+          Your browser does not support HTML5 video playback.
+        </video>
+      `;
+    } else if (file.media_type === 'image') {
+      mediaIcon = 'ph-image';
+      mediaBadgeColor = '#ec4899';
+      mediaPreview = `
+        <img src="${streamUrl}" alt="${file.name}" style="width: 100%; height: 160px; object-fit: cover; border-radius: 8px; margin: 6px 0; border: 1px solid #27272a;" loading="lazy" />
+      `;
+    } else if (file.media_type === 'audio') {
+      mediaIcon = 'ph-waveform';
+      mediaBadgeColor = '#3b82f6';
+      mediaPreview = `
+        <div style="padding: 12px; background: rgba(59,130,246,0.1); border-radius: 8px; margin: 6px 0; border: 1px solid rgba(59,130,246,0.2);">
+          <audio controls style="width: 100%; height: 36px;">
+            <source src="${streamUrl}">
+          </audio>
+        </div>
+      `;
+    } else if (file.media_type === 'hyperframe') {
+      mediaIcon = 'ph-frame-corners';
+      mediaBadgeColor = '#f97316';
+      mediaPreview = `
+        <div style="height: 120px; background: #18181b; border-radius: 8px; padding: 12px; margin: 6px 0; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px dashed #3f3f46; color: #a1a1aa; text-align: center;">
+          <i class="ph-bold ph-code" style="font-size: 1.8rem; color: #f97316; margin-bottom: 6px;"></i>
+          <span style="font-size: 0.8rem; font-weight: 600; color: #f4f4f5;">Hyperframe Template</span>
+          <span style="font-size: 0.72rem; color: #71717a;">${file.name}</span>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="panel-card" style="padding: 14px; border: 1px solid #27272a; background: #121215; border-radius: 10px; display: flex; flex-direction: column; justify-content: space-between; gap: 8px;">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div style="width: 32px; height: 32px; border-radius: 6px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: ${mediaBadgeColor};">
+              <i class="ph-bold ${mediaIcon}"></i>
+            </div>
+            <span style="font-size: 0.85rem; font-weight: 600; color: #ffffff; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 140px;" title="${file.name}">${file.name}</span>
+          </div>
+          <span style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.08); color: #d4d4d8;">.${file.ext}</span>
+        </div>
+
+        ${mediaPreview}
+
+        <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.76rem; color: #a1a1aa; border-top: 1px solid #27272a; padding-top: 8px; margin-top: 2px;">
+          <span>📁 ${file.folder} • ${file.size_formatted}</span>
+          <div style="display: flex; gap: 6px;">
+            <button class="btn-icon download-asset-btn" data-url="${API_BASE}/api/assets-vault/stream/${file.rel_path}?download=true" data-name="${file.name}" style="color: #60a5fa; font-size: 0.9rem;" title="Download Asset">
+              <i class="ph-bold ph-download-simple"></i>
+            </button>
+            <button class="btn-icon delete-asset-btn" data-path="${file.rel_path}" style="color: #ef4444; font-size: 0.9rem;" title="Delete Asset">
+              <i class="ph-bold ph-trash"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Attach download events
+  $$('.download-asset-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      const url = btn.getAttribute('data-url');
+      const filename = btn.getAttribute('data-name') || 'download.mp4';
+      if (!url) return;
+
+      try {
+        const resp = await fetch(url);
+        const blob = await resp.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(blobUrl);
+      } catch (err) {
+        window.open(url, '_blank');
+      }
+    });
+  });
+
+  // Attach delete events
+  $$('.delete-asset-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      const path = btn.getAttribute('data-path');
+      if (!path) return;
+      if (confirm(`Delete asset "${path}"?`)) {
+        try {
+          const resp = await fetch(`${API_BASE}/api/assets-vault/files/${path}`, { method: 'DELETE' });
+          if (!resp.ok) {
+            const errData = await resp.json().catch(() => null);
+            throw new Error(errData?.detail || 'Failed to delete file');
+          }
+          await loadAssetsVault();
+        } catch (err) {
+          alert(`Failed to delete: ${(err as Error).message}`);
+        }
+      }
+    });
+  });
+}
+
+function initAssetsVault() {
+  const newFolderBtn = $('#av-btn-new-folder');
+  const importFileBtn = $('#av-btn-import-file');
+  const fileInput = $('#av-file-input') as HTMLInputElement | null;
+  const filterContainer = $('#av-folder-filters');
+
+  filterContainer?.addEventListener('click', (e) => {
+    const target = (e.target as HTMLElement).closest('.hf-tab-btn');
+    if (!target) return;
+
+    $$('#av-folder-filters .hf-tab-btn').forEach(b => b.classList.remove('active'));
+    target.classList.add('active');
+    currentAssetFilter = target.getAttribute('data-folder') || 'all';
+    renderAssetsGrid();
+  });
+
+  newFolderBtn?.addEventListener('click', async () => {
+    const folderName = prompt('Enter new folder name for Assets Vault:');
+    if (!folderName || !folderName.trim()) return;
+
+    try {
+      await apiRequest('/api/assets-vault/folders', {
+        method: 'POST',
+        body: JSON.stringify({ folder_name: folderName.trim() })
+      });
+      await loadAssetsVault();
+    } catch (err) {
+      alert(`Failed to create folder: ${(err as Error).message}`);
+    }
+  });
+
+  importFileBtn?.addEventListener('click', () => {
+    fileInput?.click();
+  });
+
+  fileInput?.addEventListener('change', async () => {
+    if (!fileInput.files || fileInput.files.length === 0) return;
+    const file = fileInput.files[0];
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('category', currentAssetFilter === 'all' ? 'imports' : currentAssetFilter);
+
+    try {
+      const res = await fetch('/api/assets-vault/upload', {
+        method: 'POST',
+        body: formData
+      });
+      if (!res.ok) throw new Error(await res.text());
+      await loadAssetsVault();
+      fileInput.value = '';
+    } catch (err) {
+      alert(`Upload failed: ${(err as Error).message}`);
+    }
+  });
+
+  loadAssetsVault();
+}
+
 // Initialize Everything on Load
 document.addEventListener('DOMContentLoaded', () => {
   initNavigation();
   initAIComposer();
+  initHyperframeStudio();
+  initAssetsVault();
   initModalsAndEvents();
   initObsidianVault();
   loadSystemStats();

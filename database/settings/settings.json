@@ -1,0 +1,8 @@
+{
+  "runner": {
+    "kind": "cli",
+    "runner": "hermes",
+    "endpoint": "",
+    "model": ""
+  }
+}
