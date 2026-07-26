@@ -2695,12 +2695,666 @@ function initVideoStudio() {
   const playheadLine = $<HTMLElement>('#ae-playhead-line');
   const toolBtns = $$('.ae-tool-btn');
 
-  // Video State
+  // Video State & Timeline Data
+  const pxPerSec = 50; // 50px per second on timeline ruler
   let isPlaying = false;
   let playheadTime = 0.0; // in seconds
   let timelineDuration = 30.0;
   let activeTool: 'select' | 'split' | 'hand' | 'zoom' = 'select';
   let animationFrameId: number | null = null;
+  let selectedClipId: string | null = 'clip-1';
+
+  let activeTimeline: {
+    project_name: string;
+    fps: number;
+    width: number;
+    height: number;
+    duration: number;
+    playhead: number;
+    tracks: any[];
+    clips: any[];
+  } = {
+    project_name: 'IntroExercise',
+    fps: 30,
+    width: 1920,
+    height: 1080,
+    duration: 30.0,
+    playhead: 0.0,
+    tracks: [
+      { id: 0, name: 'V2 (Titles / Overlays)', type: 'video', muted: false, solo: false, locked: false },
+      { id: 1, name: 'V1 (Main Video Footage)', type: 'video', muted: false, solo: false, locked: false },
+      { id: 2, name: 'A1 (Voiceover / TTS)', type: 'audio', muted: false, solo: false, locked: false },
+      { id: 3, name: 'A2 (Background Music)', type: 'audio', muted: false, solo: false, locked: false },
+    ],
+    clips: [],
+  };
+
+  // HTML5 Media Element Cache for Real-Time Canvas Video Playback
+  const videoMediaCache = new Map<string, HTMLVideoElement>();
+  const audioMediaCache = new Map<string, HTMLAudioElement>();
+  const offscreenCacheMap = new Map<string, HTMLCanvasElement>();
+
+  function getOrCreateVideoOffscreenCanvas(src: string): HTMLCanvasElement {
+    let offCanvas = offscreenCacheMap.get(src);
+    if (!offCanvas) {
+      offCanvas = document.createElement('canvas');
+      offCanvas.width = 1920;
+      offCanvas.height = 1080;
+      offscreenCacheMap.set(src, offCanvas);
+    }
+    return offCanvas;
+  }
+
+  function getOrCreateVideoElement(src: string): HTMLVideoElement {
+    let video = videoMediaCache.get(src);
+    if (!video) {
+      video = document.createElement('video');
+      video.crossOrigin = 'anonymous';
+      video.preload = 'auto';
+      video.playsInline = true;
+      video.muted = true; // prevent browser autoplay block
+      video.src = src.startsWith('http') || src.startsWith('blob:') ? src : `http://localhost:8000/api/assets-vault/stream/${src.replace('database/assets_vault/', '')}`;
+
+      const vEl = video;
+      // Instantly update offscreen frame cache when frame seek finishes cleanly!
+      vEl.addEventListener('seeked', () => {
+        const offCanvas = getOrCreateVideoOffscreenCanvas(src);
+        const offCtx = offCanvas.getContext('2d');
+        if (offCtx && vEl.readyState >= 2) {
+          try {
+            offCtx.drawImage(vEl, 0, 0, 1920, 1080);
+          } catch (e) {}
+        }
+        if (!isPlaying) {
+          requestAnimationFrame(drawCompositionGuide);
+        }
+      });
+
+      videoMediaCache.set(src, video);
+    }
+    return video;
+  }
+
+  function getOrCreateAudioElement(src: string): HTMLAudioElement {
+    let audio = audioMediaCache.get(src);
+    if (!audio) {
+      audio = document.createElement('audio');
+      audio.crossOrigin = 'anonymous';
+      audio.preload = 'auto';
+      audio.src = src.startsWith('http') || src.startsWith('blob:') ? src : `http://localhost:8000/api/assets-vault/stream/${src.replace('database/assets_vault/', '')}`;
+      audioMediaCache.set(src, audio);
+    }
+    return audio;
+  }
+
+  // Explicit Track Configuration
+  const TRACK_DEFS = [
+    { id: 1, key: 'v2', name: 'V2 Overlay / Text', type: 'video', color: 'rgba(139, 92, 246, 0.35)', border: '#8b5cf6', top: 0, height: 40 },
+    { id: 2, key: 'v1', name: 'V1 Main Video', type: 'video', color: 'rgba(59, 130, 246, 0.35)', border: '#3b82f6', top: 40, height: 40 },
+    { id: 3, key: 'a1', name: 'A1 Voiceover / TTS', type: 'audio', color: 'rgba(16, 185, 129, 0.35)', border: '#10b981', top: 80, height: 40 },
+    { id: 4, key: 'a2', name: 'A2 Music / SFX', type: 'audio', color: 'rgba(5, 150, 105, 0.35)', border: '#059669', top: 120, height: 40 },
+    { id: 5, key: 'fx', name: 'FX Adjustments', type: 'effect', color: 'rgba(245, 158, 11, 0.35)', border: '#f59e0b', top: 160, height: 40 },
+  ];
+
+  // Sync timeline from FastAPI backend
+  async function syncTimelineFromBackend() {
+    try {
+      const state = await apiRequest<any>('/api/video/timeline');
+      if (state && state.clips) {
+        activeTimeline = state;
+        timelineDuration = activeTimeline.duration || 30.0;
+        renderTimeline();
+      }
+    } catch (e) {
+      renderTimeline();
+    }
+  }
+
+  // Save timeline state to FastAPI backend
+  async function persistTimelineState() {
+    try {
+      await apiRequest('/api/video/timeline', {
+        method: 'POST',
+        body: JSON.stringify(activeTimeline),
+      });
+    } catch (e) {
+      console.warn('Failed to save timeline state:', e);
+    }
+  }
+
+  // Render Left Layer Panel & Right Track Canvas (After Effects CC Layout)
+  function renderTimeline() {
+    const layerListEl = $('#ae-layer-list');
+    const rulerEl = $('#ae-time-ruler');
+    const trackCanvasEl = $('#ae-track-canvas');
+
+    if (!layerListEl || !rulerEl || !trackCanvasEl) return;
+
+    const TRACK_HEADER_WIDTH = 36;
+
+    // 1. Render Time Ruler Ticks & Playhead Pin Handle
+    let rulerHTML = `<div style="position: absolute; left: 0; top: 0; bottom: 0; width: ${TRACK_HEADER_WIDTH}px; background: #1a1a20; border-right: 1px solid #27272a; z-index: 10;"></div>`;
+    const totalSecs = Math.max(30, Math.ceil(timelineDuration));
+    for (let s = 0; s <= totalSecs; s += 1) {
+      const leftPx = TRACK_HEADER_WIDTH + s * pxPerSec;
+      rulerHTML += `<span style="position: absolute; left: ${leftPx}px; border-left: 1px solid #333; padding-left: 3px; height: 100%; font-family: monospace; font-size: 0.65rem; color: #71717a;">${String(s).padStart(2, '0')}s</span>`;
+    }
+
+    // Render Playhead Pin Handle in Time Ruler Header (100% Visible, Zero CSS Clipping!)
+    const pinLeftPx = TRACK_HEADER_WIDTH + playheadTime * pxPerSec;
+    rulerHTML += `
+      <div id="ae-playhead-pin" style="position: absolute; top: 0; left: ${pinLeftPx}px; width: 16px; height: 24px; background: #3b82f6; clip-path: polygon(0% 0%, 100% 0%, 100% 60%, 50% 100%, 0% 60%); transform: translateX(-8px); cursor: col-resize; z-index: 40; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.8));" title="Drag Playhead Pin"></div>
+    `;
+    rulerEl.innerHTML = rulerHTML;
+
+    // 2. Render Left Layer List (After Effects CC Style: Layer Index, Icon, Clip Name, Mute/Solo/Lock)
+    let layerHTML = '';
+    const clips = activeTimeline.clips;
+
+    clips.forEach((clip, idx) => {
+      const isSelected = clip.id === selectedClipId;
+      const isVideo = clip.media_type === 'video';
+      const isAudio = clip.media_type === 'audio';
+      const typeIcon = isVideo ? 'ph-video' : isAudio ? 'ph-speaker-high' : 'ph-image';
+      const iconColor = isVideo ? '#3b82f6' : isAudio ? '#10b981' : '#f59e0b';
+
+      layerHTML += `
+        <div class="ae-layer-row ${isSelected ? 'selected' : ''}" data-clip-id="${clip.id}" style="height: 36px; background: ${isSelected ? '#252532' : '#1c1c21'}; border-bottom: 1px solid #141416; padding: 0 8px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none;">
+          <div style="display: flex; align-items: center; gap: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 220px;">
+            <span style="font-size: 0.7rem; color: #71717a; font-weight: 700; width: 14px;">${idx + 1}</span>
+            <i class="ph-bold ${typeIcon}" style="color: ${iconColor}; font-size: 0.85rem;"></i>
+            <span style="font-size: 0.72rem; color: #ffffff; font-weight: 600; overflow: hidden; text-overflow: ellipsis;" title="${escapeHtml(clip.name)}">${escapeHtml(clip.name)}</span>
+          </div>
+          <div style="display: flex; gap: 8px; font-size: 0.75rem; color: #71717a; align-items: center;">
+            <span class="ae-layer-btn toggle-vis" title="Toggle Visibility">${clip.is_muted ? '🕶️' : '👁️'}</span>
+            <span title="Audio Mute">🔊</span>
+            <span title="Solo">S</span>
+            <span title="Lock">🔒</span>
+            <span class="ae-layer-btn delete-clip" title="Delete Layer" style="color: #ef4444; margin-left: 2px;"><i class="ph-bold ph-trash"></i></span>
+          </div>
+        </div>
+      `;
+    });
+
+    layerListEl.innerHTML = layerHTML;
+
+    // Attach Layer Row Click & Delete Listeners
+    layerListEl.querySelectorAll('.ae-layer-row').forEach((row) => {
+      row.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement;
+        const clipId = row.getAttribute('data-clip-id');
+        if (!clipId) return;
+
+        if (target.classList.contains('delete-clip') || target.closest('.delete-clip')) {
+          activeTimeline.clips = activeTimeline.clips.filter((c) => c.id !== clipId);
+          if (selectedClipId === clipId) selectedClipId = activeTimeline.clips[0]?.id || null;
+          persistTimelineState();
+          renderTimeline();
+          drawCompositionGuide();
+          return;
+        }
+
+        selectedClipId = clipId;
+        renderTimeline();
+        updateInspectorForSelectedClip();
+      });
+    });
+
+    // 3. Render Right Track Canvas Lanes with Track Icon Boxes, Clip Bars & Vertical Blue Line
+    let tracksHTML = `
+      <div id="ae-work-area-bar" style="position: absolute; top: 0; left: ${TRACK_HEADER_WIDTH}px; width: ${timelineDuration * pxPerSec}px; height: 4px; background: #3b82f6; border-radius: 2px; z-index: 2;"></div>
+      <div id="ae-playhead-line" style="position: absolute; top: 0; bottom: 0; left: ${pinLeftPx}px; width: 2px; background: #3b82f6; z-index: 25; pointer-events: none;"></div>
+    `;
+
+    // Render 36px Track Stripe Rows with Track Box at start (ONLY ICON NO NAME)
+    TRACK_DEFS.forEach((track, idx) => {
+      const bg = idx % 2 === 0 ? '#141418' : '#18181f';
+      const isVideo = track.type === 'video';
+      const typeIcon = isVideo ? 'ph-video' : track.type === 'audio' ? 'ph-speaker-high' : 'ph-sparkle';
+
+      tracksHTML += `
+        <div style="position: absolute; top: ${idx * 36}px; left: 0; right: 0; height: 36px; background: ${bg}; border-bottom: 1px solid #0f0f13; pointer-events: none;">
+          <div style="position: absolute; left: 4px; top: 4px; width: 28px; height: 28px; background: #1f1f26; border: 1px solid ${track.border}; border-radius: 4px; display: flex; align-items: center; justify-content: center; z-index: 10; pointer-events: auto;" title="${escapeHtml(track.name)}">
+            <i class="ph-bold ${typeIcon}" style="color: ${track.border}; font-size: 0.9rem;"></i>
+          </div>
+        </div>
+      `;
+    });
+
+    // Render Clips in their target track lane strictly by track_id, offset after 36px Track Box
+    clips.forEach((clip) => {
+      const isSelected = clip.id === selectedClipId;
+      const targetTrackIdx = Math.max(0, Math.min(TRACK_DEFS.length - 1, (clip.track_id ? clip.track_id - 1 : 0)));
+      const targetTrack = TRACK_DEFS[targetTrackIdx];
+
+      const leftPx = TRACK_HEADER_WIDTH + clip.start_time * pxPerSec;
+      const widthPx = Math.max(20, clip.duration * pxPerSec);
+      const topPx = targetTrackIdx * 36 + 4;
+      const color = targetTrack.color;
+      const borderColor = isSelected ? '#ffffff' : targetTrack.border;
+
+      let keyframeDiamonds = '';
+      if (clip.keyframes && clip.keyframes.length > 0) {
+        clip.keyframes.forEach((kf: any) => {
+          const kfLeft = (kf.time_sec - clip.start_time) * pxPerSec;
+          if (kfLeft >= 0 && kfLeft <= widthPx) {
+            keyframeDiamonds += `<div style="position: absolute; left: ${kfLeft}px; top: 8px; width: 8px; height: 8px; background: #f59e0b; transform: rotate(45deg); z-index: 5;" title="Keyframe: ${kf.property}"></div>`;
+          }
+        });
+      }
+
+      tracksHTML += `
+        <div class="ae-clip-bar ${isSelected ? 'selected' : ''}" data-clip-id="${clip.id}" style="position: absolute; top: ${topPx}px; left: ${leftPx}px; width: ${widthPx}px; height: 28px; background: ${color}; border: 1px solid ${borderColor}; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 6px; color: #ffffff; font-size: 0.7rem; font-weight: 600; cursor: move; user-select: none; z-index: 3;">
+          <div class="ae-trim-handle-left" style="position: absolute; left: 0; top: 0; bottom: 0; width: 6px; cursor: w-resize; background: rgba(255,255,255,0.4); border-radius: 3px 0 0 3px;"></div>
+          <span style="pointer-events: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 4px;">${escapeHtml(clip.name)}</span>
+          ${keyframeDiamonds}
+          <div class="ae-trim-handle-right" style="position: absolute; right: 0; top: 0; bottom: 0; width: 6px; cursor: e-resize; background: rgba(255,255,255,0.4); border-radius: 0 3px 3px 0;"></div>
+        </div>
+      `;
+    });
+
+    trackCanvasEl.innerHTML = tracksHTML;
+
+    // Synchronize horizontal scrolling so ruler and canvas tracks match
+    trackCanvasEl.addEventListener('scroll', () => {
+      rulerEl.scrollLeft = trackCanvasEl.scrollLeft;
+    });
+    rulerEl.addEventListener('scroll', () => {
+      trackCanvasEl.scrollLeft = rulerEl.scrollLeft;
+    });
+
+    // Attach Listeners
+    attachClipDragListeners();
+    attachTrackCanvasDropListener();
+    attachPlayheadPinDragListener();
+  }
+
+  function attachPlayheadPinDragListener() {
+    const pinEl = $<HTMLElement>('#ae-playhead-pin');
+    const trackCanvasEl = $<HTMLElement>('#ae-track-canvas');
+    if (!pinEl || !trackCanvasEl) return;
+
+    pinEl.addEventListener('mousedown', (e: MouseEvent) => {
+      e.stopPropagation();
+      e.preventDefault();
+
+      if (isPlaying) {
+        pausePlayback();
+      }
+
+      let isScrubbingAnimationFrame = false;
+
+      const onMove = (moveEvt: MouseEvent) => {
+        const rect = trackCanvasEl.getBoundingClientRect();
+        const scrollLeft = trackCanvasEl.scrollLeft || 0;
+        const mouseX = moveEvt.clientX - rect.left + scrollLeft - 36;
+        playheadTime = Math.max(0, Math.min(mouseX / pxPerSec, timelineDuration));
+
+        updatePlayheadUI();
+
+        if (!isScrubbingAnimationFrame) {
+          isScrubbingAnimationFrame = true;
+          requestAnimationFrame(() => {
+            drawCompositionGuide();
+            isScrubbingAnimationFrame = false;
+          });
+        }
+      };
+
+      const onUp = () => {
+        window.removeEventListener('mousemove', onMove);
+        window.removeEventListener('mouseup', onUp);
+      };
+
+      window.addEventListener('mousemove', onMove);
+      window.addEventListener('mouseup', onUp);
+    });
+  }
+
+  let isDropListenerAttached = false;
+  function attachTrackCanvasDropListener() {
+    if (isDropListenerAttached) return;
+    const trackCanvasEl = $('#ae-track-canvas');
+    if (!trackCanvasEl) return;
+
+    isDropListenerAttached = true;
+    trackCanvasEl.addEventListener('dragover', (e) => {
+      e.preventDefault();
+    });
+
+    trackCanvasEl.addEventListener('drop', (e: Event) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const dragEvt = e as DragEvent;
+      const rawData = dragEvt.dataTransfer?.getData('text/plain');
+      if (!rawData) return;
+
+      try {
+        const asset = JSON.parse(rawData);
+        const rect = trackCanvasEl.getBoundingClientRect();
+        const scrollLeft = trackCanvasEl.scrollLeft || 0;
+        const dropX = dragEvt.clientX - rect.left + scrollLeft;
+        const dropY = dragEvt.clientY - rect.top;
+
+        let dropTime = Math.max(0, dropX / pxPerSec);
+
+        // Map drop Y position to target track index (36px per track row)
+        const targetTrackIdx = Math.max(0, Math.floor(dropY / 36));
+        const existingTrackClips = activeTimeline.clips.filter((c) => c.track_id === (targetTrackIdx + 1));
+
+        // If target track already has clips, check if dropTime collides or snap sequentially
+        if (existingTrackClips.length > 0) {
+          existingTrackClips.forEach((c) => {
+            const clipEnd = c.start_time + c.duration;
+            if (dropTime >= c.start_time && dropTime < clipEnd) {
+              dropTime = clipEnd; // Auto snap right after existing clip on same track!
+            }
+          });
+        }
+
+        // Magnetic Snap to end of any clip nearby
+        activeTimeline.clips.forEach((otherClip) => {
+          const otherEnd = otherClip.start_time + otherClip.duration;
+          if (Math.abs(dropTime - otherEnd) < 0.5) {
+            dropTime = otherEnd;
+          }
+        });
+
+        const newClip = {
+          id: 'clip-' + Date.now(),
+          name: asset.name,
+          src: asset.url,
+          media_type: asset.type,
+          start_time: dropTime,
+          duration: asset.type === 'image' ? 5.0 : 12.0,
+          in_point: 0.0,
+          out_point: asset.type === 'image' ? 5.0 : 12.0,
+          track_id: targetTrackIdx + 1,
+          transform: { position_x: 0, position_y: 0, position_z: 0, scale_x: 100, scale_y: 100, rotation: 0, opacity: 100 },
+          color_grading: { exposure: 0, contrast: 100, saturation: 100, temperature: 0 },
+          keyframes: [],
+          volume_db: 0.0,
+          is_muted: false,
+        };
+
+        activeTimeline.clips.push(newClip);
+        selectedClipId = newClip.id;
+        persistTimelineState();
+        renderTimeline();
+        drawCompositionGuide();
+      } catch (err) {
+        console.warn('Drop asset parse error:', err);
+      }
+    });
+  }
+
+  function attachClipDragListeners() {
+    const trackCanvas = $('#ae-track-canvas');
+    if (!trackCanvas) return;
+
+    trackCanvas.querySelectorAll<HTMLElement>('.ae-clip-bar').forEach((bar) => {
+      const clipId = bar.getAttribute('data-clip-id');
+      const clip = activeTimeline.clips.find((c) => c.id === clipId);
+      if (!clip) return;
+
+      // Right-Click Context Menu Handler on Clips
+      bar.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        selectedClipId = clip.id;
+        renderTimeline();
+        updateInspectorForSelectedClip();
+
+        const ctxMenu = $<HTMLElement>('#ae-clip-context-menu');
+        if (ctxMenu) {
+          ctxMenu.style.display = 'block';
+          ctxMenu.style.top = `${e.clientY}px`;
+          ctxMenu.style.left = `${e.clientX}px`;
+
+          const splitBtn = $<HTMLElement>('#ae-ctx-split');
+          const dupBtn = $<HTMLElement>('#ae-ctx-dup');
+          const inspectBtn = $<HTMLElement>('#ae-ctx-inspect');
+          const deleteBtn = $<HTMLElement>('#ae-ctx-delete');
+
+          const closeMenu = () => {
+            ctxMenu.style.display = 'none';
+            window.removeEventListener('click', closeMenu);
+          };
+          window.addEventListener('click', closeMenu);
+
+          if (splitBtn) {
+            splitBtn.onclick = () => {
+              const splitOffset = playheadTime - clip.start_time;
+              if (splitOffset > 0.5 && splitOffset < clip.duration - 0.5) {
+                const oldDuration = clip.duration;
+                clip.duration = splitOffset;
+
+                const newClip = JSON.parse(JSON.stringify(clip));
+                newClip.id = 'clip-' + Date.now();
+                newClip.name = clip.name + ' (Cut)';
+                newClip.start_time = clip.start_time + splitOffset;
+                newClip.duration = oldDuration - splitOffset;
+
+                activeTimeline.clips.push(newClip);
+                persistTimelineState();
+                renderTimeline();
+                drawCompositionGuide();
+              }
+              closeMenu();
+            };
+          }
+
+          if (dupBtn) {
+            dupBtn.onclick = () => {
+              const newClip = JSON.parse(JSON.stringify(clip));
+              newClip.id = 'clip-' + Date.now();
+              newClip.name = clip.name + ' (Copy)';
+              newClip.start_time = clip.start_time + 1.0;
+              activeTimeline.clips.push(newClip);
+              selectedClipId = newClip.id;
+              persistTimelineState();
+              renderTimeline();
+              drawCompositionGuide();
+              closeMenu();
+            };
+          }
+
+          if (inspectBtn) {
+            inspectBtn.onclick = () => {
+              switchInspectorTab('transform');
+              closeMenu();
+            };
+          }
+
+          if (deleteBtn) {
+            deleteBtn.onclick = () => {
+              activeTimeline.clips = activeTimeline.clips.filter((c) => c.id !== clip.id);
+              if (selectedClipId === clip.id) selectedClipId = activeTimeline.clips[0]?.id || null;
+              persistTimelineState();
+              renderTimeline();
+              drawCompositionGuide();
+              closeMenu();
+            };
+          }
+        }
+      });
+
+      // Click & Drag Handlers
+      bar.addEventListener('mousedown', (e) => {
+        if (e.button !== 0) return; // Ignore right-clicks for dragging
+        const target = e.target as HTMLElement;
+
+        if (activeTool === 'split') {
+          e.stopPropagation();
+          const splitOffset = playheadTime - clip.start_time;
+          if (splitOffset > 0.5 && splitOffset < clip.duration - 0.5) {
+            const oldDuration = clip.duration;
+            clip.duration = splitOffset;
+
+            const newClip = JSON.parse(JSON.stringify(clip));
+            newClip.id = 'clip-' + Date.now();
+            newClip.name = clip.name + ' (Cut)';
+            newClip.start_time = clip.start_time + splitOffset;
+            newClip.duration = oldDuration - splitOffset;
+
+            activeTimeline.clips.push(newClip);
+            persistTimelineState();
+            renderTimeline();
+          }
+          return;
+        }
+
+        selectedClipId = clip.id;
+        renderTimeline();
+        updateInspectorForSelectedClip();
+
+        // 1. Left Edge Trim
+        if (target.classList.contains('ae-trim-handle-left')) {
+          e.stopPropagation();
+          let initialX = e.clientX;
+          let initialStart = clip.start_time;
+          let initialDuration = clip.duration;
+
+          const onMove = (mEvt: MouseEvent) => {
+            const deltaSec = (mEvt.clientX - initialX) / pxPerSec;
+            const newStart = Math.max(0, initialStart + deltaSec);
+            const newDuration = Math.max(0.5, initialDuration - (newStart - initialStart));
+
+            clip.start_time = newStart;
+            clip.duration = newDuration;
+            renderTimeline();
+          };
+
+          const onUp = () => {
+            window.removeEventListener('mousemove', onMove);
+            window.removeEventListener('mouseup', onUp);
+            persistTimelineState();
+          };
+
+          window.addEventListener('mousemove', onMove);
+          window.addEventListener('mouseup', onUp);
+          return;
+        }
+
+        // 2. Right Edge Trim
+        if (target.classList.contains('ae-trim-handle-right')) {
+          e.stopPropagation();
+          let initialX = e.clientX;
+          let initialDuration = clip.duration;
+
+          const onMove = (mEvt: MouseEvent) => {
+            const deltaSec = (mEvt.clientX - initialX) / pxPerSec;
+            clip.duration = Math.max(0.5, initialDuration + deltaSec);
+            renderTimeline();
+          };
+
+          const onUp = () => {
+            window.removeEventListener('mousemove', onMove);
+            window.removeEventListener('mouseup', onUp);
+            persistTimelineState();
+          };
+
+          window.addEventListener('mousemove', onMove);
+          window.addEventListener('mouseup', onUp);
+          return;
+        }
+
+        // 3. Move Clip Position & Magnetic Snap to adjacent clip edges
+        let initialX = e.clientX;
+        let initialStart = clip.start_time;
+
+        const onMove = (mEvt: MouseEvent) => {
+          const deltaSec = (mEvt.clientX - initialX) / pxPerSec;
+          let newStart = Math.max(0, initialStart + deltaSec);
+
+          // Magnetic Snap to 0.0s start wall (< 0.5s radius)
+          if (newStart < 0.5) {
+            newStart = 0.0;
+          }
+
+          // Magnetic Snap to edges of other clips (0.4s radius)
+          activeTimeline.clips.forEach((otherClip) => {
+            if (otherClip.id !== clip.id) {
+              const otherEnd = otherClip.start_time + otherClip.duration;
+              if (Math.abs(newStart - otherEnd) < 0.4) {
+                newStart = otherEnd;
+              } else if (Math.abs((newStart + clip.duration) - otherClip.start_time) < 0.4) {
+                newStart = Math.max(0, otherClip.start_time - clip.duration);
+              }
+            }
+          });
+
+          clip.start_time = newStart;
+          renderTimeline();
+        };
+
+        const onUp = () => {
+          window.removeEventListener('mousemove', onMove);
+          window.removeEventListener('mouseup', onUp);
+          persistTimelineState();
+        };
+
+        window.addEventListener('mousemove', onMove);
+        window.addEventListener('mouseup', onUp);
+      });
+    });
+  }
+
+  function updateInspectorForSelectedClip() {
+    const clip = activeTimeline.clips.find((c) => c.id === selectedClipId);
+    if (!clip) return;
+
+    const clipNameEl = $('#ae-inspect-clip-name');
+    if (clipNameEl) clipNameEl.textContent = clip.name;
+
+    const inpPosX = $<HTMLInputElement>('#ae-inp-pos-x');
+    const inpPosY = $<HTMLInputElement>('#ae-inp-pos-y');
+    const inpScale = $<HTMLInputElement>('#ae-inp-scale');
+    const inpRotation = $<HTMLInputElement>('#ae-inp-rotation');
+    const inpOpacity = $<HTMLInputElement>('#ae-inp-opacity');
+
+    if (inpPosX && clip.transform) inpPosX.value = String(clip.transform.position_x || 0);
+    if (inpPosY && clip.transform) inpPosY.value = String(clip.transform.position_y || 0);
+    if (inpScale && clip.transform) inpScale.value = String(clip.transform.scale_x || 100);
+    if (inpRotation && clip.transform) inpRotation.value = String(clip.transform.rotation || 0);
+    if (inpOpacity && clip.transform) inpOpacity.value = String(clip.transform.opacity || 100);
+  }
+
+  // Scrubber Dragging on Time Ruler & Track Canvas
+  const timeRuler = $<HTMLElement>('#ae-time-ruler');
+  const trackCanvas = $<HTMLElement>('#ae-track-canvas');
+
+  function scrubPlayheadToMouse(e: MouseEvent, container: HTMLElement) {
+    const rect = container.getBoundingClientRect();
+    const scrollLeft = container.scrollLeft || 0;
+    const mouseX = e.clientX - rect.left + scrollLeft - 36;
+    playheadTime = Math.max(0, Math.min(mouseX / pxPerSec, timelineDuration));
+
+    updatePlayheadUI();
+    drawCompositionGuide();
+  }
+
+  if (timeRuler) {
+    let isScrubbing = false;
+    timeRuler.addEventListener('mousedown', (e: MouseEvent) => {
+      isScrubbing = true;
+      if (isPlaying) {
+        pausePlayback();
+      }
+      scrubPlayheadToMouse(e, timeRuler);
+
+      const onMove = (mEvt: MouseEvent) => {
+        if (isScrubbing) scrubPlayheadToMouse(mEvt, timeRuler);
+      };
+      const onUp = () => {
+        isScrubbing = false;
+        window.removeEventListener('mousemove', onMove);
+        window.removeEventListener('mouseup', onUp);
+      };
+      window.addEventListener('mousemove', onMove);
+      window.addEventListener('mouseup', onUp);
+    });
+  }
 
   // 1. Tool Selection Handlers
   toolBtns.forEach((btn) => {
@@ -2726,20 +3380,39 @@ function initVideoStudio() {
   function updatePlayheadUI() {
     if (timecodeDisplay) timecodeDisplay.textContent = formatTimecode(playheadTime);
 
-    if (playheadLine) {
-      const pixelsPerSec = 50; // 50px per second on timeline
-      const leftPx = Math.max(0, playheadTime * pixelsPerSec);
-      playheadLine.style.left = `${leftPx}px`;
+    const leftPx = Math.max(36, 36 + playheadTime * pxPerSec);
+    const pin = $<HTMLElement>('#ae-playhead-pin');
+    if (pin) pin.style.left = `${leftPx}px`;
+
+    const line = $<HTMLElement>('#ae-playhead-line');
+    if (line) line.style.left = `${leftPx}px`;
+  }
+
+  function pausePlayback() {
+    isPlaying = false;
+    if (playIcon) {
+      playIcon.className = 'ph-bold ph-play';
     }
+    if (animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = null;
+    }
+    videoMediaCache.forEach((video) => {
+      if (!video.paused) video.pause();
+    });
+    audioMediaCache.forEach((audio) => {
+      if (!audio.paused) audio.pause();
+    });
   }
 
   function togglePlayPause() {
-    isPlaying = !isPlaying;
-    if (playIcon) {
-      playIcon.className = isPlaying ? 'ph-bold ph-pause' : 'ph-bold ph-play';
-    }
-
     if (isPlaying) {
+      pausePlayback();
+    } else {
+      isPlaying = true;
+      if (playIcon) {
+        playIcon.className = 'ph-bold ph-pause';
+      }
       let lastTimestamp = performance.now();
       const loop = (now: number) => {
         if (!isPlaying) return;
@@ -2748,7 +3421,11 @@ function initVideoStudio() {
 
         playheadTime += deltaSec;
         if (playheadTime >= timelineDuration) {
-          playheadTime = 0.0;
+          playheadTime = timelineDuration;
+          updatePlayheadUI();
+          drawCompositionGuide();
+          pausePlayback();
+          return;
         }
 
         updatePlayheadUI();
@@ -2756,8 +3433,6 @@ function initVideoStudio() {
         animationFrameId = requestAnimationFrame(loop);
       };
       animationFrameId = requestAnimationFrame(loop);
-    } else if (animationFrameId) {
-      cancelAnimationFrame(animationFrameId);
     }
   }
 
@@ -2876,6 +3551,18 @@ function initVideoStudio() {
     });
   });
 
+  // Grid Toggle state
+  let showGrid = false;
+  const btnToggleGrid = $<HTMLElement>('#ae-btn-toggle-grid');
+  if (btnToggleGrid) {
+    btnToggleGrid.addEventListener('click', () => {
+      showGrid = !showGrid;
+      btnToggleGrid.style.color = showGrid ? '#3b82f6' : '#a1a1aa';
+      btnToggleGrid.style.borderColor = showGrid ? '#3b82f6' : '#333';
+      drawCompositionGuide();
+    });
+  }
+
   function drawCompositionGuide() {
     if (!previewCanvas) return;
     const ctx = previewCanvas.getContext('2d');
@@ -2886,21 +3573,23 @@ function initVideoStudio() {
     ctx.fillStyle = '#08080a';
     ctx.fillRect(0, 0, w, h);
 
-    // Subtle grid pattern
-    ctx.strokeStyle = '#18181f';
-    ctx.lineWidth = 1;
-    const step = 80;
-    for (let x = 0; x < w; x += step) {
-      ctx.beginPath();
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, h);
-      ctx.stroke();
-    }
-    for (let y = 0; y < h; y += step) {
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(w, y);
-      ctx.stroke();
+    // Grid lines rendered ONLY IF showGrid is enabled
+    if (showGrid) {
+      ctx.strokeStyle = '#252530';
+      ctx.lineWidth = 1;
+      const step = 80;
+      for (let x = 0; x < w; x += step) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, h);
+        ctx.stroke();
+      }
+      for (let y = 0; y < h; y += step) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y);
+        ctx.stroke();
+      }
     }
 
     // Transform State
@@ -2923,49 +3612,116 @@ function initVideoStudio() {
     else if (lut === 'cyberpunk') filterStr += ' hue-rotate(180deg) saturate(180%)';
     else if (lut === 'vintage') filterStr += ' sepia(50%) contrast(120%)';
 
-    ctx.filter = filterStr;
+    // Calculate total timeline duration dynamically from end of last clip
+    let maxClipEnd = 20.0;
+    (activeTimeline.clips || []).forEach((c: any) => {
+      const end = (c.start_time || 0) + (c.duration || 0);
+      if (end > maxClipEnd) maxClipEnd = end;
+    });
+    timelineDuration = maxClipEnd;
 
-    // Dynamic Animating Preview Layer
-    const t = playheadTime;
-    const rectX = (w / 2) + Math.sin(t * 2) * 200;
-    const rectY = (h / 2) + Math.cos(t * 2) * 100;
+    // Render Active Timeline Clips on Stage Canvas
+    const activeClips = activeTimeline.clips || [];
+    if (activeClips.length > 0) {
+      activeClips.forEach((clip: any) => {
+        const isClipActive = playheadTime >= clip.start_time && playheadTime <= (clip.start_time + clip.duration);
 
-    // Render Main Footage Box with Transform Scale and Rotation
-    ctx.translate(rectX, rectY);
-    ctx.rotate((rotDeg * Math.PI) / 180);
-    ctx.scale(scale, scale);
+        if (clip.media_type === 'video') {
+          const video = getOrCreateVideoElement(clip.src);
+          if (!isClipActive) {
+            if (!video.paused) video.pause();
+            return;
+          }
 
-    // Background Layer Box
-    const grad = ctx.createLinearGradient(-300, -200, 300, 200);
-    grad.addColorStop(0, '#1e1b4b');
-    grad.addColorStop(1, '#0f172a');
-    ctx.fillStyle = grad;
-    ctx.fillRect(-300, -200, 600, 400);
+          const clipTransform = clip.transform || {};
+          const posX = (w / 2) + (clipTransform.position_x || 0);
+          const posY = (h / 2) + (clipTransform.position_y || 0);
+          const clipScale = ((clipTransform.scale_x || 100) / 100) * scale;
+          const clipRot = (clipTransform.rotation || 0) + rotDeg;
 
-    // Sample Animated Motion Shape
-    ctx.fillStyle = '#ff5500';
-    ctx.shadowColor = '#ff5500';
-    ctx.shadowBlur = 20;
-    ctx.fillRect(-100, -100, 200, 200);
-    ctx.shadowBlur = 0;
+          const mediaTime = (playheadTime - clip.start_time) + (clip.in_point || 0);
 
-    // Text Overlay
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 36px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('CONTENT OS — VIDEO ENGINE', 0, 140);
+          ctx.save();
+          ctx.translate(posX, posY);
+          ctx.rotate((clipRot * Math.PI) / 180);
+          ctx.scale(clipScale, clipScale);
+
+          if (isPlaying) {
+            if (video.paused) {
+              if (Math.abs(video.currentTime - mediaTime) > 0.1) {
+                video.currentTime = mediaTime;
+              }
+              video.play().catch(() => {});
+            } else if (Math.abs(video.currentTime - mediaTime) > 0.3) {
+              // Resync video element ONLY if it drifts significantly from JS RAF master clock
+              video.currentTime = mediaTime;
+            }
+          } else {
+            if (!video.paused) {
+              video.pause();
+            }
+            if (Math.abs(video.currentTime - mediaTime) > 0.03 && !video.seeking) {
+              if (typeof (video as any).fastSeek === 'function') {
+                (video as any).fastSeek(mediaTime);
+              } else {
+                video.currentTime = mediaTime;
+              }
+            }
+          }
+
+          // Immutable Offscreen Frame Lock: Stage canvas ONLY draws offscreen cache!
+          const offCanvas = getOrCreateVideoOffscreenCanvas(clip.src);
+          const offCtx = offCanvas.getContext('2d');
+
+          // While playing naturally, update offscreen cache continuously on every 60fps frame tick
+          if (isPlaying && video.readyState >= 2 && !video.seeking) {
+            try {
+              if (offCtx) offCtx.drawImage(video, 0, 0, 1920, 1080);
+            } catch (e) {}
+          }
+
+          // Stage canvas ALWAYS draws offscreenCacheCanvas (Zero blackout guarantee!)
+          try {
+            ctx.drawImage(offCanvas, -w / 2, -h / 2, w, h);
+          } catch (e) {
+            // Ignore initial load tick before first seeked event
+          }
+
+          // If clip is selected, render subtle transform outline box
+          if (clip.id === selectedClipId) {
+            ctx.strokeStyle = '#3b82f6';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(-w / 2, -h / 2, w, h);
+          }
+
+          ctx.restore();
+        } else if (clip.media_type === 'audio') {
+          if (!isClipActive) return;
+          const mediaTime = (playheadTime - clip.start_time) + (clip.in_point || 0);
+          const audio = getOrCreateAudioElement(clip.src);
+          if (Math.abs(audio.currentTime - mediaTime) > 0.05) {
+            audio.currentTime = mediaTime;
+          }
+          if (isPlaying && audio.paused && !clip.is_muted) {
+            audio.play().catch(() => {});
+          } else if ((!isPlaying || clip.is_muted) && !audio.paused) {
+            audio.pause();
+          }
+        }
+      });
+    }
 
     ctx.restore();
     ctx.filter = 'none';
 
     // Center Crosshair Guidelines
-    ctx.strokeStyle = '#383842';
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#282832';
+    ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.moveTo(w / 2 - 30, h / 2);
-    ctx.lineTo(w / 2 + 30, h / 2);
-    ctx.moveTo(w / 2, h / 2 - 30);
-    ctx.lineTo(w / 2, h / 2 + 30);
+    ctx.moveTo(w / 2 - 20, h / 2);
+    ctx.lineTo(w / 2 + 20, h / 2);
+    ctx.moveTo(w / 2, h / 2 - 20);
+    ctx.lineTo(w / 2, h / 2 + 20);
     ctx.stroke();
   }
 
@@ -2997,6 +3753,20 @@ function initVideoStudio() {
       } finally {
         exportBtn.removeAttribute('disabled');
         exportBtn.innerHTML = `<i class="ph-bold ph-lightning"></i> Render Comp`;
+      }
+    });
+  }
+
+  // Clear All Timeline Layers Handler
+  const btnClearTracks = $('#ae-btn-clear-tracks');
+  if (btnClearTracks) {
+    btnClearTracks.addEventListener('click', () => {
+      if (confirm('Clear all layers and reset timeline?')) {
+        activeTimeline.clips = [];
+        selectedClipId = null;
+        persistTimelineState();
+        renderTimeline();
+        drawCompositionGuide();
       }
     });
   }
@@ -3094,6 +3864,218 @@ function initVideoStudio() {
     });
   }
 
+  // Media Pool & Import File Upload Handling
+  const importInput = $<HTMLInputElement>('#ae-import-file');
+  const mediaPoolList = $<HTMLElement>('#ae-media-pool-list');
+  let mediaPoolAssets: Array<{ name: string; type: 'video' | 'audio' | 'image'; url: string }> = [];
+
+  function renderMediaPool() {
+    if (!mediaPoolList) return;
+    if (mediaPoolAssets.length === 0) {
+      mediaPoolList.innerHTML = `
+        <div style="padding: 16px 8px; text-align: center; color: #71717a; font-size: 0.72rem;">
+          <i class="ph-bold ph-folder-open" style="font-size: 1.5rem; display: block; margin-bottom: 6px; color: #3f3f46;"></i>
+          <span>No media assets imported yet.<br>Click <strong>+ Import</strong> to add files.</span>
+        </div>
+      `;
+      return;
+    }
+
+    let html = '';
+    mediaPoolAssets.forEach((asset, idx) => {
+      const isVideo = asset.type === 'video';
+      const isAudio = asset.type === 'audio';
+      const typeIcon = isVideo ? 'ph-video' : isAudio ? 'ph-speaker-high' : 'ph-image';
+      const iconColor = isVideo ? '#8b5cf6' : isAudio ? '#10b981' : '#f59e0b';
+      const ext = asset.name.split('.').pop()?.toUpperCase() || asset.type.toUpperCase();
+
+      const streamUrl = asset.url.startsWith('http') || asset.url.startsWith('blob:')
+        ? asset.url
+        : `http://localhost:8000/api/assets-vault/stream/${asset.url.replace('database/assets_vault/', '')}`;
+
+      let mediaPreviewHTML = '';
+      if (isVideo) {
+        mediaPreviewHTML = `<video src="${streamUrl}" controls preload="metadata" style="width: 100%; height: 110px; object-fit: cover; border-radius: 6px; background: #000;"></video>`;
+      } else if (isAudio) {
+        mediaPreviewHTML = `
+          <div style="height: 110px; background: #121216; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px;">
+            <i class="ph-bold ph-waveform" style="font-size: 2rem; color: #10b981; margin-bottom: 6px;"></i>
+            <audio src="${streamUrl}" controls style="width: 100%; height: 28px;"></audio>
+          </div>
+        `;
+      } else {
+        mediaPreviewHTML = `<img src="${streamUrl}" alt="${escapeHtml(asset.name)}" style="width: 100%; height: 110px; object-fit: cover; border-radius: 6px;" />`;
+      }
+
+      html += `
+        <div class="ae-asset-row" data-idx="${idx}" draggable="true" style="margin-bottom: 12px; background: #16161c; border: 1px solid #27272a; border-radius: 8px; padding: 8px; display: flex; flex-direction: column; gap: 8px; cursor: grab; user-select: none;">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 170px;">
+              <div style="width: 22px; height: 22px; background: rgba(139, 92, 246, 0.15); border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <i class="ph-bold ${typeIcon}" style="color: ${iconColor}; font-size: 0.85rem;"></i>
+              </div>
+              <strong style="color: #ffffff; font-size: 0.75rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis;" title="${escapeHtml(asset.name)}">${escapeHtml(asset.name)}</strong>
+            </div>
+            <span style="font-size: 0.62rem; background: #27272a; color: #a1a1aa; font-weight: 700; padding: 2px 6px; border-radius: 4px;">.${escapeHtml(ext)}</span>
+          </div>
+          <div style="position: relative; height: 110px; border-radius: 6px; overflow: hidden; pointer-events: none;">
+            ${mediaPreviewHTML}
+          </div>
+          <button class="ae-btn-add-timeline" data-idx="${idx}" style="width: 100%; background: #27272a; color: #ffffff; border: none; border-radius: 4px; padding: 6px; font-size: 0.72rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; pointer-events: auto;">
+            <i class="ph-bold ph-plus"></i> Add to Timeline
+          </button>
+        </div>
+      `;
+    });
+
+    mediaPoolList.innerHTML = html;
+
+    // Attach Dragstart, Double-click, and Add-to-Timeline Button Listeners
+    mediaPoolList.querySelectorAll('.ae-asset-row').forEach((row) => {
+      row.addEventListener('dragstart', (e: Event) => {
+        const dragEvt = e as DragEvent;
+        const idxStr = row.getAttribute('data-idx');
+        if (idxStr === null) return;
+        const asset = mediaPoolAssets[parseInt(idxStr)];
+        if (asset && dragEvt.dataTransfer) {
+          dragEvt.dataTransfer.setData('text/plain', JSON.stringify(asset));
+          dragEvt.dataTransfer.effectAllowed = 'copy';
+        }
+      });
+
+      row.addEventListener('dblclick', () => {
+        const idxStr = row.getAttribute('data-idx');
+        if (idxStr === null) return;
+        const asset = mediaPoolAssets[parseInt(idxStr)];
+        if (asset) addAssetToTimeline(asset);
+      });
+
+      const addBtn = row.querySelector('.ae-btn-add-timeline');
+      if (addBtn) {
+        addBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const idxStr = row.getAttribute('data-idx');
+          if (idxStr === null) return;
+          const asset = mediaPoolAssets[parseInt(idxStr)];
+          if (asset) addAssetToTimeline(asset);
+        });
+      }
+    });
+  }
+
+  function addAssetToTimeline(asset: { name: string; type: 'video' | 'audio' | 'image'; url: string }, targetTrack?: number) {
+    const isAudio = asset.type === 'audio';
+    const chosenTrackId = targetTrack || (isAudio ? 3 : 2); // Default A1 for audio, V1 for video
+
+    const newClip = {
+      id: 'clip-' + Date.now(),
+      name: asset.name,
+      src: asset.url,
+      media_type: asset.type,
+      start_time: playheadTime,
+      duration: asset.type === 'image' ? 5.0 : 12.0,
+      in_point: 0.0,
+      out_point: asset.type === 'image' ? 5.0 : 12.0,
+      track_id: chosenTrackId,
+      transform: { position_x: 0, position_y: 0, position_z: 0, scale_x: 100, scale_y: 100, rotation: 0, opacity: 100 },
+      color_grading: { exposure: 0, contrast: 100, saturation: 100, temperature: 0 },
+      keyframes: [],
+      volume_db: 0.0,
+      is_muted: false,
+    };
+
+    activeTimeline.clips.push(newClip);
+    selectedClipId = newClip.id;
+    persistTimelineState();
+    renderTimeline();
+    drawCompositionGuide();
+  }
+
+  async function syncMediaPoolFromBackend() {
+    try {
+      const res = await fetch('http://localhost:8000/api/assets-vault/tree');
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data.files && Array.isArray(data.files)) {
+        // Only load user-imported files from 'imports' folder, NOT system-generated asset vault files
+        const mediaFiles = data.files.filter((f: any) => f.folder === 'imports' && ['video', 'audio', 'image'].includes(f.media_type));
+        mediaPoolAssets = mediaFiles.map((f: any) => ({
+          name: f.name,
+          type: f.media_type as 'video' | 'audio' | 'image',
+          url: `database/assets_vault/${f.rel_path}`,
+        }));
+        renderMediaPool();
+      }
+    } catch (err) {
+      console.warn('Failed to sync media pool from assets vault:', err);
+    }
+  }
+
+  if (importInput) {
+    importInput.addEventListener('change', async () => {
+      const files = importInput.files;
+      if (!files || files.length === 0) return;
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('category', 'imports');
+
+        try {
+          const res = await fetch('http://localhost:8000/api/assets-vault/upload', {
+            method: 'POST',
+            body: formData,
+          });
+          const data = await res.json();
+          const filename = file.name;
+          const ext = filename.split('.').pop()?.toLowerCase() || '';
+          const type: 'video' | 'audio' | 'image' = ['mp3', 'wav', 'aac', 'flac', 'ogg', 'm4a'].includes(ext)
+            ? 'audio'
+            : ['png', 'jpg', 'jpeg', 'webp', 'svg', 'gif'].includes(ext)
+            ? 'image'
+            : 'video';
+
+          const asset = {
+            name: filename,
+            type,
+            url: data.url || `database/assets_vault/imports/${filename}`,
+          };
+
+          if (!mediaPoolAssets.some((a) => a.name === asset.name)) {
+            mediaPoolAssets.unshift(asset);
+          }
+          renderMediaPool();
+        } catch (err) {
+          const filename = file.name;
+          const ext = filename.split('.').pop()?.toLowerCase() || '';
+          const type: 'video' | 'audio' | 'image' = ['mp3', 'wav', 'aac', 'flac', 'ogg', 'm4a'].includes(ext)
+            ? 'audio'
+            : ['png', 'jpg', 'jpeg', 'webp', 'svg', 'gif'].includes(ext)
+            ? 'image'
+            : 'video';
+
+          const asset = {
+            name: filename,
+            type,
+            url: URL.createObjectURL(file),
+          };
+
+          if (!mediaPoolAssets.some((a) => a.name === asset.name)) {
+            mediaPoolAssets.unshift(asset);
+          }
+          renderMediaPool();
+        }
+      }
+
+      importInput.value = '';
+    });
+  }
+
+  // Initial timeline & media pool render & sync with backend
+  renderTimeline();
+  syncTimelineFromBackend();
+  syncMediaPoolFromBackend();
   updatePlayheadUI();
 }
 

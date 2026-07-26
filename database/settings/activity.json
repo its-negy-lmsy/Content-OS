@@ -1,5 +1,12 @@
 [
   {
+    "id": "act-20260727023624768892",
+    "action": "asset_deleted",
+    "title": "Deleted asset hyperframes/hyperframes_studio_2026-07-26_05-08-17.mp4",
+    "detail": "",
+    "timestamp": "2026-07-26T21:06:24.768892+00:00"
+  },
+  {
     "id": "act-20260726211033695359",
     "action": "asset_deleted",
     "title": "Deleted asset audio/tts_1785074668.wav",
@@ -201,12 +208,5 @@
     "title": "scriptwriter (HERMES SYNTHESIS)",
     "detail": "write me a youtube video scrip",
     "timestamp": "2026-07-25T21:33:33.446129+00:00"
-  },
-  {
-    "id": "act-20260726012104221827",
-    "action": "Agent Memory Updated",
-    "title": "content_os (HERMES FALLBACK)",
-    "detail": "write a funny story script",
-    "timestamp": "2026-07-25T19:51:04.221827+00:00"
   }
 ]

@@ -37,43 +37,7 @@ DEFAULT_TIMELINE_STATE = {
         {"id": 2, "name": "A1 (Voiceover / TTS)", "type": "audio", "muted": False, "solo": False, "locked": False},
         {"id": 3, "name": "A2 (Background Music)", "type": "audio", "muted": False, "solo": False, "locked": False},
     ],
-    "clips": [
-        {
-            "id": "clip-1",
-            "name": "Footage_01.mp4",
-            "src": "database/assets_vault/videos/Footage_01.mp4",
-            "media_type": "video",
-            "start_time": 0.0,
-            "duration": 15.0,
-            "in_point": 0.0,
-            "out_point": 15.0,
-            "track_id": 1,
-            "transform": {"position_x": 0, "position_y": 0, "position_z": 0, "scale_x": 100, "scale_y": 100, "rotation": 0, "opacity": 100, "anchor_x": 0, "anchor_y": 0},
-            "color_grading": {"exposure": 0, "contrast": 100, "highlights": 0, "shadows": 0, "saturation": 100, "temperature": 0, "tint": 0},
-            "keyframes": [
-                {"time_sec": 2.0, "property": "position_x", "value": 0, "easing": "linear"},
-                {"time_sec": 6.0, "property": "position_x", "value": 150, "easing": "ease_in_out"},
-            ],
-            "volume_db": 0.0,
-            "is_muted": False,
-        },
-        {
-            "id": "clip-2",
-            "name": "Narration.wav",
-            "src": "database/assets_vault/audio/Narration.wav",
-            "media_type": "audio",
-            "start_time": 0.0,
-            "duration": 12.5,
-            "in_point": 0.0,
-            "out_point": 12.5,
-            "track_id": 2,
-            "transform": {"position_x": 0, "position_y": 0, "position_z": 0, "scale_x": 100, "scale_y": 100, "rotation": 0, "opacity": 100, "anchor_x": 0, "anchor_y": 0},
-            "color_grading": {"exposure": 0, "contrast": 100, "highlights": 0, "shadows": 0, "saturation": 100, "temperature": 0, "tint": 0},
-            "keyframes": [],
-            "volume_db": 0.0,
-            "is_muted": False,
-        }
-    ]
+    "clips": []
 }
 
 def get_timeline_state() -> Dict[str, Any]:
