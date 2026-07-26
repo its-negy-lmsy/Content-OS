@@ -2575,6 +2575,7 @@ function initTTSStudio() {
   const launchOfflineBtn = $('#tts-btn-launch-offline') as HTMLElement | null;
   const offlineNotice = $('#tts-offline-notice') as HTMLElement | null;
   const iframe = $('#tts-studio-iframe') as HTMLIFrameElement | null;
+  let isLaunching = false;
 
   async function checkTTSStatus(): Promise<boolean> {
     try {
@@ -2593,9 +2594,10 @@ function initTTSStudio() {
             iframe.src = 'http://localhost:8001';
           }
         }
+        isLaunching = false;
         return true;
       } else {
-        if (statusBadge) {
+        if (statusBadge && !isLaunching) {
           statusBadge.textContent = '○ STARTING / OFFLINE';
           statusBadge.style.background = 'rgba(249, 115, 22, 0.15)';
           statusBadge.style.color = '#f97316';
@@ -2606,32 +2608,50 @@ function initTTSStudio() {
         return false;
       }
     } catch (e) {
-      if (statusBadge) {
+      if (statusBadge && !isLaunching) {
         statusBadge.textContent = '○ OFFLINE';
         statusBadge.style.background = 'rgba(239, 68, 68, 0.15)';
         statusBadge.style.color = '#ef4444';
       }
+      if (offlineNotice) offlineNotice.style.display = 'block';
+      if (iframe) iframe.style.display = 'none';
       return false;
     }
   }
 
   async function startTTSServer() {
-    if (statusBadge) statusBadge.textContent = '⏳ STARTING SERVER...';
+    isLaunching = true;
+    if (statusBadge) statusBadge.textContent = '⏳ LAUNCHING CHATTERBOX SERVER...';
+    if (launchOfflineBtn) {
+      launchOfflineBtn.textContent = '⏳ Launching Chatterbox Server...';
+      (launchOfflineBtn as HTMLButtonElement).disabled = true;
+    }
+    
     try {
       await apiRequest('/api/tts/server/start', { method: 'POST' });
-      
-      let attempts = 0;
-      const pollInterval = setInterval(async () => {
-        attempts++;
-        const isOnline = await checkTTSStatus();
-        if (isOnline) {
-          if (iframe) iframe.src = 'http://localhost:8001?t=' + Date.now();
-          clearInterval(pollInterval);
-        } else if (attempts >= 20) {
-          clearInterval(pollInterval);
+    } catch (e) {
+      console.warn('TTS Launch trigger sent:', e);
+    }
+
+    let attempts = 0;
+    const pollInterval = setInterval(async () => {
+      attempts++;
+      const isOnline = await checkTTSStatus();
+      if (isOnline) {
+        if (iframe) iframe.src = 'http://localhost:8001?t=' + Date.now();
+        if (launchOfflineBtn) {
+          launchOfflineBtn.textContent = '🚀 Launch Chatterbox Server (Port 8001)';
+          (launchOfflineBtn as HTMLButtonElement).disabled = false;
         }
-      }, 1500);
-    } catch (e) {}
+        clearInterval(pollInterval);
+      } else if (attempts >= 40) {
+        if (launchOfflineBtn) {
+          launchOfflineBtn.textContent = '🚀 Launch Chatterbox Server (Port 8001)';
+          (launchOfflineBtn as HTMLButtonElement).disabled = false;
+        }
+        clearInterval(pollInterval);
+      }
+    }, 1500);
   }
 
   if (startBtn) {
@@ -2642,6 +2662,10 @@ function initTTSStudio() {
   }
 
   checkTTSStatus();
+
+  setInterval(() => {
+    checkTTSStatus();
+  }, 4000);
 }
 
 // Auto-initialize Workflow Studio & System Logs Engine on load

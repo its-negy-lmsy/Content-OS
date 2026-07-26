@@ -1,5 +1,54 @@
 [
   {
+    "id": "act-20260726192647088758",
+    "action": "asset_deleted",
+    "title": "Deleted asset audio/tts_1785073298.wav",
+    "detail": "",
+    "timestamp": "2026-07-26T13:56:47.088758+00:00"
+  },
+  {
+    "id": "act-20260726192639581519",
+    "action": "asset_deleted",
+    "title": "Deleted asset audio/tts_1785074163.wav",
+    "detail": "",
+    "timestamp": "2026-07-26T13:56:39.581519+00:00"
+  },
+  {
+    "id": "act-20260726192636110295",
+    "action": "asset_deleted",
+    "title": "Deleted asset audio/tts_chatterbox_en_1785071080.wav",
+    "detail": "",
+    "timestamp": "2026-07-26T13:56:36.110295+00:00"
+  },
+  {
+    "id": "act-20260726192633905498",
+    "action": "asset_deleted",
+    "title": "Deleted asset audio/tts_chatterbox_en_1785071150.wav",
+    "detail": "",
+    "timestamp": "2026-07-26T13:56:33.905498+00:00"
+  },
+  {
+    "id": "act-20260726192628939238",
+    "action": "asset_deleted",
+    "title": "Deleted asset audio/tts_chatterbox_en_1785072583.wav",
+    "detail": "",
+    "timestamp": "2026-07-26T13:56:28.939238+00:00"
+  },
+  {
+    "id": "act-20260726192626332335",
+    "action": "asset_deleted",
+    "title": "Deleted asset audio/tts_chatterbox_en_1785072648.wav",
+    "detail": "",
+    "timestamp": "2026-07-26T13:56:26.332335+00:00"
+  },
+  {
+    "id": "act-20260726192623992431",
+    "action": "asset_deleted",
+    "title": "Deleted asset audio/tts_chatterbox_en_1785072699.wav",
+    "detail": "",
+    "timestamp": "2026-07-26T13:56:23.992431+00:00"
+  },
+  {
     "id": "act-20260726174350934025",
     "action": "Task removed",
     "title": "Schedule",
@@ -159,54 +208,5 @@
     "title": "content_os (HERMES FALLBACK)",
     "detail": "write more context",
     "timestamp": "2026-07-25T19:49:38.872040+00:00"
-  },
-  {
-    "id": "act-20260726011532730504",
-    "action": "Agent Memory Updated",
-    "title": "content_os (LIVE WEB SCRAPER)",
-    "detail": "write a youtube video script b",
-    "timestamp": "2026-07-25T19:45:32.730504+00:00"
-  },
-  {
-    "id": "act-20260726005818061061",
-    "action": "Live News Fetched",
-    "title": "scriptwriter",
-    "detail": "write me a youtube video scrip",
-    "timestamp": "2026-07-25T19:28:18.061061+00:00"
-  },
-  {
-    "id": "act-20260726005541698297",
-    "action": "CLI Executed",
-    "title": "HERMES (scriptwriter)",
-    "detail": "write a script for a youtube v",
-    "timestamp": "2026-07-25T19:25:41.698297+00:00"
-  },
-  {
-    "id": "act-20260726005235357707",
-    "action": "Live News Fetched",
-    "title": "scriptwriter",
-    "detail": "write me a script for a youtub",
-    "timestamp": "2026-07-25T19:22:35.357707+00:00"
-  },
-  {
-    "id": "act-20260726004528982451",
-    "action": "CLI Executed",
-    "title": "HERMES (scriptwriter)",
-    "detail": "write me a script for a youtub",
-    "timestamp": "2026-07-25T19:15:28.982451+00:00"
-  },
-  {
-    "id": "act-20260726004324904380",
-    "action": "Live News Fetched",
-    "title": "scriptwriter",
-    "detail": "write me a script for a video ",
-    "timestamp": "2026-07-25T19:13:24.904380+00:00"
-  },
-  {
-    "id": "act-20260726004245918168",
-    "action": "Agent Executed",
-    "title": "scriptwriter",
-    "detail": "write me a script",
-    "timestamp": "2026-07-25T19:12:45.918168+00:00"
   }
 ]

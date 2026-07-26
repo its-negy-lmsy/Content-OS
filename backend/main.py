@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from typing import Literal, Optional
+from typing import Literal, Optional, overload, Any
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -81,7 +81,23 @@ SCHEDULE = SETTINGS_DIR / "schedule.json"
 # Initialize Universal Database Structure
 init_database_structure()
 
-app = FastAPI(title="Content OS Local API", version="0.1.0")
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Hook python logging
+    root_logger = logging.getLogger()
+    root_logger.addHandler(SystemLogHandler())
+    push_log("SUCCESS", "SYSTEM", "Backend FastAPI server started successfully.")
+    
+    try:
+        start_hyperframe_studio_server()
+        push_log("INFO", "HYPERFRAME", "HyperFrame studio auto-start initiated.")
+    except Exception as e:
+        push_log("WARN", "HYPERFRAME", f"Hyperframe server auto-start warning: {e}")
+    yield
+
+app = FastAPI(title="Content OS Local API", version="0.1.0", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:4321", "http://127.0.0.1:4321", "*"],
@@ -107,18 +123,7 @@ async def log_requests(request: Request, call_next):
     return response
 
 
-@app.on_event("startup")
-def startup_event():
-    # Hook python logging
-    root_logger = logging.getLogger()
-    root_logger.addHandler(SystemLogHandler())
-    push_log("SUCCESS", "SYSTEM", "Backend FastAPI server started successfully.")
-    
-    try:
-        start_hyperframe_studio_server()
-        push_log("INFO", "HYPERFRAME", "HyperFrame studio auto-start initiated.")
-    except Exception as e:
-        push_log("WARN", "HYPERFRAME", f"Hyperframe server auto-start warning: {e}")
+
 
 
 # ==================== SYSTEM LOGS API ====================
@@ -208,10 +213,10 @@ def assets_vault_create_folder(payload: dict) -> dict:
 
 @app.delete("/api/assets-vault/file")
 def assets_vault_delete_file(rel_path: str) -> dict:
-    success = delete_vault_asset_file(rel_path)
-    if not success:
-        raise HTTPException(status_code=404, detail="File not found or failed to delete")
-    return {"status": "success", "rel_path": rel_path}
+    result = delete_vault_asset_file(rel_path)
+    if result.get("status") == "error":
+        raise HTTPException(status_code=404, detail=result.get("message", "File not found"))
+    return result
 
 
 class TTSGenerateInput(BaseModel):
@@ -318,11 +323,19 @@ def slugify(value: str) -> str:
     return slug[:72] or "untitled"
 
 
+@overload
+def safe_read_json(path: Path, default: dict) -> dict: ...
+@overload
+def safe_read_json(path: Path, default: list) -> list: ...
 def safe_read_json(path: Path, default: dict | list) -> dict | list:
-    try:
-        return json.loads(path.read_text(encoding="utf-8"))
-    except (FileNotFoundError, json.JSONDecodeError):
-        return default
+    if path.exists():
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+            if isinstance(data, type(default)):
+                return data
+        except Exception:
+            pass
+    return default
 
 
 def write_json(path: Path, content: dict | list) -> None:
@@ -461,7 +474,7 @@ def hyperframe_render_video(payload: dict) -> dict:
     res = render_hyperframe_mp4(project_name, composition)
     if res.get("status") == "error":
         raise HTTPException(status_code=500, detail=res.get("message"))
-    log_activity("hyperframe_rendered", f"Rendered Hyperframe Video {res.get('filename')}", res.get("output_path"))
+    log_activity("hyperframe_rendered", f"Rendered Hyperframe Video {res.get('filename')}", str(res.get("output_path") or ""))
     return res
 
 
@@ -487,6 +500,18 @@ def create_assets_folder(payload: dict) -> dict:
     return res
 
 
+# ==================== TTS STUDIO SERVER API ====================
+
+@app.get("/api/tts/server/status")
+def get_tts_server_status() -> dict:
+    return check_chatterbox_server_status()
+
+
+@app.post("/api/tts/server/start")
+def launch_tts_server() -> dict:
+    return start_chatterbox_server()
+
+
 from fastapi import UploadFile, File, Form
 
 @app.post("/api/assets-vault/upload")
@@ -495,8 +520,9 @@ async def upload_asset_file(
     category: str = Form("imports")
 ) -> dict:
     content = await file.read()
-    res = save_imported_asset_file(file.filename, content, category)
-    log_activity("asset_imported", f"Imported asset {file.filename} to {category}")
+    filename = file.filename or "uploaded_asset"
+    res = save_imported_asset_file(filename, content, category)
+    log_activity("asset_imported", f"Imported asset {filename} to {category}")
     return res
 
 
@@ -546,7 +572,8 @@ def stream_asset_file(rel_path: str, download: bool = Query(False)):
 
 @app.get("/api/pipeline/status")
 def get_pipeline_status() -> dict:
-    projects_list = list_projects()["projects"]
+    res = list_projects()
+    projects_list = res.get("projects", []) if isinstance(res, dict) else res
     if not projects_list:
         steps = [
             {"name": "Idea", "status": "waiting"},
@@ -839,7 +866,7 @@ def add_research(item: ResearchInput) -> dict:
     stamp = datetime.now().strftime("%Y-%m-%d-%H%M%S")
     filename = f"{stamp}-{slugify(item.title)}.md"
     path = WIKI / filename
-    source = str(item.source_url) if item.source_url else "Personal observation"
+    source = item.source_url if item.source_url else "Personal observation"
     path.write_text(
         f"---\ntitle: {item.title}\ntype: {item.source_type}\nsource: {source}\ncreated: {now()}\n---\n\n# {item.title}\n\n{item.notes.strip()}\n",
         encoding="utf-8",
@@ -1357,16 +1384,17 @@ def build_project_pack(project_id: str) -> dict:
     project = safe_read_json(manifest_path, {})
     research_titles = [item["title"] for item in list_research()["items"][:5]]
     sources = "\n".join(f"- {title}" for title in research_titles) or "- No research notes attached yet — add sources before finalizing."
+    topic_name = project.get("topic") or project.get("title", "Untitled")
     (folder / "script-brief.md").write_text(
-        f"# Script brief — {project['title']}\n\n## Topic\n{project['topic']}\n\n## Angle\n{project.get('angle') or 'Find a specific, honest point of view.'}\n\n## Research to review\n{sources}\n\n## Required draft structure\n1. Hook: identify the audience problem in 10–20 seconds.\n2. Promise: state what they will gain.\n3. Three evidence-backed beats.\n4. Practical next step.\n5. Clear call to action.\n",
+        f"# Script brief — {project.get('title', 'Untitled')}\n\n## Topic\n{topic_name}\n\n## Angle\n{project.get('angle') or 'Find a specific, honest point of view.'}\n\n## Research to review\n{sources}\n\n## Required draft structure\n1. Hook: identify the audience problem in 10–20 seconds.\n2. Promise: state what they will gain.\n3. Three evidence-backed beats.\n4. Practical next step.\n5. Clear call to action.\n",
         encoding="utf-8",
     )
     (folder / "prompts" / "visuals.md").write_text(
-        f"# Visual prompts — {project['title']}\n\n- Create a clean, high-contrast opening title card for: {project['topic']}\n- Create 3 B-roll prompt variants for each key script beat after the script is approved.\n- Keep a consistent visual system: channel-specific palette, readable typography, no deceptive imagery.\n",
+        f"# Visual prompts — {project.get('title', 'Untitled')}\n\n- Create a clean, high-contrast opening title card for: {topic_name}\n- Create 3 B-roll prompt variants for each key script beat after the script is approved.\n- Keep a consistent visual system: channel-specific palette, readable typography, no deceptive imagery.\n",
         encoding="utf-8",
     )
     (folder / "seo.md").write_text(
-        f"# SEO brief — {project['title']}\n\n## Search intent\nWhat exact question does this answer?\n\n## Title variants\n1. {project['topic']}: the practical version\n2. I tested {project['topic']} — here is what changed\n3. Stop guessing about {project['topic']}\n\n## Description seed\nExplain the promise, evidence, and next action in plain language. Add sources before publishing.\n",
+        f"# SEO brief — {project.get('title', 'Untitled')}\n\n## Search intent\nWhat exact question does this answer?\n\n## Title variants\n1. {topic_name}: the practical version\n2. I tested {topic_name} — here is what changed\n3. Stop guessing about {topic_name}\n\n## Description seed\nExplain the promise, evidence, and next action in plain language. Add sources before publishing.\n",
         encoding="utf-8",
     )
     project["status"] = "pack_ready"
