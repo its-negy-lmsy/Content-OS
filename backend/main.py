@@ -11,9 +11,18 @@ from datetime import UTC, datetime
 from pathlib import Path
 import sys
 
+import os
+
 ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
+
+CACHE_DIR = ROOT / "database" / "cache"
+CACHE_DIR.mkdir(parents=True, exist_ok=True)
+os.environ["HF_HOME"] = str(CACHE_DIR / "huggingface")
+os.environ["TORCH_HOME"] = str(CACHE_DIR / "torch")
+os.environ["PIP_CACHE_DIR"] = str(CACHE_DIR / "pip")
+os.environ["TRANSFORMERS_CACHE"] = str(CACHE_DIR / "huggingface")
 
 from typing import Literal, Optional, overload, Any
 
@@ -116,7 +125,12 @@ async def log_requests(request: Request, call_next):
     duration_ms = int((time.time() - start_time) * 1000)
     
     path = request.url.path
-    if not (path.startswith("/api/system/logs") or path == "/health"):
+    if not (
+        path.startswith("/api/system/logs")
+        or path.startswith("/api/tts/server/status")
+        or path.startswith("/api/pipeline/status")
+        or path == "/health"
+    ):
         level = "ERROR" if response.status_code >= 400 else "INFO"
         push_log(level, "API", f"{request.method} {path} -> {response.status_code} ({duration_ms}ms)")
         
@@ -191,6 +205,9 @@ def hyperframe_delete(render_id: str) -> dict:
     return {"status": "success", "id": render_id}
 
 
+from fastapi import FastAPI, HTTPException, Request, UploadFile, File, Form
+
+
 # ==================== ASSETS VAULT API ====================
 @app.get("/api/assets-vault/tree")
 def assets_vault_tree() -> dict:
@@ -211,9 +228,15 @@ def assets_vault_create_folder(payload: dict) -> dict:
     return create_custom_assets_folder(folder_name)
 
 
+@app.post("/api/assets-vault/upload")
+async def assets_vault_upload_file(file: UploadFile = File(...), category: str = Form("imports")) -> dict:
+    content = await file.read()
+    return save_imported_asset_file(file.filename or "file", content, category=category)
+
+
 @app.delete("/api/assets-vault/file")
-def assets_vault_delete_file(rel_path: str) -> dict:
-    result = delete_vault_asset_file(rel_path)
+def assets_vault_delete_file(path: str = "") -> dict:
+    result = delete_vault_asset_file(path)
     if result.get("status") == "error":
         raise HTTPException(status_code=404, detail=result.get("message", "File not found"))
     return result

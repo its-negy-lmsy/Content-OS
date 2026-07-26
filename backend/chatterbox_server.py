@@ -2,16 +2,25 @@ import os
 import sys
 import gc
 import time
+import threading
 from pathlib import Path
 
-# Restrict PyTorch CPU threads to prevent OOM
+# Redirect all HuggingFace, PyTorch, and pip caches to local project folder (D:\Content OS\database\cache)
+ROOT = Path(__file__).resolve().parent.parent
+CACHE_DIR = ROOT / "database" / "cache"
+CACHE_DIR.mkdir(parents=True, exist_ok=True)
+
+os.environ["HF_HOME"] = str(CACHE_DIR / "huggingface")
+os.environ["TORCH_HOME"] = str(CACHE_DIR / "torch")
+os.environ["PIP_CACHE_DIR"] = str(CACHE_DIR / "pip")
+os.environ["TRANSFORMERS_CACHE"] = str(CACHE_DIR / "huggingface")
+
+# Restrict PyTorch CPU threads to prevent OOM thrashing
 os.environ["OMP_NUM_THREADS"] = "2"
 os.environ["MKL_NUM_THREADS"] = "2"
 os.environ["OPENBLAS_NUM_THREADS"] = "2"
 
-ROOT = Path(__file__).resolve().parent.parent
 VENV_SITE = ROOT / ".venv" / "Lib" / "site-packages"
-
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 if VENV_SITE.exists() and str(VENV_SITE) not in sys.path:
@@ -30,13 +39,43 @@ torch.set_grad_enabled(False)
 AUDIO_DIR = ROOT / "database" / "assets_vault" / "audio"
 AUDIO_DIR.mkdir(parents=True, exist_ok=True)
 
-print("[Chatterbox Server] Loading Chatterbox TTS model...")
-device = "cuda" if torch.cuda.is_available() else "cpu"
-print(f"[Chatterbox Server] Running on device: {device}")
+_model = None
+_model_lock = threading.Lock()
+_last_used_time = 0
+IDLE_TIMEOUT_SECONDS = 15
 
-from chatterbox import ChatterboxTTS  # type: ignore
-model = ChatterboxTTS.from_pretrained(device)
-print(f"[Chatterbox Server] Model loaded on {device}. Ready to generate speech.")
+
+def get_model():
+    global _model, _last_used_time
+    _last_used_time = time.time()
+    with _model_lock:
+        if _model is None:
+            device = "cuda" if torch.cuda.is_available() else "cpu"
+            print(f"[Chatterbox Server] Dynamic Load: Loading Chatterbox TTS into {device}...")
+            from chatterbox import ChatterboxTTS  # type: ignore
+            _model = ChatterboxTTS.from_pretrained(device)
+            print(f"[Chatterbox Server] Model loaded on {device}. Ready for synthesis.")
+        return _model
+
+
+def unload_idle_model_worker():
+    global _model
+    while True:
+        time.sleep(5)
+        if _model is not None and (time.time() - _last_used_time) > IDLE_TIMEOUT_SECONDS:
+            with _model_lock:
+                if _model is not None and (time.time() - _last_used_time) > IDLE_TIMEOUT_SECONDS:
+                    print("[Chatterbox Server] Idle Timeout: Purging model weights to free RAM/VRAM...")
+                    del _model
+                    _model = None
+                    if torch.cuda.is_available():
+                        torch.cuda.empty_cache()
+                    gc.collect()
+                    print("[Chatterbox Server] Memory successfully purged.")
+
+
+# Launch background idle monitor thread
+threading.Thread(target=unload_idle_model_worker, daemon=True).start()
 
 
 def generate_speech(
@@ -52,9 +91,10 @@ def generate_speech(
     print(f"[Chatterbox Server] Generating: '{text[:60]}...'")
 
     ref_path = str(audio_prompt) if audio_prompt else None
+    model_inst = get_model()
 
     with torch.no_grad():
-        wav = model.generate(
+        wav = model_inst.generate(
             text=text,
             audio_prompt_path=ref_path,
             exaggeration=exaggeration,
@@ -63,9 +103,11 @@ def generate_speech(
         )
 
     out_path = AUDIO_DIR / f"tts_{int(time.time())}.wav"
-    torchaudio.save(str(out_path), wav.cpu(), model.sr)
+    torchaudio.save(str(out_path), wav.cpu(), model_inst.sr)
 
     del wav
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
     gc.collect()
 
     print(f"[Chatterbox Server] Saved: {out_path.name} ({out_path.stat().st_size} bytes)")

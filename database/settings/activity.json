@@ -1,5 +1,12 @@
 [
   {
+    "id": "act-20260726211033695359",
+    "action": "asset_deleted",
+    "title": "Deleted asset audio/tts_1785074668.wav",
+    "detail": "",
+    "timestamp": "2026-07-26T15:40:33.695359+00:00"
+  },
+  {
     "id": "act-20260726192647088758",
     "action": "asset_deleted",
     "title": "Deleted asset audio/tts_1785073298.wav",
@@ -201,12 +208,5 @@
     "title": "content_os (HERMES FALLBACK)",
     "detail": "write a funny story script",
     "timestamp": "2026-07-25T19:51:04.221827+00:00"
-  },
-  {
-    "id": "act-20260726011938872040",
-    "action": "Agent Memory Updated",
-    "title": "content_os (HERMES FALLBACK)",
-    "detail": "write more context",
-    "timestamp": "2026-07-25T19:49:38.872040+00:00"
   }
 ]

@@ -753,16 +753,321 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         </div>
       </section>
 
-      <!-- View 9: Video Studio -->
-      <section id="v-video" class="view-panel">
-        <div class="view-header">
-          <h1>Video Studio</h1>
-          <p>Code-based HeyGen Hyperframe and HTML visual rendering engine.</p>
+      <!-- View 9: Video Studio (Adobe After Effects CC Style Workspace) -->
+      <section id="v-video" class="view-panel" style="padding: 0; background: #141416; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; user-select: none; display: flex; flex-direction: column; height: 100vh; width: 100%; overflow: hidden;">
+        
+        <!-- 1. TOP TOOLBAR / MENU STRIP (AFTER EFFECTS TOOLS) -->
+        <div style="height: 38px; background: #1f1f24; border-bottom: 1px solid #000000; display: flex; align-items: center; justify-content: space-between; padding: 0 10px; width: 100%; flex-shrink: 0;">
+          <!-- Left Tool Icons -->
+          <div style="display: flex; align-items: center; gap: 2px;">
+            <button class="ae-tool-btn active" title="Selection Tool (V)"><i class="ph-bold ph-cursor"></i></button>
+            <button class="ae-tool-btn" title="Hand Tool (H)"><i class="ph-bold ph-hand-grabbing"></i></button>
+            <button class="ae-tool-btn" title="Zoom Tool (Z)"><i class="ph-bold ph-magnifying-glass"></i></button>
+            <button class="ae-tool-btn" title="Orbit Camera Tool (C)"><i class="ph-bold ph-camera"></i></button>
+            <button class="ae-tool-btn" title="Rotation Tool (W)"><i class="ph-bold ph-arrows-clockwise"></i></button>
+            <span style="width: 1px; height: 18px; background: #333338; margin: 0 4px;"></span>
+            <button class="ae-tool-btn" title="Rectangle / Shape Tool (Q)"><i class="ph-bold ph-square"></i></button>
+            <button class="ae-tool-btn" title="Pen Tool (G)"><i class="ph-bold ph-vector-two"></i></button>
+            <button class="ae-tool-btn" title="Horizontal Type Tool (T)"><i class="ph-bold ph-text-t"></i></button>
+            <button class="ae-tool-btn" title="Brush Tool (Ctrl+B)"><i class="ph-bold ph-paint-brush-broad"></i></button>
+            <button class="ae-tool-btn" title="Clone Stamp Tool"><i class="ph-bold ph-stamp"></i></button>
+            <button class="ae-tool-btn" title="Eraser Tool"><i class="ph-bold ph-eraser"></i></button>
+            <button class="ae-tool-btn" title="Puppet Pin Tool"><i class="ph-bold ph-push-pin"></i></button>
+          </div>
+
+          <!-- Center Aspect Ratio Selector -->
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <select id="ae-aspect-ratio" style="background: #121215; border: 1px solid #2d2d33; color: #d4d4d8; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem;">
+              <option value="16:9">1920x1080 (16:9)</option>
+              <option value="9:16">1080x1920 (9:16 Shorts)</option>
+              <option value="1:1">1080x1080 (1:1 Square)</option>
+            </select>
+          </div>
+
+          <!-- Right Status & Export -->
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 0.75rem; color: #a1a1aa; font-family: monospace;">Rust Engine: Active</span>
+            <button class="btn btn-primary btn-sm" id="ae-btn-export" style="padding: 4px 12px; font-size: 0.78rem; font-weight: 700;">
+              <i class="ph-bold ph-lightning"></i> Render Comp
+            </button>
+          </div>
         </div>
-        <div class="panel-card">
-          <h3><i class="ph-bold ph-video-camera"></i> Programmatic Renderer</h3>
-          <p style="color: var(--text-muted); font-size: 0.9rem;">Playwright headless screenshot and video card generator.</p>
-        </div>
+
+        <!-- 2. MAIN FLEX WORKSPACE CONTAINER (COLUMN LAYOUT) -->
+        <div id="ae-main-workspace" style="display: flex; flex-direction: column; flex: 1; min-height: 0; width: 100%; background: #141416; overflow: hidden; position: relative;">
+          
+          <!-- TOP 3-PANEL ROW (PROJECT | MONITOR | RIGHT STACK) -->
+          <div id="ae-top-row" style="display: flex; flex-direction: row; flex: 1; min-height: 180px; width: 100%; overflow: hidden; position: relative;">
+            
+            <!-- LEFT: PROJECT PANEL -->
+            <div id="ae-panel-project" style="width: 290px; min-width: 180px; max-width: 550px; background: #1a1a1e; border-right: 1px solid #000000; display: flex; flex-direction: column; flex-shrink: 0; overflow: hidden;">
+              <!-- Header Tab -->
+              <div style="height: 26px; background: #25252b; border-bottom: 1px solid #111; display: flex; align-items: center; justify-content: space-between; padding: 0 10px;">
+                <span style="font-size: 0.72rem; font-weight: 700; color: #d4d4d8;">Project ≡</span>
+                <label for="ae-import-file" style="cursor: pointer; font-size: 0.7rem; color: var(--accent-orange);"><i class="ph-bold ph-plus"></i> Import</label>
+                <input type="file" id="ae-import-file" multiple style="display: none;" />
+              </div>
+
+              <!-- Active Footage Info Preview -->
+              <div style="padding: 8px 10px; background: #141416; border-bottom: 1px solid #27272a; display: flex; gap: 10px; align-items: center;">
+                <div style="width: 50px; height: 35px; background: #09090b; border: 1px solid #3f3f46; border-radius: 3px; display: flex; align-items: center; justify-content: center; color: var(--accent-orange); font-size: 1.2rem;">
+                  <i class="ph-bold ph-film-strip"></i>
+                </div>
+                <div style="font-size: 0.7rem; color: #a1a1aa; line-height: 1.3;">
+                  <strong style="color: #ffffff; font-size: 0.75rem;" id="ae-info-title">IntroExercise</strong><br>
+                  <span id="ae-info-res">1920 x 1080 (16:9)</span><br>
+                  Δ 0;00;30;00, 29.97 fps
+                </div>
+              </div>
+
+              <!-- Search Bar -->
+              <div style="padding: 4px 6px; background: #1f1f24; border-bottom: 1px solid #27272a;">
+                <input type="text" placeholder="🔍 Search project items..." style="width: 100%; background: #121215; border: 1px solid #2d2d33; color: #ffffff; padding: 3px 8px; border-radius: 3px; font-size: 0.72rem;" />
+              </div>
+
+              <!-- Project Asset Table -->
+              <div style="flex: 1; overflow-y: auto; font-size: 0.72rem; color: #ccc;">
+                <div style="display: grid; grid-template-columns: 1fr 70px 55px; padding: 4px 8px; background: #222228; border-bottom: 1px solid #333; font-weight: 700; color: #888;">
+                  <span>Name</span>
+                  <span>Type</span>
+                  <span>FPS</span>
+                </div>
+                <div class="ae-asset-row selected">
+                  <span><i class="ph-bold ph-square" style="color: #f59e0b;"></i> IntroExercise</span>
+                  <span>Comp</span>
+                  <span>29.97</span>
+                </div>
+                <div class="ae-asset-row">
+                  <span><i class="ph-bold ph-video" style="color: #3b82f6;"></i> Footage_01.mp4</span>
+                  <span>Video</span>
+                  <span>29.97</span>
+                </div>
+                <div class="ae-asset-row">
+                  <span><i class="ph-bold ph-speaker-high" style="color: #10b981;"></i> Narration.wav</span>
+                  <span>Audio</span>
+                  <span>-</span>
+                </div>
+                <div class="ae-asset-row">
+                  <span><i class="ph-bold ph-text-t" style="color: #ec4899;"></i> Subtitles.srt</span>
+                  <span>Text</span>
+                  <span>-</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- VERTICAL SPLITTER 1 (PROJECT | MONITOR) -->
+            <div id="ae-split-col-1" class="ae-resizer-v" title="Drag to resize Project Panel"></div>
+
+            <!-- CENTER: COMPOSITION WINDOW / PREVIEW VIEWPORT -->
+            <div id="ae-panel-monitor" style="flex: 1; min-width: 300px; background: #1c1c22; border-right: 1px solid #000000; display: flex; flex-direction: column; position: relative; overflow: hidden;">
+              <!-- Comp Tab Bar -->
+              <div style="height: 26px; background: #25252b; border-bottom: 1px solid #111; display: flex; align-items: center; padding: 0 10px;">
+                <span style="font-size: 0.72rem; font-weight: 700; color: #ffffff; background: #1c1c22; padding: 4px 12px; border-radius: 4px 4px 0 0; border: 1px solid #333; border-bottom: none; display: flex; align-items: center; gap: 6px;">
+                  <i class="ph-bold ph-lock-key" style="color: #f59e0b;"></i> Composition: IntroExercise <i class="ph-bold ph-x" style="cursor: pointer; font-size: 0.65rem;"></i>
+                </span>
+              </div>
+
+              <!-- Composition Preview Viewport Area (Classic After Effects Grey Backdrop) -->
+              <div style="flex: 1; display: flex; align-items: center; justify-content: center; background: #26262d; position: relative; padding: 16px; overflow: hidden;">
+                <!-- DYNAMIC REAL COMPOSITION SCREEN BOX -->
+                <div id="ae-comp-stage-box" class="aspect-16-9" style="position: relative; background: #000000; box-shadow: 0 12px 48px rgba(0,0,0,0.95); border: 1px solid #3a3a42; border-radius: 2px; display: flex; align-items: center; justify-content: center; overflow: hidden; transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);">
+                  <!-- Composition Stage Grid & Watermark Badge -->
+                  <div style="position: absolute; top: 8px; left: 10px; font-size: 0.65rem; font-family: monospace; color: #666675; z-index: 5; pointer-events: none;" id="ae-stage-badge">
+                    1920 x 1080 • 16:9 LANDSCAPE STAGE
+                  </div>
+                  
+                  <canvas id="ae-preview-canvas" width="1920" height="1080" style="width: 100%; height: 100%; object-fit: contain; background: #000;"></canvas>
+                </div>
+              </div>
+
+              <!-- Viewport Bottom Control Bar (After Effects Style) -->
+              <div style="height: 30px; background: #1f1f24; border-top: 1px solid #27272a; display: flex; align-items: center; justify-content: space-between; padding: 0 10px; font-size: 0.72rem; color: #a1a1aa;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <select style="background: #121215; border: 1px solid #333; color: #ccc; padding: 2px 4px; border-radius: 3px; font-size: 0.7rem;"><option>50%</option><option>100%</option><option>Fit</option></select>
+                  <i class="ph-bold ph-grid-four" title="Toggle Grid" style="cursor: pointer;"></i>
+                  <i class="ph-bold ph-clock" title="Timecode"></i> <span style="font-family: monospace; color: var(--accent-orange);" id="ae-timecode-display">0;00;00;00</span>
+                  <select style="background: #121215; border: 1px solid #333; color: #ccc; padding: 2px 4px; border-radius: 3px; font-size: 0.7rem;"><option>(Full)</option><option>(Half)</option><option>(Quarter)</option></select>
+                  <span>Active Camera</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <button class="btn btn-icon btn-sm" id="ae-btn-play" style="padding: 2px 10px;"><i class="ph-bold ph-play" id="ae-play-icon"></i></button>
+                </div>
+              </div>
+            </div>
+
+            <!-- VERTICAL SPLITTER 2 (MONITOR | RIGHT STACK) -->
+            <div id="ae-split-col-2" class="ae-resizer-v" title="Drag to resize Inspector Panel"></div>
+
+            <!-- RIGHT: STACKED PANELS (CHARACTER/PARAGRAPH & EFFECTS) -->
+            <div id="ae-panel-right" style="width: 280px; min-width: 200px; max-width: 500px; background: #1a1a1e; display: flex; flex-direction: column; flex-shrink: 0; overflow: hidden;">
+              
+              <!-- Top Right: Character & Paragraph Panel -->
+              <div style="flex: 1; border-bottom: 1px solid #27272a; display: flex; flex-direction: column;">
+                <div style="height: 26px; background: #25252b; border-bottom: 1px solid #111; display: flex; align-items: center; padding: 0 10px; font-size: 0.72rem; font-weight: 700; color: #d4d4d8;">
+                  Character & Paragraph
+                </div>
+                <div style="padding: 10px; display: flex; flex-direction: column; gap: 10px; font-size: 0.72rem; color: #aaa;">
+                  <!-- Font Family -->
+                  <div style="display: flex; gap: 6px;">
+                    <select style="flex: 1; background: #121215; border: 1px solid #333; color: #fff; padding: 4px; border-radius: 3px; font-size: 0.72rem;">
+                      <option>Helvetica Neue</option>
+                      <option>Inter</option>
+                      <option>Roboto</option>
+                    </select>
+                    <select style="width: 70px; background: #121215; border: 1px solid #333; color: #fff; padding: 4px; border-radius: 3px; font-size: 0.72rem;">
+                      <option>Regular</option>
+                      <option>Bold</option>
+                    </select>
+                  </div>
+
+                  <!-- Size & Tracking -->
+                  <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span><i class="ph-bold ph-text-t"></i> 36 px</span>
+                    <span><i class="ph-bold ph-arrows-out-line-horizontal"></i> Auto</span>
+                    <span><i class="ph-bold ph-text-h"></i> 0</span>
+                  </div>
+
+                  <!-- Text Formatting Options -->
+                  <div style="display: flex; gap: 4px; justify-content: center; background: #141416; padding: 4px; border-radius: 4px;">
+                    <button class="ae-text-toggle active"><b>B</b></button>
+                    <button class="ae-text-toggle"><i>I</i></button>
+                    <button class="ae-text-toggle">TT</button>
+                    <button class="ae-text-toggle">Tt</button>
+                    <button class="ae-text-toggle">T¹</button>
+                    <button class="ae-text-toggle">T₁</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bottom Right: Effects & Presets Panel -->
+              <div style="flex: 1.2; display: flex; flex-direction: column;">
+                <div style="height: 26px; background: #25252b; border-bottom: 1px solid #111; display: flex; align-items: center; padding: 0 10px; font-size: 0.72rem; font-weight: 700; color: #d4d4d8;">
+                  Effects & Presets ≡
+                </div>
+                <div style="padding: 4px 6px; background: #1f1f24; border-bottom: 1px solid #27272a;">
+                  <input type="text" placeholder="🔍 Search effects..." style="width: 100%; background: #121215; border: 1px solid #2d2d33; color: #ffffff; padding: 3px 8px; border-radius: 3px; font-size: 0.72rem;" />
+                </div>
+                <div style="flex: 1; overflow-y: auto; padding: 4px 6px; font-size: 0.72rem; color: #aaa; display: flex; flex-direction: column; gap: 2px;">
+                  <div class="ae-fx-cat">▶ Animation Presets</div>
+                  <div class="ae-fx-cat">▶ 3D Channel</div>
+                  <div class="ae-fx-cat">▶ Audio</div>
+                  <div class="ae-fx-cat">▶ Blur & Sharpen</div>
+                  <div class="ae-fx-cat">▶ Channel</div>
+                  <div class="ae-fx-cat">▶ Color Correction</div>
+                  <div class="ae-fx-cat">▶ Distort</div>
+                  <div class="ae-fx-cat">▶ Keying</div>
+                  <div class="ae-fx-cat">▶ Perspective</div>
+                  <div class="ae-fx-cat">▶ Simulation</div>
+                  <div class="ae-fx-cat">▶ Stylize</div>
+                  <div class="ae-fx-cat">▶ Text</div>
+                  <div class="ae-fx-cat">▶ Transition</div>
+                </div>
+              </div>
+            </div>
+
+          </div> <!-- END OF ae-top-row -->
+
+          <!-- HORIZONTAL SPLITTER (TOP PANELS | BOTTOM TIMELINE) -->
+          <div id="ae-split-row-bottom" class="ae-resizer-h" title="Drag to resize Timeline height"></div>
+
+          <!-- 5. BOTTOM WIDTH: TIMELINE & LAYER STACK (AFTER EFFECTS CC LAYOUT) -->
+          <div id="ae-panel-timeline" style="height: 240px; min-height: 120px; max-height: 500px; width: 100%; background: #18181c; border-top: 1px solid #000000; display: grid; grid-template-columns: 380px 1fr; overflow: hidden; flex-shrink: 0;">
+            
+            <!-- Left: Layer Property Controls (380px) -->
+            <div style="border-right: 1px solid #000000; display: flex; flex-direction: column; background: #1c1c21; overflow: hidden;">
+              <!-- Header Bar -->
+              <div style="height: 24px; background: #25252b; border-bottom: 1px solid #111; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; font-size: 0.7rem; color: #aaa; font-weight: 700;">
+                <span># Layer Name</span>
+                <div style="display: flex; gap: 10px;">
+                  <span>👁️</span><span>🔊</span><span>S</span><span>🔒</span>
+                </div>
+              </div>
+
+              <!-- Layer List & Expandable Properties Tree -->
+              <div style="flex: 1; overflow-y: auto; font-size: 0.72rem; color: #d4d4d8;">
+                <!-- Layer 1: Shape Layer -->
+                <div style="background: #24242c; padding: 4px 8px; border-bottom: 1px solid #18181b; display: flex; justify-content: space-between; align-items: center;">
+                  <span>▼ 1 <i class="ph-bold ph-star" style="color: #f59e0b;"></i> Shape Layer 1</span>
+                  <span style="color: #71717a; font-size: 0.68rem;">Parent: @ None</span>
+                </div>
+                <div style="padding-left: 20px; background: #1a1a1e; color: #a1a1aa; display: flex; flex-direction: column; gap: 2px; border-bottom: 1px solid #111;">
+                  <div style="padding: 2px 0;">▼ Contents</div>
+                  <div style="padding: 2px 0;">▼ Transform</div>
+                  <div style="padding-left: 14px; display: flex; justify-content: space-between; padding-right: 10px; color: #e4e4e7;">
+                    <span>⏱️ Anchor Point</span><span>0.0, 0.0</span>
+                  </div>
+                  <div style="padding-left: 14px; display: flex; justify-content: space-between; padding-right: 10px; color: #e4e4e7;">
+                    <span>⏱️ Position</span><span style="color: var(--accent-orange);">820.0, 636.0</span>
+                  </div>
+                  <div style="padding-left: 14px; display: flex; justify-content: space-between; padding-right: 10px; color: #e4e4e7;">
+                    <span>⏱️ Scale</span><span>100.0%, 100.0%</span>
+                  </div>
+                  <div style="padding-left: 14px; display: flex; justify-content: space-between; padding-right: 10px; color: #e4e4e7;">
+                    <span>⏱️ Rotation</span><span>0x +0.0°</span>
+                  </div>
+                  <div style="padding-left: 14px; display: flex; justify-content: space-between; padding-right: 10px; color: #e4e4e7;">
+                    <span>⏱️ Opacity</span><span>100%</span>
+                  </div>
+                </div>
+
+                <!-- Layer 2: Video Footage -->
+                <div style="background: #202026; padding: 4px 8px; border-bottom: 1px solid #18181b; display: flex; justify-content: space-between; align-items: center;">
+                  <span>▶ 2 <i class="ph-bold ph-video" style="color: #3b82f6;"></i> Footage_01.mp4</span>
+                  <span style="color: #71717a; font-size: 0.68rem;">Parent: @ None</span>
+                </div>
+              </div>
+
+              <!-- Bottom Toggle Modes Button -->
+              <div style="height: 24px; background: #141416; border-top: 1px solid #27272a; display: flex; align-items: center; justify-content: center;">
+                <button style="background: #222; border: 1px solid #333; color: #aaa; padding: 2px 10px; border-radius: 3px; font-size: 0.68rem; cursor: pointer;">Toggle Switches / Modes</button>
+              </div>
+            </div>
+
+            <!-- Right: Time Ruler & Keyframe Tracks (1fr) -->
+            <div style="display: flex; flex-direction: column; background: #141416; position: relative; overflow-x: auto;">
+              <!-- Time Ruler Bar -->
+              <div style="height: 24px; background: #1f1f24; border-bottom: 1px solid #000; position: relative; font-family: monospace; font-size: 0.68rem; color: #71717a; display: flex; align-items: center; padding-left: 10px;">
+                <span style="position: absolute; left: 0px;">00s</span>
+                <span style="position: absolute; left: 100px;">02s</span>
+                <span style="position: absolute; left: 200px;">04s</span>
+                <span style="position: absolute; left: 300px;">06s</span>
+                <span style="position: absolute; left: 400px;">08s</span>
+                <span style="position: absolute; left: 500px;">10s</span>
+                <span style="position: absolute; left: 600px;">12s</span>
+                <span style="position: absolute; left: 700px;">14s</span>
+              </div>
+
+              <!-- Keyframe Track Canvas Area -->
+              <div style="flex: 1; position: relative; background: #121214;">
+                <!-- Work Area Bar -->
+                <div style="position: absolute; top: 0; left: 0; width: 650px; height: 6px; background: #3b82f6; border-radius: 2px;"></div>
+
+                <!-- Layer 1 Duration & Keyframes -->
+                <div style="height: 120px; border-bottom: 1px solid #1a1a1e; position: relative;">
+                  <div style="position: absolute; top: 8px; left: 0; width: 500px; height: 22px; background: rgba(245, 158, 11, 0.25); border: 1px solid #f59e0b; border-radius: 3px;">
+                    <!-- Keyframe Diamonds -->
+                    <div style="position: absolute; left: 50px; top: 4px; width: 10px; height: 10px; background: #f59e0b; transform: rotate(45deg);" title="Keyframe: Position"></div>
+                    <div style="position: absolute; left: 220px; top: 4px; width: 10px; height: 10px; background: #f59e0b; transform: rotate(45deg);" title="Keyframe: Scale"></div>
+                    <div style="position: absolute; left: 380px; top: 4px; width: 10px; height: 10px; background: #f59e0b; transform: rotate(45deg);" title="Keyframe: Opacity"></div>
+                  </div>
+                </div>
+
+                <!-- Layer 2 Duration -->
+                <div style="height: 40px; position: relative;">
+                  <div style="position: absolute; top: 8px; left: 100px; width: 450px; height: 22px; background: rgba(59, 130, 246, 0.25); border: 1px solid #3b82f6; border-radius: 3px;"></div>
+                </div>
+
+                <!-- Scrubber Line -->
+                <div id="ae-playhead-line" style="position: absolute; top: 0; bottom: 0; left: 180px; width: 2px; background: var(--accent-orange); z-index: 10; pointer-events: none;">
+                  <div style="width: 10px; height: 10px; background: var(--accent-orange); transform: translateX(-4px) rotate(45deg); position: absolute; top: 0;"></div>
+                </div>
+              </div>
+            </div>
+
+          </div> <!-- END OF ae-panel-timeline -->
+
+        </div> <!-- END OF ae-main-workspace -->
+
       </section>
 
       <!-- View 10: Audio Studio -->

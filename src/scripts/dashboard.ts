@@ -1476,7 +1476,7 @@ function initAssetsVault() {
     formData.append('category', currentAssetFilter === 'all' ? 'imports' : currentAssetFilter);
 
     try {
-      const res = await fetch('/api/assets-vault/upload', {
+      const res = await fetch(`${API_BASE}/api/assets-vault/upload`, {
         method: 'POST',
         body: formData
       });
@@ -2668,13 +2668,196 @@ function initTTSStudio() {
   }, 4000);
 }
 
-// Auto-initialize Workflow Studio & System Logs Engine on load
+// Auto-initialize Workflow Studio, System Logs, TTS, and Video Studio on load
 if (typeof window !== 'undefined') {
   document.addEventListener('DOMContentLoaded', () => {
     initWorkflowStudio();
     initSystemLogs();
     initTTSStudio();
+    initVideoStudio();
   });
-  setTimeout(initWorkflowStudio, 200);
+  setTimeout(() => {
+    initWorkflowStudio();
+    initVideoStudio();
+  }, 200);
 }
+
+function initVideoStudio() {
+  const aspectSelect = $<HTMLSelectElement>('#ae-aspect-ratio');
+  const stageBox = $('#ae-comp-stage-box');
+  const stageBadge = $('#ae-stage-badge');
+  const previewCanvas = $<HTMLCanvasElement>('#ae-preview-canvas');
+  const infoRes = $('#ae-info-res');
+
+  // 1. Dynamic Composition Stage Aspect Ratio Switcher
+  function updateCompositionStage() {
+    if (!aspectSelect || !stageBox) return;
+    const ratio = aspectSelect.value;
+    stageBox.classList.remove('aspect-16-9', 'aspect-9-16', 'aspect-1-1');
+
+    if (ratio === '9:16') {
+      stageBox.classList.add('aspect-9-16');
+      if (stageBadge) stageBadge.textContent = '1080 x 1920 • 9:16 SHORTS/REELS STAGE';
+      if (infoRes) infoRes.textContent = '1080 x 1920 (9:16)';
+      if (previewCanvas) {
+        previewCanvas.width = 1080;
+        previewCanvas.height = 1920;
+      }
+    } else if (ratio === '1:1') {
+      stageBox.classList.add('aspect-1-1');
+      if (stageBadge) stageBadge.textContent = '1080 x 1080 • 1:1 SQUARE STAGE';
+      if (infoRes) infoRes.textContent = '1080 x 1080 (1:1)';
+      if (previewCanvas) {
+        previewCanvas.width = 1080;
+        previewCanvas.height = 1080;
+      }
+    } else {
+      stageBox.classList.add('aspect-16-9');
+      if (stageBadge) stageBadge.textContent = '1920 x 1080 • 16:9 LANDSCAPE STAGE';
+      if (infoRes) infoRes.textContent = '1920 x 1080 (16:9)';
+      if (previewCanvas) {
+        previewCanvas.width = 1920;
+        previewCanvas.height = 1080;
+      }
+    }
+    drawCompositionGuide();
+  }
+
+  function drawCompositionGuide() {
+    if (!previewCanvas) return;
+    const ctx = previewCanvas.getContext('2d');
+    if (!ctx) return;
+    const w = previewCanvas.width;
+    const h = previewCanvas.height;
+
+    ctx.fillStyle = '#08080a';
+    ctx.fillRect(0, 0, w, h);
+
+    // Subtle grid pattern
+    ctx.strokeStyle = '#18181f';
+    ctx.lineWidth = 1;
+    const step = 80;
+    for (let x = 0; x < w; x += step) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, h);
+      ctx.stroke();
+    }
+    for (let y = 0; y < h; y += step) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(w, y);
+      ctx.stroke();
+    }
+
+    // Center Crosshair Guidelines
+    ctx.strokeStyle = '#272730';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(w / 2 - 30, h / 2);
+    ctx.lineTo(w / 2 + 30, h / 2);
+    ctx.moveTo(w / 2, h / 2 - 30);
+    ctx.lineTo(w / 2, h / 2 + 30);
+    ctx.stroke();
+  }
+
+  if (aspectSelect) {
+    aspectSelect.addEventListener('change', updateCompositionStage);
+    updateCompositionStage();
+  }
+
+  // 2. Interactive Workspace Panel Resizers (Mouse Dragging)
+  const splitCol1 = $('#ae-split-col-1');
+  const splitCol2 = $('#ae-split-col-2');
+  const splitRowBottom = $('#ae-split-row-bottom');
+
+  const panelProject = $<HTMLElement>('#ae-panel-project');
+  const panelRight = $<HTMLElement>('#ae-panel-right');
+  const panelTimeline = $<HTMLElement>('#ae-panel-timeline');
+
+  // Resize Left Project Panel
+  if (splitCol1 && panelProject) {
+    let isDragging = false;
+    splitCol1.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      isDragging = true;
+      splitCol1.classList.add('dragging');
+      document.body.style.cursor = 'col-resize';
+
+      const onMouseMove = (moveEvt: MouseEvent) => {
+        if (!isDragging) return;
+        const newWidth = Math.max(180, Math.min(moveEvt.clientX - panelProject.getBoundingClientRect().left, 550));
+        panelProject.style.width = `${newWidth}px`;
+      };
+
+      const onMouseUp = () => {
+        isDragging = false;
+        splitCol1.classList.remove('dragging');
+        document.body.style.cursor = '';
+        window.removeEventListener('mousemove', onMouseMove);
+        window.removeEventListener('mouseup', onMouseUp);
+      };
+
+      window.addEventListener('mousemove', onMouseMove);
+      window.addEventListener('mouseup', onMouseUp);
+    });
+  }
+
+  // Resize Right Panel Stack
+  if (splitCol2 && panelRight) {
+    let isDragging = false;
+    splitCol2.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      isDragging = true;
+      splitCol2.classList.add('dragging');
+      document.body.style.cursor = 'col-resize';
+
+      const onMouseMove = (moveEvt: MouseEvent) => {
+        if (!isDragging) return;
+        const newWidth = Math.max(200, Math.min(window.innerWidth - moveEvt.clientX, 500));
+        panelRight.style.width = `${newWidth}px`;
+      };
+
+      const onMouseUp = () => {
+        isDragging = false;
+        splitCol2.classList.remove('dragging');
+        document.body.style.cursor = '';
+        window.removeEventListener('mousemove', onMouseMove);
+        window.removeEventListener('mouseup', onMouseUp);
+      };
+
+      window.addEventListener('mousemove', onMouseMove);
+      window.addEventListener('mouseup', onMouseUp);
+    });
+  }
+
+  // Resize Bottom Timeline Height
+  if (splitRowBottom && panelTimeline) {
+    let isDragging = false;
+    splitRowBottom.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      isDragging = true;
+      splitRowBottom.classList.add('dragging');
+      document.body.style.cursor = 'row-resize';
+
+      const onMouseMove = (moveEvt: MouseEvent) => {
+        if (!isDragging) return;
+        const newHeight = Math.max(120, Math.min(window.innerHeight - moveEvt.clientY, 500));
+        panelTimeline.style.height = `${newHeight}px`;
+      };
+
+      const onMouseUp = () => {
+        isDragging = false;
+        splitRowBottom.classList.remove('dragging');
+        document.body.style.cursor = '';
+        window.removeEventListener('mousemove', onMouseMove);
+        window.removeEventListener('mouseup', onMouseUp);
+      };
+
+      window.addEventListener('mousemove', onMouseMove);
+      window.addEventListener('mouseup', onMouseUp);
+    });
+  }
+}
+
 

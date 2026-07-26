@@ -1,6 +1,7 @@
 import { spawn, exec } from 'node:child_process';
 import path from 'node:path';
 import fs from 'node:fs';
+import http from 'node:http';
 import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -22,7 +23,6 @@ if (process.platform === 'win32' && fs.existsSync(venvPythonWin)) {
 }
 
 const npxCmd = process.platform === 'win32' ? 'npx.cmd' : 'npx';
-
 let browserOpened = false;
 
 function openBrowser(url) {
@@ -38,6 +38,29 @@ function openBrowser(url) {
   }
 }
 
+// Poll server readiness via HTTP GET before opening browser to eliminate blank page delay
+function waitForServer(url, timeoutMs = 15000) {
+  const start = Date.now();
+  const check = () => {
+    http.get(url, (res) => {
+      if (res.statusCode && res.statusCode >= 200 && res.statusCode < 500) {
+        openBrowser(url);
+      } else if (Date.now() - start < timeoutMs) {
+        setTimeout(check, 150);
+      } else {
+        openBrowser(url);
+      }
+    }).on('error', () => {
+      if (Date.now() - start < timeoutMs) {
+        setTimeout(check, 150);
+      } else {
+        openBrowser(url);
+      }
+    });
+  };
+  check();
+}
+
 // 1. Launch FastAPI Backend Server
 console.log(`\x1b[36m[System]\x1b[0m Starting Backend API on http://localhost:8000 ...`);
 const backendProcess = spawn(
@@ -48,23 +71,27 @@ const backendProcess = spawn(
 
 backendProcess.stderr?.on('data', (data) => {
   const str = data.toString();
-  // Only print critical non-logging python errors if process fails
   if (str.includes('Traceback (most recent call last)')) {
     console.error(`\x1b[31m[Backend Error]\x1b[0m ${str.trim()}`);
   }
 });
 
-// 2. Launch Astro Frontend Dev Server
-console.log(`\x1b[36m[System]\x1b[0m Starting Astro Web Workspace on http://localhost:4321 ...`);
+// 2. Launch Astro Web Workspace (Use prebuilt dist/ for 0.06s instant load if available, or dev mode)
+const hasPrebuilt = fs.existsSync(path.join(__dirname, 'dist', 'index.html'));
+const astroArgs = hasPrebuilt
+  ? ['astro', 'preview', '--port', '4321']
+  : ['astro', 'dev', '--port', '4321'];
+
+console.log(`\x1b[36m[System]\x1b[0m Starting Astro Web Workspace on http://localhost:4321 ${hasPrebuilt ? '(Instant Build)' : '(Dev Mode)'}...`);
 const frontendProcess = spawn(
   npxCmd,
-  ['astro', 'dev', '--port', '4321'],
+  astroArgs,
   { cwd: __dirname, shell: true }
 );
 
 let chatterboxProcess = null;
 
-// Delay Chatterbox TTS startup by 2.5 seconds so Astro & FastAPI launch instantly (1-2s)
+// Delay Chatterbox TTS startup slightly so Astro & FastAPI initialize with zero CPU contention
 setTimeout(() => {
   console.log(`\x1b[36m[System]\x1b[0m Starting Chatterbox TTS Local Web Studio on http://localhost:8001 ...`);
   chatterboxProcess = spawn(
@@ -79,26 +106,10 @@ setTimeout(() => {
       console.error(`\x1b[31m[Chatterbox Error]\x1b[0m ${str.trim()}`);
     }
   });
-}, 2500);
+}, 2000);
 
-frontendProcess.stdout?.on('data', (data) => {
-  const str = data.toString();
-  if (str.includes('http://localhost:4321') || str.includes('ready in') || str.includes('Local:')) {
-    openBrowser('http://localhost:4321');
-  }
-});
-
-frontendProcess.stderr?.on('data', (data) => {
-  const str = data.toString();
-  if (str.includes('http://localhost:4321') || str.includes('ready in') || str.includes('Local:')) {
-    openBrowser('http://localhost:4321');
-  }
-});
-
-// Auto-open browser after 2.5 seconds
-setTimeout(() => {
-  openBrowser('http://localhost:4321');
-}, 2500);
+// Wait for HTTP response on port 4321 before popping browser tab
+waitForServer('http://localhost:4321');
 
 // Cleanup processes on termination
 function cleanup() {

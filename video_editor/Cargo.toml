@@ -1,0 +1,19 @@
+[package]
+name = "video_editor"
+version = "0.1.0"
+edition = "2021"
+authors = ["Content OS Core Team"]
+description = "High-performance native Rust video composite and rendering engine for Content OS"
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1.0", features = ["full"] }
+
+[lib]
+name = "video_editor_engine"
+path = "src/lib.rs"
+
+[[bin]]
+name = "video_editor_server"
+path = "src/main.rs"

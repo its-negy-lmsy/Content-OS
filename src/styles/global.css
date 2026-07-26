@@ -354,7 +354,7 @@ button {
 
 /* View Panels Structure */
 .view-panel {
-  display: none;
+  display: none !important;
   padding: 32px;
   max-width: 1500px;
   width: 100%;
@@ -362,7 +362,7 @@ button {
 }
 
 .view-panel.active {
-  display: block;
+  display: block !important;
 }
 
 .view-header {
@@ -2689,6 +2689,154 @@ button {
   color: #000000;
   border-color: var(--accent-orange);
 }
+
+/* After Effects Pro Dark Workspace Styles */
+.ae-tool-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: #a1a1aa;
+  width: 26px;
+  height: 26px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.ae-tool-btn:hover {
+  background: #2a2a30;
+  color: #ffffff;
+}
+
+.ae-tool-btn.active {
+  background: var(--accent-orange);
+  color: #000000;
+  border-color: var(--accent-orange);
+}
+
+.ae-asset-row {
+  display: grid;
+  grid-template-columns: 1fr 70px 55px;
+  padding: 4px 8px;
+  border-bottom: 1px solid #1a1a1e;
+  cursor: pointer;
+}
+
+.ae-asset-row:hover {
+  background: #25252c;
+  color: #ffffff;
+}
+
+.ae-asset-row.selected {
+  background: #3b82f6;
+  color: #ffffff;
+}
+
+.ae-text-toggle {
+  background: #1f1f24;
+  border: 1px solid #333;
+  color: #aaa;
+  width: 24px;
+  height: 22px;
+  font-size: 0.7rem;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.ae-text-toggle.active, .ae-text-toggle:hover {
+  background: #3b82f6;
+  color: #fff;
+  border-color: #3b82f6;
+}
+
+.ae-fx-cat {
+  padding: 3px 6px;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.ae-fx-cat:hover {
+  background: #25252c;
+  color: #fff;
+}
+
+/* Resizable Workspace Splitter Handles */
+.ae-resizer-v {
+  width: 5px;
+  background: #141416;
+  border-left: 1px solid #111115;
+  border-right: 1px solid #111115;
+  cursor: col-resize;
+  z-index: 20;
+  transition: background 0.15s ease;
+  flex-shrink: 0;
+}
+
+.ae-resizer-v:hover, .ae-resizer-v.dragging {
+  background: var(--accent-orange);
+  border-color: var(--accent-orange);
+}
+
+.ae-resizer-h {
+  height: 5px;
+  background: #141416;
+  border-top: 1px solid #111115;
+  border-bottom: 1px solid #111115;
+  cursor: row-resize;
+  z-index: 20;
+  transition: background 0.15s ease;
+  flex-shrink: 0;
+}
+
+.ae-resizer-h:hover, .ae-resizer-h.dragging {
+  background: var(--accent-orange);
+  border-color: var(--accent-orange);
+}
+
+/* Dynamic Composition Aspect Ratio Screen Box */
+#ae-comp-stage-box.aspect-16-9 {
+  aspect-ratio: 16 / 9;
+  max-width: 90%;
+  max-height: 90%;
+  width: 100%;
+}
+
+#ae-comp-stage-box.aspect-9-16 {
+  aspect-ratio: 9 / 16;
+  max-width: 50%;
+  max-height: 92%;
+  height: 92%;
+}
+
+#ae-comp-stage-box.aspect-1-1 {
+  aspect-ratio: 1 / 1;
+  max-height: 88%;
+  max-width: 88%;
+  height: 88%;
+}
+
+/* Full height Video Studio workspace layout override */
+#v-video.view-panel {
+  display: none !important;
+  padding: 0 !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  margin: 0 !important;
+}
+
+#v-video.view-panel.active {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100vh !important;
+  max-height: 100vh !important;
+  overflow: hidden !important;
+}
+
+
+
 
 
 

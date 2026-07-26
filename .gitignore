@@ -5,3 +5,12 @@ __pycache__/
 .venv/
 data/
 .env
+
+# Database runtime files & logs
+database/cache/
+database/settings/*.log
+database/settings/*.db
+database/settings/chatterbox.log
+database/assets_vault/
+database/hyperframes_studio/
+*.log
