@@ -2696,7 +2696,7 @@ function initVideoStudio() {
   const toolBtns = $$('.ae-tool-btn');
 
   // Video State & Timeline Data
-  const pxPerSec = 50; // 50px per second on timeline ruler
+  let pxPerSec = 40; // 40px per second on timeline ruler (Dynamic zoom scale)
   let isPlaying = false;
   let playheadTime = 0.0; // in seconds
   let timelineDuration = 30.0;
@@ -2933,27 +2933,73 @@ function initVideoStudio() {
       const color = targetTrack.color;
       const borderColor = isSelected ? '#ffffff' : targetTrack.border;
 
+      // CapCut Category Badge Pill
+      const categoryLabel = clip.media_type === 'video' ? 'Video' : clip.media_type === 'audio' ? 'Audio' : 'Vector Image';
+      const categoryBadgeColor = clip.media_type === 'video' ? '#3b82f6' : clip.media_type === 'audio' ? '#10b981' : '#f59e0b';
+      const badgeHTML = `<span style="position: absolute; top: -14px; left: 0; background: ${categoryBadgeColor}; color: #ffffff; padding: 0px 5px; border-radius: 3px 3px 0 0; font-size: 0.58rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; pointer-events: none; z-index: 4;">${categoryLabel}</span>`;
+
+      // CapCut Audio Waveform SVG Pattern
+      let waveSVG = '';
+      if (clip.media_type === 'audio') {
+        waveSVG = `
+          <svg style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.4; pointer-events: none;" preserveAspectRatio="none" viewBox="0 0 100 28">
+            <path d="M 0 14 Q 5 4, 10 14 T 20 14 T 30 4 T 40 24 T 50 14 T 60 4 T 70 24 T 80 14 T 90 4 T 100 14 L 100 28 L 0 28 Z" fill="#10b981" />
+          </svg>
+        `;
+      }
+
+      // CapCut Video Filmstrip Thumbnails Pattern
+      let filmstripHTML = '';
+      if (clip.media_type === 'video') {
+        filmstripHTML = `
+          <div style="position: absolute; inset: 0; opacity: 0.25; background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 16px 16px; pointer-events: none;"></div>
+        `;
+      }
+
       let keyframeDiamonds = '';
       if (clip.keyframes && clip.keyframes.length > 0) {
-        clip.keyframes.forEach((kf: any) => {
-          const kfLeft = (kf.time_sec - clip.start_time) * pxPerSec;
+        clip.keyframes.forEach((kf: any, kfIdx: number) => {
+          const offsetSec = kf.clip_offset_sec !== undefined ? kf.clip_offset_sec : Math.max(0, (kf.time_sec || 0) - clip.start_time);
+          const kfLeft = offsetSec * pxPerSec;
           if (kfLeft >= 0 && kfLeft <= widthPx) {
-            keyframeDiamonds += `<div style="position: absolute; left: ${kfLeft}px; top: 8px; width: 8px; height: 8px; background: #f59e0b; transform: rotate(45deg); z-index: 5;" title="Keyframe: ${kf.property}"></div>`;
+            const easeType = kf.easing || 'linear';
+            let shapeHTML = '';
+            if (easeType === 'ease') {
+              shapeHTML = `<div class="ae-kf-node" data-clip-id="${clip.id}" data-kf-idx="${kfIdx}" style="position: absolute; left: ${kfLeft}px; top: 8px; width: 12px; height: 12px; color: #f59e0b; font-size: 11px; line-height: 12px; z-index: 10; cursor: pointer; text-shadow: 0 0 3px #000;" title="Keyframe (${kf.property}): Ease">⧖</div>`;
+            } else if (easeType === 'hold') {
+              shapeHTML = `<div class="ae-kf-node" data-clip-id="${clip.id}" data-kf-idx="${kfIdx}" style="position: absolute; left: ${kfLeft}px; top: 8px; width: 10px; height: 10px; color: #f59e0b; font-size: 10px; line-height: 10px; z-index: 10; cursor: pointer; text-shadow: 0 0 3px #000;" title="Keyframe (${kf.property}): Hold">■</div>`;
+            } else {
+              shapeHTML = `<div class="ae-kf-node" data-clip-id="${clip.id}" data-kf-idx="${kfIdx}" style="position: absolute; left: ${kfLeft}px; top: 10px; width: 8px; height: 8px; background: #f59e0b; transform: rotate(45deg); z-index: 10; cursor: pointer; box-shadow: 0 0 4px #000;" title="Keyframe (${kf.property}): Linear"></div>`;
+            }
+            keyframeDiamonds += shapeHTML;
           }
         });
       }
 
       tracksHTML += `
-        <div class="ae-clip-bar ${isSelected ? 'selected' : ''}" data-clip-id="${clip.id}" style="position: absolute; top: ${topPx}px; left: ${leftPx}px; width: ${widthPx}px; height: 28px; background: ${color}; border: 1px solid ${borderColor}; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 6px; color: #ffffff; font-size: 0.7rem; font-weight: 600; cursor: move; user-select: none; z-index: 3;">
-          <div class="ae-trim-handle-left" style="position: absolute; left: 0; top: 0; bottom: 0; width: 6px; cursor: w-resize; background: rgba(255,255,255,0.4); border-radius: 3px 0 0 3px;"></div>
-          <span style="pointer-events: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 4px;">${escapeHtml(clip.name)}</span>
+        <div class="ae-clip-bar ${isSelected ? 'selected' : ''}" data-clip-id="${clip.id}" style="position: absolute; top: ${topPx}px; left: ${leftPx}px; width: ${widthPx}px; height: 28px; background: ${color}; border: 1px solid ${borderColor}; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 6px; color: #ffffff; font-size: 0.7rem; font-weight: 600; cursor: move; user-select: none; z-index: 3; overflow: visible;">
+          ${badgeHTML}
+          ${filmstripHTML}
+          ${waveSVG}
+          <div class="ae-trim-handle-left" style="position: absolute; left: 0; top: 0; bottom: 0; width: 6px; cursor: w-resize; background: rgba(255,255,255,0.4); border-radius: 3px 0 0 3px; z-index: 6;"></div>
+          <span style="pointer-events: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 4px; z-index: 4; position: relative;">${escapeHtml(clip.name)}</span>
           ${keyframeDiamonds}
-          <div class="ae-trim-handle-right" style="position: absolute; right: 0; top: 0; bottom: 0; width: 6px; cursor: e-resize; background: rgba(255,255,255,0.4); border-radius: 0 3px 3px 0;"></div>
+          <div class="ae-trim-handle-right" style="position: absolute; right: 0; top: 0; bottom: 0; width: 6px; cursor: e-resize; background: rgba(255,255,255,0.4); border-radius: 0 3px 3px 0; z-index: 6;"></div>
         </div>
       `;
     });
 
     trackCanvasEl.innerHTML = tracksHTML;
+
+    // Attach Keyframe Node Click Listener to open Keyframe Settings Box in Inspector
+    trackCanvasEl.querySelectorAll('.ae-kf-node').forEach((node) => {
+      node.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const clipId = node.getAttribute('data-clip-id');
+        const kfIdx = parseInt(node.getAttribute('data-kf-idx') || '0', 10);
+        if (clipId) openKeyframeInspector(clipId, kfIdx);
+      });
+    });
 
     // Synchronize horizontal scrolling so ruler and canvas tracks match
     trackCanvasEl.addEventListener('scroll', () => {
@@ -3284,6 +3330,18 @@ function initVideoStudio() {
             }
           });
 
+          // Track Collision Auto-Displacement: Push overlapping clips on the same track lane
+          const currentTrackId = clip.track_id || 1;
+          activeTimeline.clips.forEach((otherClip) => {
+            if (otherClip.id !== clip.id && (otherClip.track_id || 1) === currentTrackId) {
+              const clipEnd = newStart + clip.duration;
+              const otherEnd = otherClip.start_time + otherClip.duration;
+              if (newStart < otherEnd && clipEnd > otherClip.start_time) {
+                otherClip.start_time = clipEnd;
+              }
+            }
+          });
+
           clip.start_time = newStart;
           renderTimeline();
         };
@@ -3297,6 +3355,231 @@ function initVideoStudio() {
         window.addEventListener('mousemove', onMove);
         window.addEventListener('mouseup', onUp);
       });
+    });
+  }
+
+  // CapCut Editing Action Tool Handlers (100% Functional Engine)
+  function splitClipAtPlayhead() {
+    const targetClip = activeTimeline.clips.find((c) => c.id === selectedClipId) ||
+                       activeTimeline.clips.find((c) => playheadTime >= c.start_time && playheadTime <= (c.start_time + c.duration));
+    if (!targetClip) return;
+
+    const splitTimeInClip = playheadTime - targetClip.start_time;
+    if (splitTimeInClip <= 0.2 || splitTimeInClip >= targetClip.duration - 0.2) return;
+
+    const duration1 = splitTimeInClip;
+    const duration2 = targetClip.duration - splitTimeInClip;
+
+    targetClip.duration = duration1;
+
+    const clip2Id = `clip_${Date.now()}`;
+    const newClip: any = {
+      ...JSON.parse(JSON.stringify(targetClip)),
+      id: clip2Id,
+      name: `${targetClip.name} (Part 2)`,
+      start_time: playheadTime,
+      duration: duration2,
+      in_point: (targetClip.in_point || 0) + splitTimeInClip,
+    };
+
+    activeTimeline.clips.push(newClip);
+    selectedClipId = clip2Id;
+
+    persistTimelineState();
+    renderTimeline();
+    drawCompositionGuide();
+  }
+
+  function splitLeftAtPlayhead() {
+    const targetClip = activeTimeline.clips.find((c) => c.id === selectedClipId) ||
+                       activeTimeline.clips.find((c) => playheadTime >= c.start_time && playheadTime <= (c.start_time + c.duration));
+    if (!targetClip) return;
+
+    const splitTimeInClip = playheadTime - targetClip.start_time;
+    if (splitTimeInClip <= 0.1 || splitTimeInClip >= targetClip.duration - 0.1) return;
+
+    targetClip.start_time = playheadTime;
+    targetClip.duration = targetClip.duration - splitTimeInClip;
+    targetClip.in_point = (targetClip.in_point || 0) + splitTimeInClip;
+
+    persistTimelineState();
+    renderTimeline();
+    drawCompositionGuide();
+  }
+
+  function splitRightAtPlayhead() {
+    const targetClip = activeTimeline.clips.find((c) => c.id === selectedClipId) ||
+                       activeTimeline.clips.find((c) => playheadTime >= c.start_time && playheadTime <= (c.start_time + c.duration));
+    if (!targetClip) return;
+
+    const splitTimeInClip = playheadTime - targetClip.start_time;
+    if (splitTimeInClip <= 0.1 || splitTimeInClip >= targetClip.duration - 0.1) return;
+
+    targetClip.duration = splitTimeInClip;
+
+    persistTimelineState();
+    renderTimeline();
+    drawCompositionGuide();
+  }
+
+  function deleteSelectedClip() {
+    if (!selectedClipId) return;
+    activeTimeline.clips = activeTimeline.clips.filter((c) => c.id !== selectedClipId);
+    selectedClipId = activeTimeline.clips[0]?.id || null;
+    persistTimelineState();
+    renderTimeline();
+    drawCompositionGuide();
+  }
+
+  let selectedKfIdx: { clipId: string; kfIdx: number } | null = null;
+
+  function addKeyframeAtPlayhead() {
+    const targetClip = activeTimeline.clips.find((c) => c.id === selectedClipId);
+    if (!targetClip) return;
+
+    if (!targetClip.keyframes) targetClip.keyframes = [];
+
+    const clipOffset = Math.max(0, Math.min(playheadTime - targetClip.start_time, targetClip.duration));
+    const existingIdx = targetClip.keyframes.findIndex((kf: any) => {
+      const off = kf.clip_offset_sec !== undefined ? kf.clip_offset_sec : Math.max(0, (kf.time_sec || 0) - targetClip.start_time);
+      return Math.abs(off - clipOffset) < 0.15;
+    });
+
+    if (existingIdx >= 0) {
+      targetClip.keyframes.splice(existingIdx, 1);
+      selectedKfIdx = null;
+    } else {
+      const newKf = {
+        clip_offset_sec: clipOffset,
+        property: 'position_x',
+        value: targetClip.transform?.position_x || 0,
+        easing: 'linear' as const,
+      };
+      targetClip.keyframes.push(newKf);
+      selectedKfIdx = { clipId: targetClip.id, kfIdx: targetClip.keyframes.length - 1 };
+      openKeyframeInspector(targetClip.id, targetClip.keyframes.length - 1);
+    }
+
+    persistTimelineState();
+    renderTimeline();
+    updateInspectorForSelectedClip();
+    drawCompositionGuide();
+  }
+
+  function openKeyframeInspector(clipId: string, kfIdx: number) {
+    const clip = activeTimeline.clips.find((c) => c.id === clipId);
+    if (!clip || !clip.keyframes || !clip.keyframes[kfIdx]) return;
+
+    selectedClipId = clipId;
+    selectedKfIdx = { clipId, kfIdx };
+
+    const kfBox = $<HTMLElement>('#ae-keyframe-settings-box');
+    const propNameEl = $('#ae-kf-prop-name');
+    const valInput = $<HTMLInputElement>('#ae-kf-val-input');
+    const easeBtns = $$('.kf-ease-btn');
+
+    if (kfBox) kfBox.style.display = 'block';
+
+    const kf = clip.keyframes[kfIdx];
+    if (propNameEl) propNameEl.textContent = kf.property || 'position_x';
+    if (valInput) valInput.value = String(kf.value !== undefined ? kf.value : 0);
+
+    const currentEase = kf.easing || 'linear';
+    easeBtns.forEach((btn) => {
+      const ease = btn.getAttribute('data-ease');
+      btn.classList.toggle('active', ease === currentEase);
+    });
+
+    renderTimeline();
+  }
+
+  function getInterpolatedClipValue(clip: any, property: string, defaultValue: number): number {
+    if (!clip || !clip.keyframes || clip.keyframes.length === 0) return defaultValue;
+
+    const kfs = clip.keyframes
+      .filter((k: any) => k.property === property)
+      .sort((a: any, b: any) => {
+        const offA = a.clip_offset_sec !== undefined ? a.clip_offset_sec : Math.max(0, (a.time_sec || 0) - clip.start_time);
+        const offB = b.clip_offset_sec !== undefined ? b.clip_offset_sec : Math.max(0, (b.time_sec || 0) - clip.start_time);
+        return offA - offB;
+      });
+
+    if (kfs.length === 0) return defaultValue;
+
+    const clipTime = Math.max(0, playheadTime - clip.start_time);
+
+    const getOffset = (k: any) => k.clip_offset_sec !== undefined ? k.clip_offset_sec : Math.max(0, (k.time_sec || 0) - clip.start_time);
+
+    if (clipTime <= getOffset(kfs[0])) return kfs[0].value;
+    if (clipTime >= getOffset(kfs[kfs.length - 1])) return kfs[kfs.length - 1].value;
+
+    for (let i = 0; i < kfs.length - 1; i++) {
+      const kf1 = kfs[i];
+      const kf2 = kfs[i + 1];
+      const t1 = getOffset(kf1);
+      const t2 = getOffset(kf2);
+
+      if (clipTime >= t1 && clipTime <= t2) {
+        const duration = t2 - t1;
+        if (duration <= 0) return kf1.value;
+
+        const t = (clipTime - t1) / duration;
+        const easing = kf1.easing || 'linear';
+
+        if (easing === 'hold') {
+          return t >= 1.0 ? kf2.value : kf1.value;
+        } else if (easing === 'ease') {
+          const smoothT = t * t * (3 - 2 * t);
+          return kf1.value + (kf2.value - kf1.value) * smoothT;
+        } else {
+          return kf1.value + (kf2.value - kf1.value) * t;
+        }
+      }
+    }
+
+    return defaultValue;
+  }
+
+  function initCapCutToolbarEvents() {
+    $('#ae-capcut-btn-split')?.addEventListener('click', splitClipAtPlayhead);
+    $('#ae-capcut-btn-split-left')?.addEventListener('click', splitLeftAtPlayhead);
+    $('#ae-capcut-btn-split-right')?.addEventListener('click', splitRightAtPlayhead);
+    $('#ae-capcut-btn-delete')?.addEventListener('click', deleteSelectedClip);
+    $('#ae-capcut-btn-keyframe')?.addEventListener('click', addKeyframeAtPlayhead);
+
+    const zoomSlider = $<HTMLInputElement>('#ae-capcut-zoom-slider');
+    if (zoomSlider) {
+      zoomSlider.addEventListener('input', () => {
+        pxPerSec = parseFloat(zoomSlider.value);
+        renderTimeline();
+      });
+    }
+
+    $('#ae-capcut-btn-zoom-out')?.addEventListener('click', () => {
+      if (zoomSlider) {
+        zoomSlider.value = String(Math.max(10, parseFloat(zoomSlider.value) - 10));
+        pxPerSec = parseFloat(zoomSlider.value);
+        renderTimeline();
+      }
+    });
+
+    $('#ae-capcut-btn-zoom-in')?.addEventListener('click', () => {
+      if (zoomSlider) {
+        zoomSlider.value = String(Math.min(200, parseFloat(zoomSlider.value) + 10));
+        pxPerSec = parseFloat(zoomSlider.value);
+        renderTimeline();
+      }
+    });
+
+    window.addEventListener('keydown', (e: KeyboardEvent) => {
+      const activeTag = (document.activeElement?.tagName || '').toLowerCase();
+      if (activeTag === 'input' || activeTag === 'textarea') return;
+
+      if (e.key === 'b' || e.key === 'B') {
+        splitClipAtPlayhead();
+      } else if (e.key === 'Delete' || e.key === 'Backspace') {
+        deleteSelectedClip();
+      }
     });
   }
 
@@ -3439,6 +3722,57 @@ function initVideoStudio() {
   if (playBtn) {
     playBtn.addEventListener('click', togglePlayPause);
   }
+
+  // Initialize CapCut Desktop Timeline Toolbar Events
+  initCapCutToolbarEvents();
+
+  // Keyframe Settings Inspector Panel Event Handlers
+  const kfValInput = $<HTMLInputElement>('#ae-kf-val-input');
+  const btnDeleteKf = $('#ae-btn-delete-kf');
+  const kfEaseBtns = $$('.kf-ease-btn');
+
+  if (kfValInput) {
+    kfValInput.addEventListener('input', () => {
+      if (!selectedKfIdx) return;
+      const clip = activeTimeline.clips.find((c) => c.id === selectedKfIdx?.clipId);
+      if (clip && clip.keyframes && clip.keyframes[selectedKfIdx.kfIdx]) {
+        clip.keyframes[selectedKfIdx.kfIdx].value = parseFloat(kfValInput.value) || 0;
+        persistTimelineState();
+        drawCompositionGuide();
+      }
+    });
+  }
+
+  if (btnDeleteKf) {
+    btnDeleteKf.addEventListener('click', () => {
+      if (!selectedKfIdx) return;
+      const clip = activeTimeline.clips.find((c) => c.id === selectedKfIdx?.clipId);
+      if (clip && clip.keyframes && clip.keyframes[selectedKfIdx.kfIdx]) {
+        clip.keyframes.splice(selectedKfIdx.kfIdx, 1);
+        selectedKfIdx = null;
+        const kfBox = $<HTMLElement>('#ae-keyframe-settings-box');
+        if (kfBox) kfBox.style.display = 'none';
+        persistTimelineState();
+        renderTimeline();
+        drawCompositionGuide();
+      }
+    });
+  }
+
+  kfEaseBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      if (!selectedKfIdx) return;
+      const clip = activeTimeline.clips.find((c) => c.id === selectedKfIdx?.clipId);
+      if (clip && clip.keyframes && clip.keyframes[selectedKfIdx.kfIdx]) {
+        const ease = (btn.getAttribute('data-ease') || 'linear') as 'linear' | 'ease' | 'hold';
+        clip.keyframes[selectedKfIdx.kfIdx].easing = ease;
+        kfEaseBtns.forEach((b) => b.classList.toggle('active', b === btn));
+        persistTimelineState();
+        renderTimeline();
+        drawCompositionGuide();
+      }
+    });
+  });
 
   // Keyboard Shortcuts (Spacebar Play/Pause, C Razor, V Select)
   window.addEventListener('keydown', (e) => {
@@ -3634,14 +3968,21 @@ function initVideoStudio() {
           }
 
           const clipTransform = clip.transform || {};
-          const posX = (w / 2) + (clipTransform.position_x || 0);
-          const posY = (h / 2) + (clipTransform.position_y || 0);
-          const clipScale = ((clipTransform.scale_x || 100) / 100) * scale;
-          const clipRot = (clipTransform.rotation || 0) + rotDeg;
+          const posXVal = getInterpolatedClipValue(clip, 'position_x', clipTransform.position_x || 0);
+          const posYVal = getInterpolatedClipValue(clip, 'position_y', clipTransform.position_y || 0);
+          const scaleVal = getInterpolatedClipValue(clip, 'scale_x', clipTransform.scale_x || 100);
+          const rotVal = getInterpolatedClipValue(clip, 'rotation', clipTransform.rotation || 0);
+          const opacityVal = getInterpolatedClipValue(clip, 'opacity', clipTransform.opacity || 100);
+
+          const posX = (w / 2) + posXVal;
+          const posY = (h / 2) + posYVal;
+          const clipScale = ((scaleVal) / 100) * scale;
+          const clipRot = rotVal + rotDeg;
 
           const mediaTime = (playheadTime - clip.start_time) + (clip.in_point || 0);
 
           ctx.save();
+          ctx.globalAlpha = (opacityVal / 100) * opacity;
           ctx.translate(posX, posY);
           ctx.rotate((clipRot * Math.PI) / 180);
           ctx.scale(clipScale, clipScale);
