@@ -4,6 +4,7 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "lowercase")]
 pub enum TrackType {
     Video,
     Audio,
@@ -13,16 +14,28 @@ pub enum TrackType {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Transform {
+    #[serde(default)]
     pub position_x: f64,
+    #[serde(default)]
     pub position_y: f64,
+    #[serde(default)]
     pub position_z: f64,
+    #[serde(default = "default_scale")]
     pub scale_x: f64,
+    #[serde(default = "default_scale")]
     pub scale_y: f64,
+    #[serde(default)]
     pub rotation: f64,
+    #[serde(default = "default_opacity")]
     pub opacity: f64,
+    #[serde(default)]
     pub anchor_x: f64,
+    #[serde(default)]
     pub anchor_y: f64,
 }
+
+fn default_scale() -> f64 { 100.0 }
+fn default_opacity() -> f64 { 100.0 }
 
 impl Default for Transform {
     fn default() -> Self {
@@ -42,13 +55,21 @@ impl Default for Transform {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ColorGrading {
+    #[serde(default)]
     pub exposure: f64,
+    #[serde(default = "default_scale")]
     pub contrast: f64,
+    #[serde(default)]
     pub highlights: f64,
+    #[serde(default)]
     pub shadows: f64,
+    #[serde(default = "default_scale")]
     pub saturation: f64,
+    #[serde(default)]
     pub temperature: f64,
+    #[serde(default)]
     pub tint: f64,
+    #[serde(default)]
     pub lut_file: Option<String>,
 }
 
@@ -86,10 +107,13 @@ pub struct MediaClip {
     pub in_point: f64,      // Trim start inside source media
     pub out_point: f64,     // Trim end inside source media
     pub track_id: usize,
+    #[serde(default)]
     pub transform: Transform,
+    #[serde(default)]
     pub color_grading: ColorGrading,
     pub keyframes: Vec<Keyframe>,
     pub volume_db: f64,
+    #[serde(rename = "muted", alias = "is_muted", default)]
     pub is_muted: bool,
 }
 
@@ -175,9 +199,13 @@ fn set_transform_prop(t: &mut Transform, prop: &str, val: f64) {
 pub struct Track {
     pub id: usize,
     pub name: String,
+    #[serde(rename = "type", alias = "track_type")]
     pub track_type: TrackType,
+    #[serde(rename = "muted", alias = "is_muted")]
     pub is_muted: bool,
+    #[serde(rename = "solo", alias = "is_solo")]
     pub is_solo: bool,
+    #[serde(rename = "locked", alias = "is_locked")]
     pub is_locked: bool,
 }
 

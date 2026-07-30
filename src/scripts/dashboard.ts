@@ -1,6 +1,3 @@
-import { LGraph, LGraphCanvas, LiteGraph } from 'litegraph.js';
-import 'litegraph.js/css/litegraph.css';
-
 const API_BASE = 'http://localhost:8000';
 
 const $ = <T extends Element>(selector: string) => document.querySelector<T>(selector);
@@ -63,58 +60,98 @@ let activeMode: 'cli' | 'endpoint' | 'byok' = 'cli';
 
 // Navigation & View Routing
 function initNavigation() {
-  const navItems = $$('.nav-item');
-  const viewPanels = $$('.view-panel');
-  const viewTitle = $('#view-title');
-
   function switchView(targetId: string) {
-    navItems.forEach((item) => {
-      const isTarget = item.getAttribute('data-target') === targetId;
+    const liveNavItems = document.querySelectorAll('.nav-item');
+    const liveViewPanels = document.querySelectorAll('.view-panel');
+    const viewTitle = document.querySelector('#view-title');
+
+    liveNavItems.forEach((item) => {
+      const dataTarget = item.getAttribute('data-target');
+      const href = item.getAttribute('href');
+      const targetHash = targetId.replace('v-', '');
+      const isTarget = dataTarget === targetId || href === `#${targetHash}`;
       item.classList.toggle('active', isTarget);
       if (isTarget && viewTitle) {
         const spanText = item.querySelector('span')?.textContent;
-        viewTitle.textContent = spanText ? `${spanText} Overview` : 'Dashboard Overview';
+        viewTitle.textContent = spanText ? `${spanText} Workspace` : 'Dashboard Workspace';
       }
     });
 
-    viewPanels.forEach((panel) => {
-      panel.classList.toggle('active', panel.id === targetId);
+    liveViewPanels.forEach((panel) => {
+      const el = panel as HTMLElement;
+      if (panel.id === targetId) {
+        el.classList.add('active');
+        if (panel.id === 'v-video' || panel.id === 'v-assets') {
+          el.style.setProperty('display', 'flex', 'important');
+        } else {
+          el.style.setProperty('display', 'block', 'important');
+        }
+      } else {
+        el.classList.remove('active');
+        el.style.setProperty('display', 'none', 'important');
+      }
     });
 
-    if (targetId === 'v-canvas') {
-      setTimeout(initWorkflowStudio, 100);
-    }
-    if (targetId === 'v-templates') {
+    if (targetId === 'v-dashboard') {
+      loadSystemStats();
+      loadPipelineStatus();
+      loadTodaySchedule();
+      loadRecentActivity();
+      loadProjects();
+    } else if (targetId === 'v-projects') {
+      loadProjects();
+    } else if (targetId === 'v-video') {
+      setTimeout(initVideoStudio, 50);
+    } else if (targetId === 'v-canvas') {
+      setTimeout(initWorkflowStudio, 50);
+    } else if (targetId === 'v-templates') {
       loadAssetsVault();
-    }
-    if (targetId === 'v-assets') {
+    } else if (targetId === 'v-assets') {
       initHyperframeStudio();
-    }
-    if (targetId === 'v-logs') {
+    } else if (targetId === 'v-logs') {
       initSystemLogs();
-    }
-    if (targetId === 'v-voice') {
+    } else if (targetId === 'v-voice') {
       initTTSStudio();
     }
   }
 
-  navItems.forEach((item) => {
-    item.addEventListener('click', (e) => {
-      e.preventDefault();
-      const targetId = item.getAttribute('data-target');
-      if (targetId) {
-        switchView(targetId);
-        window.location.hash = targetId.replace('v-', '');
+  // Global event delegation for all navigation links and buttons
+  document.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement | null;
+    if (!target) return;
+    const link = target.closest<HTMLAnchorElement>('a[href^="#"], .nav-item[data-target]');
+    if (link) {
+      const dataTarget = link.getAttribute('data-target');
+      const href = link.getAttribute('href') || '';
+      const targetHash = dataTarget ? dataTarget.replace('v-', '') : href.replace('#', '');
+      if (targetHash) {
+        const matchingTarget = `v-${targetHash}`;
+        if (document.querySelector(`#${matchingTarget}`)) {
+          e.preventDefault();
+          switchView(matchingTarget);
+          if (window.location.hash !== `#${targetHash}`) {
+            window.location.hash = targetHash;
+          }
+        }
       }
-    });
+    }
   });
 
-  // Handle hash routing on page load
-  const hash = window.location.hash.replace('#', '');
-  if (hash) {
-    const matchingTarget = `v-${hash}`;
-    if ($(`#${matchingTarget}`)) switchView(matchingTarget);
+  // Handle hash routing on page load & hashchange events
+  function handleHashRoute() {
+    const hash = window.location.hash.replace('#', '');
+    if (hash) {
+      const matchingTarget = `v-${hash}`;
+      if (document.querySelector(`#${matchingTarget}`)) {
+        switchView(matchingTarget);
+        return;
+      }
+    }
+    switchView('v-dashboard');
   }
+
+  window.addEventListener('hashchange', handleHashRoute);
+  handleHashRoute();
 }
 
 // Global dashboard state loaders
@@ -1064,14 +1101,18 @@ function initGraphCanvas() {
   const host = $('#workflow-canvas-host') as HTMLDivElement | null;
   if (!host) return;
 
+  const LGraphClass = (window as any).LGraph;
+  const LGraphCanvasClass = (window as any).LGraphCanvas;
+  if (!LGraphClass || !LGraphCanvasClass) return;
+
   host.innerHTML = '';
   const canvasElement = document.createElement('canvas');
   canvasElement.width = host.clientWidth || 1000;
   canvasElement.height = host.clientHeight || 550;
   host.appendChild(canvasElement);
 
-  const graph = new LGraph();
-  const canvas = new LGraphCanvas(canvasElement, graph);
+  const graph = new LGraphClass();
+  const canvas = new LGraphCanvasClass(canvasElement, graph);
   canvas.ds.scale = 0.85;
 
   const steps = [
@@ -1084,8 +1125,11 @@ function initGraphCanvas() {
     ['Publish Gate', '#ffffff'],
   ];
 
+  const LiteGraphGlobal = (window as any).LiteGraph;
+  if (!LiteGraphGlobal) return;
+
   const nodes = steps.map(([title, color], index) => {
-    const node = LiteGraph.createNode('basic/const');
+    const node = LiteGraphGlobal.createNode('basic/const');
     if (!node) throw new Error('Unable to create node.');
     node.title = title;
     node.pos = [30 + index * 210, 100 + (index % 2) * 120];
@@ -1491,21 +1535,33 @@ function initAssetsVault() {
   loadAssetsVault();
 }
 
-// Initialize Everything on Load
-document.addEventListener('DOMContentLoaded', () => {
+// Master App Initialization Entrypoint
+function startApp() {
   initNavigation();
   initAIComposer();
   initHyperframeStudio();
   initAssetsVault();
   initModalsAndEvents();
   initObsidianVault();
+  initWorkflowStudio();
+  initSystemLogs();
+  initTTSStudio();
+  initVideoStudio();
   loadSystemStats();
   loadPipelineStatus();
   loadTodaySchedule();
   loadRecentActivity();
   loadProjects();
   loadResearch();
-});
+}
+
+if (typeof window !== 'undefined') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startApp);
+  } else {
+    startApp();
+  }
+}
 
 // ==================== OBSIDIAN KNOWLEDGE VAULT ENGINE ====================
 interface WikiTreeNode {
@@ -2668,20 +2724,6 @@ function initTTSStudio() {
   }, 4000);
 }
 
-// Auto-initialize Workflow Studio, System Logs, TTS, and Video Studio on load
-if (typeof window !== 'undefined') {
-  document.addEventListener('DOMContentLoaded', () => {
-    initWorkflowStudio();
-    initSystemLogs();
-    initTTSStudio();
-    initVideoStudio();
-  });
-  setTimeout(() => {
-    initWorkflowStudio();
-    initVideoStudio();
-  }, 200);
-}
-
 function initVideoStudio() {
   const aspectSelect = $<HTMLSelectElement>('#ae-aspect-ratio');
   const stageBox = $('#ae-comp-stage-box');
@@ -2694,15 +2736,104 @@ function initVideoStudio() {
   const exportBtn = $('#ae-btn-export');
   const playheadLine = $<HTMLElement>('#ae-playhead-line');
   const toolBtns = $$('.ae-tool-btn');
+  // Header + Add Track Popup Handler
+  const addTrackHeaderBtn = $<HTMLElement>('#ae-header-btn-add-track');
+  const addTrackPopup = $<HTMLElement>('#ae-add-track-popup');
+  if (addTrackHeaderBtn && addTrackPopup) {
+    addTrackHeaderBtn.onclick = (e) => {
+      e.stopPropagation();
+      addTrackPopup.style.display = addTrackPopup.style.display === 'none' ? 'block' : 'none';
+    };
+
+    window.addEventListener('click', () => {
+      addTrackPopup.style.display = 'none';
+    });
+
+    addTrackPopup.querySelectorAll<HTMLElement>('.ae-add-track-item').forEach((item) => {
+      item.onclick = (e) => {
+        e.stopPropagation();
+        const trackType = item.getAttribute('data-type') as 'video' | 'audio';
+        const isAudio = trackType === 'audio';
+
+        const existingCount = activeTimeline.tracks.filter((t: any) => t.type === trackType).length;
+        const newTrack = {
+          id: Date.now(),
+          name: isAudio ? `A${existingCount + 1} · Audio Track` : `V${existingCount + 1} · Video Track`,
+          type: trackType,
+          muted: false,
+          solo: false,
+          locked: false,
+        };
+
+        if (isAudio) {
+          activeTimeline.tracks.push(newTrack);
+        } else {
+          const lastVideoIdx = activeTimeline.tracks.map((t: any) => t.type).lastIndexOf('video');
+          if (lastVideoIdx >= 0) {
+            activeTimeline.tracks.splice(lastVideoIdx + 1, 0, newTrack);
+          } else {
+            activeTimeline.tracks.unshift(newTrack);
+          }
+        }
+
+        addTrackPopup.style.display = 'none';
+        persistTimelineState();
+        renderTimeline();
+      };
+    });
+  }
 
   // Video State & Timeline Data
-  let pxPerSec = 40; // 40px per second on timeline ruler (Dynamic zoom scale)
+  let pxPerSec = 15; // 15px per second on timeline ruler (Compact zoom scale)
   let isPlaying = false;
   let playheadTime = 0.0; // in seconds
   let timelineDuration = 30.0;
   let activeTool: 'select' | 'split' | 'hand' | 'zoom' = 'select';
   let animationFrameId: number | null = null;
   let selectedClipId: string | null = 'clip-1';
+  let clipboardClip: any = null;
+
+  function extractAudioFromVideoClip(clipId: string) {
+    const targetClip = activeTimeline.clips.find((c) => c.id === clipId);
+    if (!targetClip || targetClip.media_type !== 'video') return;
+
+    pushUndoState();
+    targetClip.is_muted = true;
+
+    let audioTrackObj = activeTimeline.tracks.find((t: any) => t.type === 'audio');
+    if (!audioTrackObj) {
+      audioTrackObj = {
+        id: Date.now(),
+        name: `A${activeTimeline.tracks.filter((t: any) => t.type === 'audio').length + 1} · Dialogue & Audio`,
+        type: 'audio',
+        muted: false,
+        solo: false,
+        locked: false,
+      };
+      activeTimeline.tracks.push(audioTrackObj);
+    }
+
+    const extractedAudioClip = {
+      id: 'clip-extracted-' + Date.now(),
+      name: `${targetClip.name} (Extracted Audio)`,
+      src: targetClip.src,
+      media_type: 'audio',
+      start_time: targetClip.start_time,
+      duration: targetClip.duration,
+      in_point: targetClip.in_point || 0.0,
+      out_point: targetClip.out_point || targetClip.duration,
+      track_id: audioTrackObj.id,
+      volume_db: 0.0,
+      keyframes: [],
+    };
+
+    activeTimeline.clips.push(extractedAudioClip);
+    selectedClipId = extractedAudioClip.id;
+
+    persistTimelineState();
+    renderTimeline();
+    drawCompositionGuide();
+  }
 
   let activeTimeline: {
     project_name: string;
@@ -2721,13 +2852,48 @@ function initVideoStudio() {
     duration: 30.0,
     playhead: 0.0,
     tracks: [
-      { id: 0, name: 'V2 (Titles / Overlays)', type: 'video', muted: false, solo: false, locked: false },
-      { id: 1, name: 'V1 (Main Video Footage)', type: 'video', muted: false, solo: false, locked: false },
-      { id: 2, name: 'A1 (Voiceover / TTS)', type: 'audio', muted: false, solo: false, locked: false },
-      { id: 3, name: 'A2 (Background Music)', type: 'audio', muted: false, solo: false, locked: false },
+      { id: 1, name: 'V1 · Main Video Footage', type: 'video', muted: false, solo: false, locked: false },
+      { id: 2, name: 'A1 · Dialogue & Audio', type: 'audio', muted: false, solo: false, locked: false },
     ],
     clips: [],
   };
+
+  // Undo / Redo History Stack Engine
+  const undoStack: string[] = [];
+  const redoStack: string[] = [];
+  let engineEventQueue: Promise<void> = Promise.resolve();
+
+  function pushUndoState() {
+    undoStack.push(JSON.stringify(activeTimeline));
+    if (undoStack.length > 50) undoStack.shift();
+    redoStack.length = 0;
+  }
+
+  function undoAction() {
+    if (undoStack.length === 0) return;
+    redoStack.push(JSON.stringify(activeTimeline));
+    const prevState = undoStack.pop();
+    if (prevState) {
+      activeTimeline = JSON.parse(prevState);
+      persistTimelineState();
+      renderTimeline();
+      updateInspectorForSelectedClip();
+      drawCompositionGuide();
+    }
+  }
+
+  function redoAction() {
+    if (redoStack.length === 0) return;
+    undoStack.push(JSON.stringify(activeTimeline));
+    const nextState = redoStack.pop();
+    if (nextState) {
+      activeTimeline = JSON.parse(nextState);
+      persistTimelineState();
+      renderTimeline();
+      updateInspectorForSelectedClip();
+      drawCompositionGuide();
+    }
+  }
 
   // HTML5 Media Element Cache for Real-Time Canvas Video Playback
   const videoMediaCache = new Map<string, HTMLVideoElement>();
@@ -2752,7 +2918,6 @@ function initVideoStudio() {
       video.crossOrigin = 'anonymous';
       video.preload = 'auto';
       video.playsInline = true;
-      video.muted = true; // prevent browser autoplay block
       video.src = src.startsWith('http') || src.startsWith('blob:') ? src : `http://localhost:8000/api/assets-vault/stream/${src.replace('database/assets_vault/', '')}`;
 
       const vEl = video;
@@ -2787,43 +2952,178 @@ function initVideoStudio() {
     return audio;
   }
 
-  // Explicit Track Configuration
+  // Explicit Track Configuration (CapCut Desktop Track Icons & Styles)
   const TRACK_DEFS = [
-    { id: 1, key: 'v2', name: 'V2 Overlay / Text', type: 'video', color: 'rgba(139, 92, 246, 0.35)', border: '#8b5cf6', top: 0, height: 40 },
-    { id: 2, key: 'v1', name: 'V1 Main Video', type: 'video', color: 'rgba(59, 130, 246, 0.35)', border: '#3b82f6', top: 40, height: 40 },
-    { id: 3, key: 'a1', name: 'A1 Voiceover / TTS', type: 'audio', color: 'rgba(16, 185, 129, 0.35)', border: '#10b981', top: 80, height: 40 },
-    { id: 4, key: 'a2', name: 'A2 Music / SFX', type: 'audio', color: 'rgba(5, 150, 105, 0.35)', border: '#059669', top: 120, height: 40 },
-    { id: 5, key: 'fx', name: 'FX Adjustments', type: 'effect', color: 'rgba(245, 158, 11, 0.35)', border: '#f59e0b', top: 160, height: 40 },
+    { id: 1, key: 'v2', name: 'V2 Text & Overlays', type: 'video', icon: 'ph-text-t', color: 'rgba(139, 92, 246, 0.35)', border: '#8b5cf6', iconBg: 'rgba(139, 92, 246, 0.2)' },
+    { id: 2, key: 'v1', name: 'V1 Main Video', type: 'video', icon: 'ph-video-camera', color: 'rgba(0, 180, 216, 0.35)', border: '#00b4d8', iconBg: 'rgba(0, 180, 216, 0.2)' },
+    { id: 3, key: 'a1', name: 'A1 Voiceover', type: 'audio', icon: 'ph-microphone', color: 'rgba(16, 185, 129, 0.35)', border: '#10b981', iconBg: 'rgba(16, 185, 129, 0.2)' },
+    { id: 4, key: 'a2', name: 'A2 Background Music', type: 'audio', icon: 'ph-music-notes', color: 'rgba(5, 150, 105, 0.35)', border: '#059669', iconBg: 'rgba(5, 150, 105, 0.2)' },
+    { id: 5, key: 'fx', name: 'FX Color Adjustments', type: 'effect', icon: 'ph-sparkle', color: 'rgba(245, 158, 11, 0.35)', border: '#f59e0b', iconBg: 'rgba(245, 158, 11, 0.2)' },
   ];
 
   // Sync timeline from FastAPI backend
   async function syncTimelineFromBackend() {
     try {
-      const state = await apiRequest<any>('/api/video/timeline');
-      if (state && state.clips) {
+      const state = await apiRequest<any>('/api/video/project');
+      if (state && Array.isArray(state.clips) && Array.isArray(state.tracks)) {
         activeTimeline = state;
         timelineDuration = activeTimeline.duration || 30.0;
-        renderTimeline();
       }
     } catch (e) {
-      renderTimeline();
+      console.error('The editor project could not be loaded:', e);
     }
+    renderTimeline();
+    drawCompositionGuide();
   }
 
-  // Save timeline state to FastAPI backend
-  async function persistTimelineState() {
+  // Save timeline state to FastAPI backend (debounced with client state authority)
+  let persistTimer: any = null;
+
+  function persistTimelineState() {
     try {
-      await apiRequest('/api/video/timeline', {
+      localStorage.setItem('capcut_active_timeline', JSON.stringify(activeTimeline));
+    } catch (e) {}
+
+    if (persistTimer) clearTimeout(persistTimer);
+    persistTimer = setTimeout(() => {
+      const snapshot = JSON.parse(JSON.stringify(activeTimeline));
+      apiRequest<{ timeline: typeof activeTimeline }>('/api/video/engine/event', {
         method: 'POST',
-        body: JSON.stringify(activeTimeline),
+        body: JSON.stringify({ op: 'replace_timeline', payload: snapshot }),
+      }).catch((e) => {
+        console.warn('Backend sync saved locally:', e);
       });
-    } catch (e) {
-      console.warn('Failed to save timeline state:', e);
+    }, 200);
+  }
+
+  function updatePlayheadUI() {
+    const pinEl = $<HTMLElement>('#ae-playhead-pin');
+    const lineEl = $<HTMLElement>('#ae-playhead-line');
+    const tcEl = $('#ae-timecode-display');
+    const TRACK_HEADER_WIDTH = 36;
+    const pinLeftPx = TRACK_HEADER_WIDTH + playheadTime * pxPerSec;
+
+    if (pinEl) {
+      pinEl.style.left = `${pinLeftPx}px`;
+    }
+    if (lineEl) {
+      lineEl.style.left = `${pinLeftPx}px`;
+    }
+    if (tcEl) {
+      tcEl.textContent = formatFullTimecode(playheadTime);
     }
   }
 
-  // Render Left Layer Panel & Right Track Canvas (After Effects CC Layout)
+  function formatShortTimecode(seconds: number): string {
+    const s = Math.floor(seconds);
+    const ms = Math.floor((seconds - s) * 30);
+    return `${String(s).padStart(2, '0')}:${String(ms).padStart(2, '0')}`;
+  }
+
+  function formatFullTimecode(seconds: number): string {
+    const totalMs = Math.floor(seconds * 1000);
+    const hrs = Math.floor(totalMs / 3600000);
+    const mins = Math.floor((totalMs % 3600000) / 60000);
+    const secs = Math.floor((totalMs % 60000) / 1000);
+    const frames = Math.floor(((totalMs % 1000) / 1000) * 30);
+    return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}:${String(frames).padStart(2, '0')}`;
+  }
+
+  function renderMediaPoolList() {
+    const listEl = $('#ae-media-pool-list');
+    if (!listEl) return;
+
+    if (!activeTimeline.clips || activeTimeline.clips.length === 0) {
+      listEl.innerHTML = `
+        <div style="padding: 24px 12px; text-align: center; color: #71717a; font-size: 0.72rem;">
+          <i class="ph-bold ph-folder-open" style="font-size: 1.8rem; display: block; margin-bottom: 8px; color: #3f3f46;"></i>
+          <span>No media assets imported yet.<br>Click <strong>+ Import</strong> to add files.</span>
+        </div>
+      `;
+      return;
+    }
+
+    let html = '';
+    activeTimeline.clips.forEach((clip) => {
+      const isVideo = clip.media_type === 'video';
+      const icon = isVideo ? 'ph-video-camera' : 'ph-waveform';
+      const iconColor = isVideo ? '#00b4d8' : '#10b981';
+
+      html += `
+        <div class="ae-media-card" style="background: #121215; border: 1px solid #242430; border-radius: 6px; padding: 8px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; user-select: none;">
+          <div style="display: flex; align-items: center; gap: 8px; overflow: hidden;">
+            <div style="width: 26px; height: 26px; background: #1a1a22; border: 1px solid ${iconColor}; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <i class="ph-bold ${icon}" style="color: ${iconColor}; font-size: 0.85rem;"></i>
+            </div>
+            <div style="display: flex; flex-direction: column; overflow: hidden;">
+              <span style="font-size: 0.72rem; font-weight: 600; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(clip.name)}</span>
+              <span style="font-size: 0.64rem; color: #71717a;">${clip.duration.toFixed(1)}s • ${clip.media_type.toUpperCase()}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+
+    listEl.innerHTML = html;
+  }
+
+  function deleteClipById(clipId: string) {
+    pushUndoState();
+    const clipToDelete = activeTimeline.clips.find((c: any) => c.id === clipId);
+    if (clipToDelete && clipToDelete.media_type === 'audio' && clipToDelete.name.includes('(Extracted Audio)')) {
+      const origVideoName = clipToDelete.name.replace(' (Extracted Audio)', '');
+      const origVideo = activeTimeline.clips.find((c: any) => c.name === origVideoName && c.media_type === 'video');
+      if (origVideo) {
+        origVideo.is_muted = false;
+      }
+    }
+
+    activeTimeline.clips = activeTimeline.clips.filter((c: any) => c.id !== clipId);
+    if (selectedClipId === clipId) selectedClipId = activeTimeline.clips[0]?.id || null;
+    persistTimelineState();
+    renderTimeline();
+    drawCompositionGuide();
+  }
+
+  // Render Left Layer Panel & Right Track Canvas (CapCut Desktop Layout)
   function renderTimeline() {
+    renderMediaPool();
+
+    // 1. Sanitize & Enforce Track Hierarchy: V1 (video) first, A1 (audio) second
+    if (!activeTimeline.tracks || activeTimeline.tracks.length === 0) {
+      activeTimeline.tracks = [
+        { id: 1, name: 'V1 · Main Video Footage', type: 'video', muted: false, solo: false, locked: false },
+        { id: 2, name: 'A1 · Dialogue & Audio', type: 'audio', muted: false, solo: false, locked: false },
+      ];
+    } else {
+      const vTracks = activeTimeline.tracks.filter((t: any) => t.type === 'video');
+      const aTracks = activeTimeline.tracks.filter((t: any) => t.type === 'audio');
+
+      if (vTracks.length === 0) {
+        vTracks.push({ id: 1, name: 'V1 · Main Video Footage', type: 'video', muted: false, solo: false, locked: false });
+      }
+      if (aTracks.length === 0) {
+        aTracks.push({ id: 2, name: 'A1 · Dialogue & Audio', type: 'audio', muted: false, solo: false, locked: false });
+      }
+
+      vTracks.forEach((vt: any, i: number) => {
+        vt.name = `V${i + 1} · Video Track`;
+      });
+      aTracks.forEach((at: any, i: number) => {
+        at.name = `A${i + 1} · Audio Track`;
+      });
+
+      activeTimeline.tracks = [...vTracks, ...aTracks];
+    }
+
+    // 2. Dynamic Timeline Duration: Extend timeline ruler dynamically based on max clip end time
+    let maxClipEnd = 30.0;
+    (activeTimeline.clips || []).forEach((c: any) => {
+      const end = (c.start_time || 0) + (c.duration || 0);
+      if (end > maxClipEnd) maxClipEnd = end;
+    });
+    timelineDuration = Math.max(60.0, Math.ceil(maxClipEnd + 30.0));
+
     const layerListEl = $('#ae-layer-list');
     const rulerEl = $('#ae-time-ruler');
     const trackCanvasEl = $('#ae-track-canvas');
@@ -2831,46 +3131,62 @@ function initVideoStudio() {
     if (!layerListEl || !rulerEl || !trackCanvasEl) return;
 
     const TRACK_HEADER_WIDTH = 36;
+    const pinLeftPx = TRACK_HEADER_WIDTH + playheadTime * pxPerSec;
 
-    // 1. Render Time Ruler Ticks & Playhead Pin Handle
-    let rulerHTML = `<div style="position: absolute; left: 0; top: 0; bottom: 0; width: ${TRACK_HEADER_WIDTH}px; background: #1a1a20; border-right: 1px solid #27272a; z-index: 10;"></div>`;
-    const totalSecs = Math.max(30, Math.ceil(timelineDuration));
+    // 3. Render Time Ruler Ticks dynamically with generous 90px label spacing
+    let rulerHTML = `<div style="position: absolute; left: 0; top: 0; bottom: 0; width: ${TRACK_HEADER_WIDTH}px; background: #121215; border-right: 1px solid #1e1e24; z-index: 10;"></div>`;
+    
+    const minLabelPx = 90;
+    let step = Math.max(2, Math.ceil(minLabelPx / pxPerSec));
+    if (step % 2 !== 0 && step > 1) step += 1;
+
+    const totalSecs = Math.ceil(timelineDuration);
     for (let s = 0; s <= totalSecs; s += 1) {
       const leftPx = TRACK_HEADER_WIDTH + s * pxPerSec;
-      rulerHTML += `<span style="position: absolute; left: ${leftPx}px; border-left: 1px solid #333; padding-left: 3px; height: 100%; font-family: monospace; font-size: 0.65rem; color: #71717a;">${String(s).padStart(2, '0')}s</span>`;
+      const isLabeled = s % step === 0;
+
+      if (isLabeled) {
+        const mm = Math.floor(s / 60);
+        const ss = s % 60;
+        const label = `${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}`;
+
+        rulerHTML += `<span style="position: absolute; left: ${leftPx}px; border-left: 1px solid #4a4a58; padding-left: 4px; height: 100%; font-family: monospace; font-size: 0.62rem; color: #a1a1aa; line-height: 22px; pointer-events: none; white-space: nowrap;">${label}</span>`;
+      } else {
+        rulerHTML += `<span style="position: absolute; left: ${leftPx}px; border-left: 1px solid #272730; height: 35%; bottom: 0; pointer-events: none;"></span>`;
+      }
     }
 
-    // Render Playhead Pin Handle in Time Ruler Header (100% Visible, Zero CSS Clipping!)
-    const pinLeftPx = TRACK_HEADER_WIDTH + playheadTime * pxPerSec;
+    // CapCut-style Playhead: Inverted white triangle pin at top + vertical white scrubber line (NO timecode text on pin!)
     rulerHTML += `
-      <div id="ae-playhead-pin" style="position: absolute; top: 0; left: ${pinLeftPx}px; width: 16px; height: 24px; background: #3b82f6; clip-path: polygon(0% 0%, 100% 0%, 100% 60%, 50% 100%, 0% 60%); transform: translateX(-8px); cursor: col-resize; z-index: 40; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.8));" title="Drag Playhead Pin"></div>
+      <div id="ae-playhead-pin" style="position: absolute; left: ${pinLeftPx - 7}px; top: 2px; width: 14px; height: 16px; cursor: pointer; z-index: 30;" title="CapCut Playhead (${playheadTime.toFixed(2)}s)">
+        <svg width="14" height="16" viewBox="0 0 14 16" fill="none">
+          <path d="M0 0 H14 V10 L7 16 L0 10 Z" fill="#ffffff" stroke="#111827" stroke-width="1.2"/>
+        </svg>
+      </div>
     `;
+
     rulerEl.innerHTML = rulerHTML;
 
-    // 2. Render Left Layer List (After Effects CC Style: Layer Index, Icon, Clip Name, Mute/Solo/Lock)
-    let layerHTML = '';
-    const clips = activeTimeline.clips;
+    // 4. Render Left CapCut Layer Panel (Compact V1, A1 Row Control Boxes)
+    let layerHTML = `
+      <div style="height: 24px; background: #121215; border-bottom: 1px solid #1e1e24; display: flex; align-items: center; justify-content: space-between; padding: 0 8px;">
+        <span style="font-size: 0.62rem; color: #a1a1aa; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Timeline Tracks</span>
+        <button id="ae-btn-add-track-header" style="background: transparent; border: none; color: #3b82f6; cursor: pointer; font-size: 0.9rem;" title="Add Video / Audio Track">+</button>
+      </div>
+    `;
 
-    clips.forEach((clip, idx) => {
+    activeTimeline.clips.forEach((clip) => {
       const isSelected = clip.id === selectedClipId;
-      const isVideo = clip.media_type === 'video';
-      const isAudio = clip.media_type === 'audio';
-      const typeIcon = isVideo ? 'ph-video' : isAudio ? 'ph-speaker-high' : 'ph-image';
-      const iconColor = isVideo ? '#3b82f6' : isAudio ? '#10b981' : '#f59e0b';
-
+      const icon = clip.media_type === 'video' ? 'ph-film-strip' : clip.media_type === 'audio' ? 'ph-waveform' : clip.media_type === 'text' ? 'ph-text-t' : 'ph-image';
+      const typeColor = clip.media_type === 'video' ? '#00b4d8' : clip.media_type === 'audio' ? '#10b981' : clip.media_type === 'text' ? '#8b5cf6' : '#f59e0b';
       layerHTML += `
-        <div class="ae-layer-row ${isSelected ? 'selected' : ''}" data-clip-id="${clip.id}" style="height: 36px; background: ${isSelected ? '#252532' : '#1c1c21'}; border-bottom: 1px solid #141416; padding: 0 8px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none;">
-          <div style="display: flex; align-items: center; gap: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 220px;">
-            <span style="font-size: 0.7rem; color: #71717a; font-weight: 700; width: 14px;">${idx + 1}</span>
-            <i class="ph-bold ${typeIcon}" style="color: ${iconColor}; font-size: 0.85rem;"></i>
-            <span style="font-size: 0.72rem; color: #ffffff; font-weight: 600; overflow: hidden; text-overflow: ellipsis;" title="${escapeHtml(clip.name)}">${escapeHtml(clip.name)}</span>
+        <div class="ae-layer-row ${isSelected ? 'selected' : ''}" data-clip-id="${clip.id}" style="height: 36px; border-bottom: 1px solid #1a1a20; background: ${isSelected ? '#1e1e24' : 'transparent'}; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; cursor: pointer;">
+          <div style="display: flex; align-items: center; gap: 6px; overflow: hidden;">
+            <i class="ph-bold ${icon}" style="color: ${typeColor}; font-size: 0.85rem;"></i>
+            <span style="font-size: 0.72rem; color: #e4e4e7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(clip.name)}</span>
           </div>
-          <div style="display: flex; gap: 8px; font-size: 0.75rem; color: #71717a; align-items: center;">
-            <span class="ae-layer-btn toggle-vis" title="Toggle Visibility">${clip.is_muted ? '🕶️' : '👁️'}</span>
-            <span title="Audio Mute">🔊</span>
-            <span title="Solo">S</span>
-            <span title="Lock">🔒</span>
-            <span class="ae-layer-btn delete-clip" title="Delete Layer" style="color: #ef4444; margin-left: 2px;"><i class="ph-bold ph-trash"></i></span>
+          <div style="display: flex; align-items: center; gap: 4px;">
+            <button class="delete-clip" style="background: transparent; border: none; color: #71717a; cursor: pointer; font-size: 0.75rem;" title="Delete Clip">✕</button>
           </div>
         </div>
       `;
@@ -2886,11 +3202,7 @@ function initVideoStudio() {
         if (!clipId) return;
 
         if (target.classList.contains('delete-clip') || target.closest('.delete-clip')) {
-          activeTimeline.clips = activeTimeline.clips.filter((c) => c.id !== clipId);
-          if (selectedClipId === clipId) selectedClipId = activeTimeline.clips[0]?.id || null;
-          persistTimelineState();
-          renderTimeline();
-          drawCompositionGuide();
+          deleteClipById(clipId);
           return;
         }
 
@@ -2900,91 +3212,75 @@ function initVideoStudio() {
       });
     });
 
-    // 3. Render Right Track Canvas Lanes with Track Icon Boxes, Clip Bars & Vertical Blue Line
+    // 5. Render Right Track Canvas Lanes with CapCut Filmstrip & Waveforms
     let tracksHTML = `
-      <div id="ae-work-area-bar" style="position: absolute; top: 0; left: ${TRACK_HEADER_WIDTH}px; width: ${timelineDuration * pxPerSec}px; height: 4px; background: #3b82f6; border-radius: 2px; z-index: 2;"></div>
-      <div id="ae-playhead-line" style="position: absolute; top: 0; bottom: 0; left: ${pinLeftPx}px; width: 2px; background: #3b82f6; z-index: 25; pointer-events: none;"></div>
+      <div id="ae-work-area-bar" style="position: absolute; top: 0; left: ${TRACK_HEADER_WIDTH}px; width: ${timelineDuration * pxPerSec}px; height: 4px; background: #00b4d8; border-radius: 2px; z-index: 2;"></div>
+      <div id="ae-playhead-line" style="position: absolute; top: 0; bottom: 0; left: ${pinLeftPx}px; width: 1.5px; background: #ffffff; z-index: 25; pointer-events: none; box-shadow: 0 0 6px rgba(255,255,255,0.9);"></div>
     `;
 
-    // Render 36px Track Stripe Rows with Track Box at start (ONLY ICON NO NAME)
-    TRACK_DEFS.forEach((track, idx) => {
-      const bg = idx % 2 === 0 ? '#141418' : '#18181f';
-      const isVideo = track.type === 'video';
-      const typeIcon = isVideo ? 'ph-video' : track.type === 'audio' ? 'ph-speaker-high' : 'ph-sparkle';
+    const currentTracks = (activeTimeline.tracks && activeTimeline.tracks.length > 0)
+      ? activeTimeline.tracks
+      : [
+          { id: 1, name: 'V1 · Video Track', type: 'video' },
+          { id: 2, name: 'A1 · Audio Track', type: 'audio' },
+        ];
+
+    currentTracks.forEach((track, idx) => {
+      const bg = idx % 2 === 0 ? '#101014' : '#141418';
+      const trackColor = track.type === 'video' ? '#00b4d8' : track.type === 'audio' ? '#10b981' : track.type === 'text' ? '#8b5cf6' : '#f59e0b';
+      const trackLabel = track.name ? track.name.split(' ')[0] : (track.type === 'video' ? `V${idx+1}` : `A${idx+1}`);
 
       tracksHTML += `
-        <div style="position: absolute; top: ${idx * 36}px; left: 0; right: 0; height: 36px; background: ${bg}; border-bottom: 1px solid #0f0f13; pointer-events: none;">
-          <div style="position: absolute; left: 4px; top: 4px; width: 28px; height: 28px; background: #1f1f26; border: 1px solid ${track.border}; border-radius: 4px; display: flex; align-items: center; justify-content: center; z-index: 10; pointer-events: auto;" title="${escapeHtml(track.name)}">
-            <i class="ph-bold ${typeIcon}" style="color: ${track.border}; font-size: 0.9rem;"></i>
+        <div style="position: absolute; top: ${idx * 36}px; left: 0; right: 0; height: 36px; background: ${bg}; border-bottom: 1px solid #1a1a20; pointer-events: none;">
+          <div style="position: absolute; left: 3px; top: 0; height: 36px; width: 30px; display: flex; align-items: center; justify-content: center; z-index: 10; pointer-events: auto;" title="${escapeHtml(track.name || '')}">
+            <span style="font-size: 0.58rem; font-weight: 700; color: ${trackColor}; text-transform: uppercase; letter-spacing: 0.02em; white-space: nowrap;">${escapeHtml(trackLabel)}</span>
           </div>
         </div>
       `;
     });
 
-    // Render Clips in their target track lane strictly by track_id, offset after 36px Track Box
-    clips.forEach((clip) => {
+    // Render Clips in CapCut Desktop style (matching Screenshot 2)
+    activeTimeline.clips.forEach((clip) => {
       const isSelected = clip.id === selectedClipId;
-      const targetTrackIdx = Math.max(0, Math.min(TRACK_DEFS.length - 1, (clip.track_id ? clip.track_id - 1 : 0)));
-      const targetTrack = TRACK_DEFS[targetTrackIdx];
+      let trackIdx = currentTracks.findIndex((t) => String(t.id) === String(clip.track_id));
+      if (trackIdx < 0) {
+        trackIdx = currentTracks.findIndex((t) => clip.media_type === 'audio' ? t.type === 'audio' : (t.type === 'video' || t.type === 'text'));
+        if (trackIdx < 0) trackIdx = 0;
+      }
+
+      const targetTrack = currentTracks[trackIdx];
+      const clipBg = targetTrack?.type === 'video' ? '#0d5c63' : targetTrack?.type === 'audio' ? '#0b4d3c' : targetTrack?.type === 'text' ? '#5b21b6' : '#92400e';
+      const borderColor = isSelected ? '#ffffff' : '#00b4d8';
 
       const leftPx = TRACK_HEADER_WIDTH + clip.start_time * pxPerSec;
       const widthPx = Math.max(20, clip.duration * pxPerSec);
-      const topPx = targetTrackIdx * 36 + 4;
-      const color = targetTrack.color;
-      const borderColor = isSelected ? '#ffffff' : targetTrack.border;
-
-      // CapCut Category Badge Pill
-      const categoryLabel = clip.media_type === 'video' ? 'Video' : clip.media_type === 'audio' ? 'Audio' : 'Vector Image';
-      const categoryBadgeColor = clip.media_type === 'video' ? '#3b82f6' : clip.media_type === 'audio' ? '#10b981' : '#f59e0b';
-      const badgeHTML = `<span style="position: absolute; top: -14px; left: 0; background: ${categoryBadgeColor}; color: #ffffff; padding: 0px 5px; border-radius: 3px 3px 0 0; font-size: 0.58rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; pointer-events: none; z-index: 4;">${categoryLabel}</span>`;
+      const topPx = trackIdx * 36 + 4;
 
       // CapCut Audio Waveform SVG Pattern
       let waveSVG = '';
       if (clip.media_type === 'audio') {
         waveSVG = `
-          <svg style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.4; pointer-events: none;" preserveAspectRatio="none" viewBox="0 0 100 28">
+          <svg style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.6; pointer-events: none;" preserveAspectRatio="none" viewBox="0 0 100 28">
             <path d="M 0 14 Q 5 4, 10 14 T 20 14 T 30 4 T 40 24 T 50 14 T 60 4 T 70 24 T 80 14 T 90 4 T 100 14 L 100 28 L 0 28 Z" fill="#10b981" />
           </svg>
         `;
       }
 
-      // CapCut Video Filmstrip Thumbnails Pattern
+      // CapCut Video Filmstrip Pattern
       let filmstripHTML = '';
       if (clip.media_type === 'video') {
         filmstripHTML = `
-          <div style="position: absolute; inset: 0; opacity: 0.25; background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 16px 16px; pointer-events: none;"></div>
+          <div style="position: absolute; inset: 0; opacity: 0.35; background-image: linear-gradient(90deg, rgba(255,255,255,0.2) 1px, transparent 1px); background-size: 24px 100%; pointer-events: none;"></div>
         `;
       }
 
-      let keyframeDiamonds = '';
-      if (clip.keyframes && clip.keyframes.length > 0) {
-        clip.keyframes.forEach((kf: any, kfIdx: number) => {
-          const offsetSec = kf.clip_offset_sec !== undefined ? kf.clip_offset_sec : Math.max(0, (kf.time_sec || 0) - clip.start_time);
-          const kfLeft = offsetSec * pxPerSec;
-          if (kfLeft >= 0 && kfLeft <= widthPx) {
-            const easeType = kf.easing || 'linear';
-            let shapeHTML = '';
-            if (easeType === 'ease') {
-              shapeHTML = `<div class="ae-kf-node" data-clip-id="${clip.id}" data-kf-idx="${kfIdx}" style="position: absolute; left: ${kfLeft}px; top: 8px; width: 12px; height: 12px; color: #f59e0b; font-size: 11px; line-height: 12px; z-index: 10; cursor: pointer; text-shadow: 0 0 3px #000;" title="Keyframe (${kf.property}): Ease">⧖</div>`;
-            } else if (easeType === 'hold') {
-              shapeHTML = `<div class="ae-kf-node" data-clip-id="${clip.id}" data-kf-idx="${kfIdx}" style="position: absolute; left: ${kfLeft}px; top: 8px; width: 10px; height: 10px; color: #f59e0b; font-size: 10px; line-height: 10px; z-index: 10; cursor: pointer; text-shadow: 0 0 3px #000;" title="Keyframe (${kf.property}): Hold">■</div>`;
-            } else {
-              shapeHTML = `<div class="ae-kf-node" data-clip-id="${clip.id}" data-kf-idx="${kfIdx}" style="position: absolute; left: ${kfLeft}px; top: 10px; width: 8px; height: 8px; background: #f59e0b; transform: rotate(45deg); z-index: 10; cursor: pointer; box-shadow: 0 0 4px #000;" title="Keyframe (${kf.property}): Linear"></div>`;
-            }
-            keyframeDiamonds += shapeHTML;
-          }
-        });
-      }
-
       tracksHTML += `
-        <div class="ae-clip-bar ${isSelected ? 'selected' : ''}" data-clip-id="${clip.id}" style="position: absolute; top: ${topPx}px; left: ${leftPx}px; width: ${widthPx}px; height: 28px; background: ${color}; border: 1px solid ${borderColor}; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 6px; color: #ffffff; font-size: 0.7rem; font-weight: 600; cursor: move; user-select: none; z-index: 3; overflow: visible;">
-          ${badgeHTML}
+        <div class="ae-clip-bar ${isSelected ? 'selected' : ''}" data-clip-id="${clip.id}" style="position: absolute; top: ${topPx}px; left: ${leftPx}px; width: ${widthPx}px; height: 28px; background: ${clipBg}; border: 1px solid ${borderColor}; border-radius: 3px; display: flex; align-items: center; justify-content: space-between; padding: 0 6px; color: #ffffff; font-size: 0.68rem; font-weight: 600; cursor: move; user-select: none; z-index: 3; overflow: hidden;">
           ${filmstripHTML}
           ${waveSVG}
-          <div class="ae-trim-handle-left" style="position: absolute; left: 0; top: 0; bottom: 0; width: 6px; cursor: w-resize; background: rgba(255,255,255,0.4); border-radius: 3px 0 0 3px; z-index: 6;"></div>
-          <span style="pointer-events: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 4px; z-index: 4; position: relative;">${escapeHtml(clip.name)}</span>
-          ${keyframeDiamonds}
-          <div class="ae-trim-handle-right" style="position: absolute; right: 0; top: 0; bottom: 0; width: 6px; cursor: e-resize; background: rgba(255,255,255,0.4); border-radius: 0 3px 3px 0; z-index: 6;"></div>
+          <div class="ae-trim-handle-left" style="position: absolute; left: 0; top: 0; bottom: 0; width: 5px; cursor: w-resize; background: rgba(255,255,255,0.5); z-index: 6;"></div>
+          <span style="pointer-events: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 4px; z-index: 4; position: relative; font-family: monospace;">${escapeHtml(clip.name)}</span>
+          <div class="ae-trim-handle-right" style="position: absolute; right: 0; top: 0; bottom: 0; width: 5px; cursor: e-resize; background: rgba(255,255,255,0.5); z-index: 6;"></div>
         </div>
       `;
     });
@@ -3084,38 +3380,61 @@ function initVideoStudio() {
 
         let dropTime = Math.max(0, dropX / pxPerSec);
 
-        // Map drop Y position to target track index (36px per track row)
         const targetTrackIdx = Math.max(0, Math.floor(dropY / 36));
-        const existingTrackClips = activeTimeline.clips.filter((c) => c.track_id === (targetTrackIdx + 1));
+        const isAudio = asset.type === 'audio';
+        let targetTrackObj: any = null;
 
-        // If target track already has clips, check if dropTime collides or snap sequentially
-        if (existingTrackClips.length > 0) {
-          existingTrackClips.forEach((c) => {
-            const clipEnd = c.start_time + c.duration;
-            if (dropTime >= c.start_time && dropTime < clipEnd) {
-              dropTime = clipEnd; // Auto snap right after existing clip on same track!
-            }
-          });
+        if (isAudio) {
+          const audioTracks = activeTimeline.tracks.filter((t: any) => t.type === 'audio');
+          const matched = activeTimeline.tracks[targetTrackIdx];
+          targetTrackObj = (matched && matched.type === 'audio') ? matched : (audioTracks[0] || activeTimeline.tracks.find((t: any) => t.type === 'audio'));
+        } else {
+          // Video / Image assets MUST land on a Video Track!
+          const videoTracks = activeTimeline.tracks.filter((t: any) => t.type === 'video');
+          const matched = activeTimeline.tracks[targetTrackIdx];
+          targetTrackObj = (matched && matched.type === 'video') ? matched : (videoTracks[0] || activeTimeline.tracks.find((t: any) => t.type === 'video'));
         }
 
-        // Magnetic Snap to end of any clip nearby
-        activeTimeline.clips.forEach((otherClip) => {
-          const otherEnd = otherClip.start_time + otherClip.duration;
-          if (Math.abs(dropTime - otherEnd) < 0.5) {
-            dropTime = otherEnd;
-          }
-        });
+        if (!targetTrackObj) {
+          targetTrackObj = {
+            id: Date.now(),
+            name: isAudio ? 'A1 · Dialogue & Audio' : 'V1 · Main Video Footage',
+            type: isAudio ? 'audio' : 'video',
+            muted: false,
+            solo: false,
+            locked: false,
+          };
+          activeTimeline.tracks.push(targetTrackObj);
+        }
 
+        // Calculate drop start time: fit at 0.0s for first clip or dropped near start
+        const existingTrackClips = (activeTimeline.clips || []).filter((c: any) => String(c.track_id) === String(targetTrackObj.id));
+        let finalDropTime = 0.0;
+        if (existingTrackClips.length === 0) {
+          finalDropTime = 0.0;
+        } else {
+          const rawDropTime = Math.max(0, dropX / pxPerSec);
+          if (rawDropTime < 3.0) {
+            finalDropTime = 0.0;
+          } else {
+            const maxEnd = Math.max(...existingTrackClips.map((c: any) => c.start_time + c.duration));
+            finalDropTime = maxEnd;
+          }
+        }
+
+        const sourceDuration = asset.type === 'image' ? 5.0 : Math.max(0.1, Number(asset.duration || 12.0));
+
+        pushUndoState();
         const newClip = {
           id: 'clip-' + Date.now(),
           name: asset.name,
           src: asset.url,
           media_type: asset.type,
-          start_time: dropTime,
-          duration: asset.type === 'image' ? 5.0 : 12.0,
+          start_time: finalDropTime,
+          duration: sourceDuration,
           in_point: 0.0,
-          out_point: asset.type === 'image' ? 5.0 : 12.0,
-          track_id: targetTrackIdx + 1,
+          out_point: sourceDuration,
+          track_id: targetTrackObj.id,
           transform: { position_x: 0, position_y: 0, position_z: 0, scale_x: 100, scale_y: 100, rotation: 0, opacity: 100 },
           color_grading: { exposure: 0, contrast: 100, saturation: 100, temperature: 0 },
           keyframes: [],
@@ -3154,19 +3473,62 @@ function initVideoStudio() {
         const ctxMenu = $<HTMLElement>('#ae-clip-context-menu');
         if (ctxMenu) {
           ctxMenu.style.display = 'block';
-          ctxMenu.style.top = `${e.clientY}px`;
-          ctxMenu.style.left = `${e.clientX}px`;
 
-          const splitBtn = $<HTMLElement>('#ae-ctx-split');
-          const dupBtn = $<HTMLElement>('#ae-ctx-dup');
-          const inspectBtn = $<HTMLElement>('#ae-ctx-inspect');
+          const menuHeight = ctxMenu.offsetHeight || 420;
+          const menuWidth = ctxMenu.offsetWidth || 230;
+
+          let topPx = e.clientY;
+          if (e.clientY + menuHeight > window.innerHeight) {
+            topPx = Math.max(10, e.clientY - menuHeight);
+          }
+
+          let leftPx = e.clientX;
+          if (e.clientX + menuWidth > window.innerWidth) {
+            leftPx = Math.max(10, e.clientX - menuWidth);
+          }
+
+          ctxMenu.style.top = `${topPx}px`;
+          ctxMenu.style.left = `${leftPx}px`;
+
+          const copyBtn = $<HTMLElement>('#ae-ctx-copy');
+          const cutBtn = $<HTMLElement>('#ae-ctx-cut');
           const deleteBtn = $<HTMLElement>('#ae-ctx-delete');
+          const splitBtn = $<HTMLElement>('#ae-ctx-split');
+          const extractAudioBtn = $<HTMLElement>('#ae-ctx-extract-audio');
+          const adjustColorBtn = $<HTMLElement>('#ae-ctx-adjust-color');
+          const deactivateBtn = $<HTMLElement>('#ae-ctx-deactivate');
 
           const closeMenu = () => {
             ctxMenu.style.display = 'none';
             window.removeEventListener('click', closeMenu);
           };
           window.addEventListener('click', closeMenu);
+
+          if (copyBtn) {
+            copyBtn.onclick = () => {
+              clipboardClip = JSON.parse(JSON.stringify(clip));
+              closeMenu();
+            };
+          }
+
+          if (cutBtn) {
+            cutBtn.onclick = () => {
+              clipboardClip = JSON.parse(JSON.stringify(clip));
+              activeTimeline.clips = activeTimeline.clips.filter((c: any) => c.id !== clip.id);
+              if (selectedClipId === clip.id) selectedClipId = activeTimeline.clips[0]?.id || null;
+              persistTimelineState();
+              renderTimeline();
+              drawCompositionGuide();
+              closeMenu();
+            };
+          }
+
+          if (deleteBtn) {
+            deleteBtn.onclick = () => {
+              deleteClipById(clip.id);
+              closeMenu();
+            };
+          }
 
           if (splitBtn) {
             splitBtn.onclick = () => {
@@ -3190,32 +3552,27 @@ function initVideoStudio() {
             };
           }
 
-          if (dupBtn) {
-            dupBtn.onclick = () => {
-              const newClip = JSON.parse(JSON.stringify(clip));
-              newClip.id = 'clip-' + Date.now();
-              newClip.name = clip.name + ' (Copy)';
-              newClip.start_time = clip.start_time + 1.0;
-              activeTimeline.clips.push(newClip);
-              selectedClipId = newClip.id;
-              persistTimelineState();
-              renderTimeline();
-              drawCompositionGuide();
+          if (extractAudioBtn) {
+            const isVideo = clip.media_type === 'video';
+            extractAudioBtn.classList.toggle('disabled', !isVideo);
+            if (isVideo) {
+              extractAudioBtn.onclick = () => {
+                extractAudioFromVideoClip(clip.id);
+                closeMenu();
+              };
+            }
+          }
+
+          if (adjustColorBtn) {
+            adjustColorBtn.onclick = () => {
+              switchInspectorTab('lumetri');
               closeMenu();
             };
           }
 
-          if (inspectBtn) {
-            inspectBtn.onclick = () => {
-              switchInspectorTab('transform');
-              closeMenu();
-            };
-          }
-
-          if (deleteBtn) {
-            deleteBtn.onclick = () => {
-              activeTimeline.clips = activeTimeline.clips.filter((c) => c.id !== clip.id);
-              if (selectedClipId === clip.id) selectedClipId = activeTimeline.clips[0]?.id || null;
+          if (deactivateBtn) {
+            deactivateBtn.onclick = () => {
+              clip.is_muted = !clip.is_muted;
               persistTimelineState();
               renderTimeline();
               drawCompositionGuide();
@@ -3251,8 +3608,9 @@ function initVideoStudio() {
         }
 
         selectedClipId = clip.id;
-        renderTimeline();
         updateInspectorForSelectedClip();
+
+        const TRACK_HEADER_WIDTH = 36;
 
         // 1. Left Edge Trim
         if (target.classList.contains('ae-trim-handle-left')) {
@@ -3261,6 +3619,8 @@ function initVideoStudio() {
           let initialStart = clip.start_time;
           let initialDuration = clip.duration;
 
+          pushUndoState();
+
           const onMove = (mEvt: MouseEvent) => {
             const deltaSec = (mEvt.clientX - initialX) / pxPerSec;
             const newStart = Math.max(0, initialStart + deltaSec);
@@ -3268,13 +3628,17 @@ function initVideoStudio() {
 
             clip.start_time = newStart;
             clip.duration = newDuration;
-            renderTimeline();
+
+            bar.style.left = `${TRACK_HEADER_WIDTH + newStart * pxPerSec}px`;
+            bar.style.width = `${newDuration * pxPerSec}px`;
           };
 
           const onUp = () => {
             window.removeEventListener('mousemove', onMove);
             window.removeEventListener('mouseup', onUp);
             persistTimelineState();
+            renderTimeline();
+            drawCompositionGuide();
           };
 
           window.addEventListener('mousemove', onMove);
@@ -3288,16 +3652,22 @@ function initVideoStudio() {
           let initialX = e.clientX;
           let initialDuration = clip.duration;
 
+          pushUndoState();
+
           const onMove = (mEvt: MouseEvent) => {
             const deltaSec = (mEvt.clientX - initialX) / pxPerSec;
-            clip.duration = Math.max(0.5, initialDuration + deltaSec);
-            renderTimeline();
+            const newDuration = Math.max(0.5, initialDuration + deltaSec);
+            clip.duration = newDuration;
+
+            bar.style.width = `${newDuration * pxPerSec}px`;
           };
 
           const onUp = () => {
             window.removeEventListener('mousemove', onMove);
             window.removeEventListener('mouseup', onUp);
             persistTimelineState();
+            renderTimeline();
+            drawCompositionGuide();
           };
 
           window.addEventListener('mousemove', onMove);
@@ -3305,51 +3675,48 @@ function initVideoStudio() {
           return;
         }
 
-        // 3. Move Clip Position & Magnetic Snap to adjacent clip edges
+        // 3. Move Clip Position Freely (Horizontally & Vertically Across Tracks)
         let initialX = e.clientX;
         let initialStart = clip.start_time;
+
+        pushUndoState();
 
         const onMove = (mEvt: MouseEvent) => {
           const deltaSec = (mEvt.clientX - initialX) / pxPerSec;
           let newStart = Math.max(0, initialStart + deltaSec);
 
-          // Magnetic Snap to 0.0s start wall (< 0.5s radius)
-          if (newStart < 0.5) {
+          if (newStart < 0.15) {
             newStart = 0.0;
           }
 
-          // Magnetic Snap to edges of other clips (0.4s radius)
-          activeTimeline.clips.forEach((otherClip) => {
-            if (otherClip.id !== clip.id) {
-              const otherEnd = otherClip.start_time + otherClip.duration;
-              if (Math.abs(newStart - otherEnd) < 0.4) {
-                newStart = otherEnd;
-              } else if (Math.abs((newStart + clip.duration) - otherClip.start_time) < 0.4) {
-                newStart = Math.max(0, otherClip.start_time - clip.duration);
-              }
-            }
-          });
+          const rect = trackCanvas.getBoundingClientRect();
+          const mouseY = mEvt.clientY - rect.top;
+          const trackIdx = Math.max(0, Math.min(Math.floor(mouseY / 36), activeTimeline.tracks.length - 1));
+          const targetTrack = activeTimeline.tracks[trackIdx];
 
-          // Track Collision Auto-Displacement: Push overlapping clips on the same track lane
-          const currentTrackId = clip.track_id || 1;
-          activeTimeline.clips.forEach((otherClip) => {
-            if (otherClip.id !== clip.id && (otherClip.track_id || 1) === currentTrackId) {
-              const clipEnd = newStart + clip.duration;
-              const otherEnd = otherClip.start_time + otherClip.duration;
-              if (newStart < otherEnd && clipEnd > otherClip.start_time) {
-                otherClip.start_time = clipEnd;
-              }
+          if (targetTrack) {
+            const isAudio = clip.media_type === 'audio';
+            if ((isAudio && targetTrack.type === 'audio') || (!isAudio && targetTrack.type === 'video')) {
+              clip.track_id = targetTrack.id;
             }
-          });
+          }
 
           clip.start_time = newStart;
-          renderTimeline();
+
+          // Direct DOM style manipulation for 60fps zero-lag drag!
+          const currentTrackIdx = activeTimeline.tracks.findIndex((t: any) => String(t.id) === String(clip.track_id));
+          const topPx = (currentTrackIdx >= 0 ? currentTrackIdx : 0) * 36 + 4;
+
+          bar.style.left = `${TRACK_HEADER_WIDTH + newStart * pxPerSec}px`;
+          bar.style.top = `${topPx}px`;
         };
 
         const onUp = () => {
           window.removeEventListener('mousemove', onMove);
           window.removeEventListener('mouseup', onUp);
           persistTimelineState();
+          renderTimeline();
+          drawCompositionGuide();
         };
 
         window.addEventListener('mousemove', onMove);
@@ -3547,17 +3914,27 @@ function initVideoStudio() {
     $('#ae-capcut-btn-delete')?.addEventListener('click', deleteSelectedClip);
     $('#ae-capcut-btn-keyframe')?.addEventListener('click', addKeyframeAtPlayhead);
 
+    // NOTE: Import file listener is handled in the unified media pool section below (line ~4689).
+    // Do NOT attach a second 'change' listener here — it causes duplicate clip creation + conflicts.
+
+    // Bind Undo / Redo & Cut Left / Right Buttons
+    $('#ae-capcut-btn-undo')?.addEventListener('click', undoAction);
+    $('#ae-capcut-btn-redo')?.addEventListener('click', redoAction);
+    $('#ae-capcut-btn-split-left')?.addEventListener('click', splitLeftAtPlayhead);
+    $('#ae-capcut-btn-split-right')?.addEventListener('click', splitRightAtPlayhead);
+
     const zoomSlider = $<HTMLInputElement>('#ae-capcut-zoom-slider');
     if (zoomSlider) {
+      zoomSlider.value = String(pxPerSec);
       zoomSlider.addEventListener('input', () => {
-        pxPerSec = parseFloat(zoomSlider.value);
+        pxPerSec = Math.max(2, parseFloat(zoomSlider.value));
         renderTimeline();
       });
     }
 
     $('#ae-capcut-btn-zoom-out')?.addEventListener('click', () => {
       if (zoomSlider) {
-        zoomSlider.value = String(Math.max(10, parseFloat(zoomSlider.value) - 10));
+        zoomSlider.value = String(Math.max(2, parseFloat(zoomSlider.value) - 5));
         pxPerSec = parseFloat(zoomSlider.value);
         renderTimeline();
       }
@@ -3565,7 +3942,7 @@ function initVideoStudio() {
 
     $('#ae-capcut-btn-zoom-in')?.addEventListener('click', () => {
       if (zoomSlider) {
-        zoomSlider.value = String(Math.min(200, parseFloat(zoomSlider.value) + 10));
+        zoomSlider.value = String(Math.min(100, parseFloat(zoomSlider.value) + 5));
         pxPerSec = parseFloat(zoomSlider.value);
         renderTimeline();
       }
@@ -3575,8 +3952,19 @@ function initVideoStudio() {
       const activeTag = (document.activeElement?.tagName || '').toLowerCase();
       if (activeTag === 'input' || activeTag === 'textarea') return;
 
-      if (e.key === 'b' || e.key === 'B') {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+        e.preventDefault();
+        if (e.shiftKey) redoAction();
+        else undoAction();
+      } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') {
+        e.preventDefault();
+        redoAction();
+      } else if (e.key === 'b' || e.key === 'B') {
         splitClipAtPlayhead();
+      } else if (e.key === '[') {
+        splitLeftAtPlayhead();
+      } else if (e.key === ']') {
+        splitRightAtPlayhead();
       } else if (e.key === 'Delete' || e.key === 'Backspace') {
         deleteSelectedClip();
       }
@@ -3660,17 +4048,6 @@ function initVideoStudio() {
     return `${pad(hrs)};${pad(mins)};${pad(secs)};${pad(frames)}`;
   }
 
-  function updatePlayheadUI() {
-    if (timecodeDisplay) timecodeDisplay.textContent = formatTimecode(playheadTime);
-
-    const leftPx = Math.max(36, 36 + playheadTime * pxPerSec);
-    const pin = $<HTMLElement>('#ae-playhead-pin');
-    if (pin) pin.style.left = `${leftPx}px`;
-
-    const line = $<HTMLElement>('#ae-playhead-line');
-    if (line) line.style.left = `${leftPx}px`;
-  }
-
   function pausePlayback() {
     isPlaying = false;
     if (playIcon) {
@@ -3726,6 +4103,47 @@ function initVideoStudio() {
   // Initialize CapCut Desktop Timeline Toolbar Events
   initCapCutToolbarEvents();
 
+  // Add Track Header Popup Controls (+ Icon above V1)
+  const btnAddTrackHeader = $('#ae-header-btn-add-track');
+  const popupAddTrack = $<HTMLElement>('#ae-add-track-popup');
+
+  if (btnAddTrackHeader && popupAddTrack) {
+    btnAddTrackHeader.addEventListener('click', (e) => {
+      e.stopPropagation();
+      popupAddTrack.style.display = popupAddTrack.style.display === 'block' ? 'none' : 'block';
+    });
+
+    window.addEventListener('click', () => {
+      popupAddTrack.style.display = 'none';
+    });
+
+    popupAddTrack.querySelectorAll('.ae-add-track-item').forEach((item) => {
+      item.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const trackType = item.getAttribute('data-type') || 'video';
+        const existingSameType = activeTimeline.tracks.filter((t: any) => t.type === trackType);
+        const newNum = existingSameType.length + 1;
+        const prefix = trackType === 'video' ? 'V' : 'A';
+        const newTrackName = `${prefix}${newNum} · ${trackType === 'video' ? 'Video Track' : 'Audio Track'}`;
+
+        const newTrack = {
+          id: Date.now(),
+          name: newTrackName,
+          type: trackType,
+          muted: false,
+          solo: false,
+          locked: false,
+        };
+
+        activeTimeline.tracks.push(newTrack);
+        persistTimelineState();
+        renderTimeline();
+        drawCompositionGuide();
+        popupAddTrack.style.display = 'none';
+      });
+    });
+  }
+
   // Keyframe Settings Inspector Panel Event Handlers
   const kfValInput = $<HTMLInputElement>('#ae-kf-val-input');
   const btnDeleteKf = $('#ae-btn-delete-kf');
@@ -3771,6 +4189,131 @@ function initVideoStudio() {
         renderTimeline();
         drawCompositionGuide();
       }
+    });
+  });
+  // Sidebar Category Nav Tab Switcher (Media, Audio, Text, Stickers, Effects, Transitions, Captions, Filters)
+  $$('#ae-sidebar-nav .ae-nav-item').forEach((navBtn) => {
+    navBtn.addEventListener('click', () => {
+      $$('#ae-sidebar-nav .ae-nav-item').forEach((b) => {
+        b.classList.remove('active');
+        (b as HTMLElement).style.background = 'transparent';
+        (b as HTMLElement).style.borderColor = 'transparent';
+        (b as HTMLElement).style.color = '#a1a1aa';
+      });
+      navBtn.classList.add('active');
+      (navBtn as HTMLElement).style.background = '#1a1a22';
+      (navBtn as HTMLElement).style.borderColor = '#00b4d8';
+      (navBtn as HTMLElement).style.color = '#00b4d8';
+
+      const tabCategory = navBtn.getAttribute('data-tab') || 'media';
+      renderCategoryExplorer(tabCategory);
+    });
+  });
+
+  function renderCategoryExplorer(category: string) {
+    const listEl = $('#ae-media-pool-list');
+    if (!listEl) return;
+
+    if (category === 'text') {
+      listEl.innerHTML = `
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="font-weight: 700; font-size: 0.72rem; color: #ffffff; margin-bottom: 4px;">Text Presets (V2 Track)</div>
+          <button class="ae-preset-text-btn" data-text="Main Header Title" data-size="72" data-color="#ffffff" style="background: #121215; border: 1px solid #2d2d38; border-radius: 6px; padding: 10px; color: #ffffff; font-size: 0.85rem; font-weight: 800; cursor: pointer; text-align: left;">
+            Aa Main Title
+          </button>
+          <button class="ae-preset-text-btn" data-text="Lower Third Subtitle" data-size="44" data-color="#00b4d8" style="background: #121215; border: 1px solid #00b4d8; border-radius: 6px; padding: 10px; color: #00b4d8; font-size: 0.78rem; font-weight: 700; cursor: pointer; text-align: left;">
+            Aa Cyan Subtitle
+          </button>
+          <button class="ae-preset-text-btn" data-text="Neon Glow Title" data-size="56" data-color="#f59e0b" style="background: #121215; border: 1px solid #f59e0b; border-radius: 6px; padding: 10px; color: #f59e0b; font-size: 0.8rem; font-weight: 700; cursor: pointer; text-align: left;">
+            ✨ Neon Glow Text
+          </button>
+        </div>
+      `;
+
+      listEl.querySelectorAll('.ae-preset-text-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const txt = btn.getAttribute('data-text') || 'Preset Title';
+          const sz = parseInt(btn.getAttribute('data-size') || '60', 10);
+          const col = btn.getAttribute('data-color') || '#ffffff';
+          addTextClipToTimeline(txt, sz, col);
+        });
+      });
+    } else if (category === 'filters' || category === 'effects') {
+      listEl.innerHTML = `
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="font-weight: 700; font-size: 0.72rem; color: #ffffff; margin-bottom: 4px;">Color Grading LUT Presets</div>
+          <button class="ae-preset-lut-btn" data-lut="none" style="background: #121215; border: 1px solid #2d2d38; border-radius: 6px; padding: 8px; color: #ffffff; font-size: 0.74rem; cursor: pointer; text-align: left;">Standard Neutral</button>
+          <button class="ae-preset-lut-btn" data-lut="vivid" style="background: #121215; border: 1px solid #00b4d8; border-radius: 6px; padding: 8px; color: #00b4d8; font-size: 0.74rem; cursor: pointer; text-align: left;">Vivid Cyan Boost</button>
+          <button class="ae-preset-lut-btn" data-lut="cyberpunk" style="background: #121215; border: 1px solid #8b5cf6; border-radius: 6px; padding: 8px; color: #8b5cf6; font-size: 0.74rem; cursor: pointer; text-align: left;">Cyberpunk Neon</button>
+          <button class="ae-preset-lut-btn" data-lut="vintage" style="background: #121215; border: 1px solid #f59e0b; border-radius: 6px; padding: 8px; color: #f59e0b; font-size: 0.74rem; cursor: pointer; text-align: left;">Vintage Warm Sepia</button>
+          <button class="ae-preset-lut-btn" data-lut="bw" style="background: #121215; border: 1px solid #71717a; border-radius: 6px; padding: 8px; color: #d4d4d8; font-size: 0.74rem; cursor: pointer; text-align: left;">Monochrome B&W</button>
+        </div>
+      `;
+
+      listEl.querySelectorAll('.ae-preset-lut-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const lut = btn.getAttribute('data-lut') || 'none';
+          const lumPreset = $<HTMLSelectElement>('#lum-lut-preset');
+          if (lumPreset) {
+            lumPreset.value = lut;
+            drawCompositionGuide();
+          }
+        });
+      });
+    } else {
+      renderMediaPoolList();
+    }
+  }
+
+  function addTextClipToTimeline(text: string, fontSize: number, color: string) {
+    pushUndoState();
+
+    const newClip = {
+      id: 'clip-' + Date.now(),
+      name: text,
+      src: '',
+      media_type: 'text',
+      start_time: playheadTime,
+      duration: 5.0,
+      in_point: 0.0,
+      out_point: 5.0,
+      track_id: 1, // Track 1 is V2 Titles/Overlays
+      transform: { position_x: 0, position_y: 0, position_z: 0, scale_x: 100, scale_y: 100, rotation: 0, opacity: 100 },
+      color_grading: { exposure: 0, contrast: 100, saturation: 100, temperature: 0 },
+      text_style: { text, font_size: fontSize, color, font_family: 'Outfit, sans-serif', align: 'center' },
+      keyframes: [],
+      volume_db: 0.0,
+      is_muted: false,
+    };
+
+    activeTimeline.clips.push(newClip);
+    selectedClipId = newClip.id;
+    persistTimelineState();
+    renderTimeline();
+    updateInspectorForSelectedClip();
+    drawCompositionGuide();
+  }
+
+  // Right Inspector Main Tab Switcher
+  $$('#ae-panel-right .ae-right-tab').forEach((tabBtn) => {
+    tabBtn.addEventListener('click', () => {
+      $$('#ae-panel-right .ae-right-tab').forEach((b) => {
+        b.classList.remove('active');
+        (b as HTMLElement).style.background = 'transparent';
+        (b as HTMLElement).style.color = '#a1a1aa';
+      });
+      tabBtn.classList.add('active');
+      (tabBtn as HTMLElement).style.background = '#1c1c24';
+      (tabBtn as HTMLElement).style.color = '#ffffff';
+
+      const tabId = tabBtn.id;
+      const paneTransform = $<HTMLElement>('#ae-pane-transform');
+      const paneLumetri = $<HTMLElement>('#ae-pane-lumetri');
+      const paneFx = $<HTMLElement>('#ae-pane-fx');
+
+      if (paneTransform) paneTransform.style.display = tabId === 'ae-tab-transform' ? 'flex' : 'none';
+      if (paneLumetri) paneLumetri.style.display = (tabId === 'ae-tab-lumetri' || tabId === 'ae-tab-audio') ? 'flex' : 'none';
+      if (paneFx) paneFx.style.display = tabId === 'ae-tab-fx' ? 'flex' : 'none';
     });
   });
 
@@ -3960,6 +4503,32 @@ function initVideoStudio() {
       activeClips.forEach((clip: any) => {
         const isClipActive = playheadTime >= clip.start_time && playheadTime <= (clip.start_time + clip.duration);
 
+        if (clip.media_type === 'text') {
+          if (!isClipActive) return;
+
+          const clipTransform = clip.transform || {};
+          const posXVal = getInterpolatedClipValue(clip, 'position_x', clipTransform.position_x || 0);
+          const posYVal = getInterpolatedClipValue(clip, 'position_y', clipTransform.position_y || 0);
+          const scaleVal = getInterpolatedClipValue(clip, 'scale_x', clipTransform.scale_x || 100);
+          const rotVal = getInterpolatedClipValue(clip, 'rotation', clipTransform.rotation || 0);
+          const opacityVal = getInterpolatedClipValue(clip, 'opacity', clipTransform.opacity || 100);
+
+          ctx.save();
+          ctx.filter = filterStr;
+          ctx.globalAlpha = (opacityVal / 100) * opacity;
+          ctx.translate((w / 2) + posXVal, (h / 2) + posYVal);
+          ctx.rotate(((rotVal + rotDeg) * Math.PI) / 180);
+          ctx.scale((scaleVal / 100) * scale, (scaleVal / 100) * scale);
+
+          ctx.font = `${clip.text_style?.font_size || 60}px ${clip.text_style?.font_family || 'sans-serif'}`;
+          ctx.textAlign = (clip.text_style?.align as any) || 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillStyle = clip.text_style?.color || '#ffffff';
+          ctx.fillText(clip.text_style?.text || clip.name || 'Sample Title', 0, 0);
+
+          ctx.restore();
+        }
+
         if (clip.media_type === 'video') {
           const video = getOrCreateVideoElement(clip.src);
           if (!isClipActive) {
@@ -3988,6 +4557,9 @@ function initVideoStudio() {
           ctx.scale(clipScale, clipScale);
 
           if (isPlaying) {
+            video.muted = Boolean(clip.is_muted || clip.muted);
+            video.volume = Math.min(1.0, Math.max(0.0, Math.pow(10, (clip.volume_db || 0) / 20)));
+
             if (video.paused) {
               if (Math.abs(video.currentTime - mediaTime) > 0.1) {
                 video.currentTime = mediaTime;
@@ -4037,16 +4609,33 @@ function initVideoStudio() {
 
           ctx.restore();
         } else if (clip.media_type === 'audio') {
-          if (!isClipActive) return;
           const mediaTime = (playheadTime - clip.start_time) + (clip.in_point || 0);
           const audio = getOrCreateAudioElement(clip.src);
-          if (Math.abs(audio.currentTime - mediaTime) > 0.05) {
-            audio.currentTime = mediaTime;
+
+          if (!isClipActive) {
+            if (!audio.paused) audio.pause();
+            return;
           }
-          if (isPlaying && audio.paused && !clip.is_muted) {
-            audio.play().catch(() => {});
-          } else if ((!isPlaying || clip.is_muted) && !audio.paused) {
-            audio.pause();
+
+          audio.muted = Boolean(clip.is_muted || clip.muted);
+          audio.volume = Math.min(1.0, Math.max(0.0, Math.pow(10, (clip.volume_db || 0) / 20)));
+
+          if (isPlaying) {
+            if (audio.paused) {
+              if (Math.abs(audio.currentTime - mediaTime) > 0.1) {
+                audio.currentTime = mediaTime;
+              }
+              audio.play().catch(() => {});
+            } else if (Math.abs(audio.currentTime - mediaTime) > 0.3) {
+              audio.currentTime = mediaTime;
+            }
+          } else {
+            if (!audio.paused) {
+              audio.pause();
+            }
+            if (Math.abs(audio.currentTime - mediaTime) > 0.03) {
+              audio.currentTime = mediaTime;
+            }
           }
         }
       });
@@ -4078,7 +4667,7 @@ function initVideoStudio() {
       exportBtn.innerHTML = `<i class="ph-bold ph-spinner spinner"></i> Rendering GPU...`;
 
       try {
-        const res = await apiRequest<{ status: string; url?: string; message?: string; filename?: string }>('/api/video/render', {
+        const res = await apiRequest<{ status: string; url?: string; message?: string; filename?: string }>('/api/video/engine/render', {
           method: 'POST',
           body: JSON.stringify({ use_gpu: true }),
         });
@@ -4097,6 +4686,97 @@ function initVideoStudio() {
       }
     });
   }
+
+  // Storage Analytics & Cache Drawer Modal
+  const btnStorage = $('#ae-btn-storage');
+  const storageDrawer = $<HTMLElement>('#ae-storage-drawer');
+  const closeStorageModal = $('#ae-close-storage-modal');
+
+  async function refreshStorageStats() {
+    try {
+      const stats = await apiRequest<{
+        formatted?: Record<string, string>;
+        unused_assets_count?: number;
+      }>('/api/video/storage');
+      if (stats.formatted) {
+        const elOrig = $('#stg-orig-size');
+        const elProxy = $('#stg-proxy-size');
+        const elThumb = $('#stg-thumb-size');
+        const elExport = $('#stg-export-size');
+        const elUnused = $('#stg-unused-info');
+
+        if (elOrig) elOrig.textContent = stats.formatted.original || '0 MB';
+        if (elProxy) elProxy.textContent = stats.formatted.proxy || '0 MB';
+        if (elThumb) elThumb.textContent = stats.formatted.thumbnail || '0 MB';
+        if (elExport) elExport.textContent = stats.formatted.export || '0 MB';
+        if (elUnused) elUnused.textContent = `${stats.unused_assets_count || 0} unused files (${stats.formatted.unused || '0 B'})`;
+      }
+    } catch (err) {
+      console.warn('Storage stats fetch error:', err);
+    }
+  }
+
+  if (btnStorage && storageDrawer) {
+    btnStorage.addEventListener('click', () => {
+      storageDrawer.style.display = 'flex';
+      refreshStorageStats();
+    });
+  }
+
+  if (closeStorageModal && storageDrawer) {
+    closeStorageModal.addEventListener('click', () => {
+      storageDrawer.style.display = 'none';
+    });
+  }
+
+  $('#stg-btn-clean-proxy')?.addEventListener('click', async () => {
+    await apiRequest('/api/video/storage/clean', { method: 'POST', body: JSON.stringify({ target: 'proxy' }) });
+    refreshStorageStats();
+    alert('Proxy cache cleared cleanly.');
+  });
+
+  $('#stg-btn-clean-all')?.addEventListener('click', async () => {
+    if (confirm('Clear all temporary caches (proxies, thumbnails, waveforms)? Original assets will remain safe.')) {
+      await apiRequest('/api/video/storage/clean', { method: 'POST', body: JSON.stringify({ target: 'all' }) });
+      refreshStorageStats();
+      alert('All video caches cleared cleanly.');
+    }
+  });
+
+  // AI Tools Handlers (Auto Cut Silence & Auto Captions)
+  $('#ae-capcut-btn-autocut')?.addEventListener('click', async () => {
+    const btn = $('#ae-capcut-btn-autocut');
+    if (btn) btn.innerHTML = `<i class="ph-bold ph-spinner spinner"></i> Cutting...`;
+    try {
+      const res = await apiRequest<{ status: string; cuts_made?: number; message?: string }>('/api/video/ai/auto-cut', { method: 'POST' });
+      if (res.status === 'success') {
+        alert(`✨ AI Auto-Cut Complete!\nPerformed ${res.cuts_made || 0} smart cuts on silent periods.`);
+        syncTimelineFromBackend();
+      } else {
+        alert(`AI Auto-Cut Notice: ${res.message || 'Could not perform auto-cut'}`);
+      }
+    } catch (err) {
+      alert(`AI Auto-Cut Error: ${(err as Error).message}`);
+    } finally {
+      if (btn) btn.innerHTML = `<i class="ph-bold ph-sparkle"></i> Auto Cut`;
+    }
+  });
+
+  $('#ae-capcut-btn-captions')?.addEventListener('click', async () => {
+    const btn = $('#ae-capcut-btn-captions');
+    if (btn) btn.innerHTML = `<i class="ph-bold ph-spinner spinner"></i> Generating...`;
+    try {
+      const res = await apiRequest<{ status: string; captions_added?: number }>('/api/video/ai/auto-captions', { method: 'POST' });
+      if (res.status === 'success') {
+        alert(`✨ AI Auto-Captions Complete!\nGenerated ${res.captions_added || 0} subtitle text layers.`);
+        syncTimelineFromBackend();
+      }
+    } catch (err) {
+      alert(`AI Captions Error: ${(err as Error).message}`);
+    } finally {
+      if (btn) btn.innerHTML = `<i class="ph-bold ph-closed-captioning"></i> Captions`;
+    }
+  });
 
   // Clear All Timeline Layers Handler
   const btnClearTracks = $('#ae-btn-clear-tracks');
@@ -4208,14 +4888,18 @@ function initVideoStudio() {
   // Media Pool & Import File Upload Handling
   const importInput = $<HTMLInputElement>('#ae-import-file');
   const mediaPoolList = $<HTMLElement>('#ae-media-pool-list');
-  let mediaPoolAssets: Array<{ name: string; type: 'video' | 'audio' | 'image'; url: string }> = [];
+  let mediaPoolAssets: Array<{ name: string; type: 'video' | 'audio' | 'image'; url: string; duration?: number }> = [];
+
+  let currentAuditionMedia: HTMLAudioElement | HTMLVideoElement | null = null;
 
   function renderMediaPool() {
     if (!mediaPoolList) return;
+    mediaPoolList.className = 'ae-media-card-grid';
+
     if (mediaPoolAssets.length === 0) {
       mediaPoolList.innerHTML = `
-        <div style="padding: 16px 8px; text-align: center; color: #71717a; font-size: 0.72rem;">
-          <i class="ph-bold ph-folder-open" style="font-size: 1.5rem; display: block; margin-bottom: 6px; color: #3f3f46;"></i>
+        <div style="grid-column: 1 / -1; padding: 24px 12px; text-align: center; color: #71717a; font-size: 0.72rem;">
+          <i class="ph-bold ph-folder-open" style="font-size: 1.8rem; display: block; margin-bottom: 8px; color: #3f3f46;"></i>
           <span>No media assets imported yet.<br>Click <strong>+ Import</strong> to add files.</span>
         </div>
       `;
@@ -4226,56 +4910,54 @@ function initVideoStudio() {
     mediaPoolAssets.forEach((asset, idx) => {
       const isVideo = asset.type === 'video';
       const isAudio = asset.type === 'audio';
-      const typeIcon = isVideo ? 'ph-video' : isAudio ? 'ph-speaker-high' : 'ph-image';
-      const iconColor = isVideo ? '#8b5cf6' : isAudio ? '#10b981' : '#f59e0b';
-      const ext = asset.name.split('.').pop()?.toUpperCase() || asset.type.toUpperCase();
+      const isImage = asset.type === 'image';
+      const typeIcon = isVideo ? 'ph-video-camera' : isAudio ? 'ph-waveform' : 'ph-image';
+      const badgeClass = isVideo ? 'ae-media-badge-video' : isAudio ? 'ae-media-badge-audio' : 'ae-media-badge-image';
+      const durationStr = isImage ? 'IMAGE' : `${(asset.duration || 12.0).toFixed(1)}s`;
 
       const streamUrl = asset.url.startsWith('http') || asset.url.startsWith('blob:')
         ? asset.url
         : `http://localhost:8000/api/assets-vault/stream/${asset.url.replace('database/assets_vault/', '')}`;
 
-      let mediaPreviewHTML = '';
+      let thumbContent = '';
       if (isVideo) {
-        mediaPreviewHTML = `<video src="${streamUrl}" controls preload="metadata" style="width: 100%; height: 110px; object-fit: cover; border-radius: 6px; background: #000;"></video>`;
-      } else if (isAudio) {
-        mediaPreviewHTML = `
-          <div style="height: 110px; background: #121216; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px;">
-            <i class="ph-bold ph-waveform" style="font-size: 2rem; color: #10b981; margin-bottom: 6px;"></i>
-            <audio src="${streamUrl}" controls style="width: 100%; height: 28px;"></audio>
-          </div>
-        `;
+        thumbContent = `<video class="ae-media-video-element" src="${streamUrl}" preload="metadata" muted playsinline style="width: 100%; height: 100%; object-fit: cover; background: #000; pointer-events: none;"></video>`;
+      } else if (isImage) {
+        thumbContent = `<img src="${streamUrl}" alt="${escapeHtml(asset.name)}" style="width: 100%; height: 100%; object-fit: cover;" />`;
       } else {
-        mediaPreviewHTML = `<img src="${streamUrl}" alt="${escapeHtml(asset.name)}" style="width: 100%; height: 110px; object-fit: cover; border-radius: 6px;" />`;
+        thumbContent = `<i class="ph-bold ${typeIcon} media-icon"></i>`;
       }
 
       html += `
-        <div class="ae-asset-row" data-idx="${idx}" draggable="true" style="margin-bottom: 12px; background: #16161c; border: 1px solid #27272a; border-radius: 8px; padding: 8px; display: flex; flex-direction: column; gap: 8px; cursor: grab; user-select: none;">
-          <div style="display: flex; align-items: center; justify-content: space-between;">
-            <div style="display: flex; align-items: center; gap: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 170px;">
-              <div style="width: 22px; height: 22px; background: rgba(139, 92, 246, 0.15); border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                <i class="ph-bold ${typeIcon}" style="color: ${iconColor}; font-size: 0.85rem;"></i>
-              </div>
-              <strong style="color: #ffffff; font-size: 0.75rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis;" title="${escapeHtml(asset.name)}">${escapeHtml(asset.name)}</strong>
-            </div>
-            <span style="font-size: 0.62rem; background: #27272a; color: #a1a1aa; font-weight: 700; padding: 2px 6px; border-radius: 4px;">.${escapeHtml(ext)}</span>
-          </div>
-          <div style="position: relative; height: 110px; border-radius: 6px; overflow: hidden; pointer-events: none;">
-            ${mediaPreviewHTML}
-          </div>
-          <button class="ae-btn-add-timeline" data-idx="${idx}" style="width: 100%; background: #27272a; color: #ffffff; border: none; border-radius: 4px; padding: 6px; font-size: 0.72rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; pointer-events: auto;">
-            <i class="ph-bold ph-plus"></i> Add to Timeline
+        <div class="ae-media-card-box" data-idx="${idx}" draggable="true" title="Double click to add to timeline">
+          <button class="ae-media-btn-delete" data-idx="${idx}" title="Delete asset from Media Explorer">
+            <i class="ph-bold ph-trash"></i>
           </button>
+          <div class="ae-media-card-thumb">
+            ${thumbContent}
+            <div class="ae-media-play-overlay">
+              <button class="ae-media-btn-play" data-idx="${idx}" title="Audition Play / Pause">
+                <i class="ph-bold ph-play"></i>
+              </button>
+            </div>
+          </div>
+          <div class="ae-media-card-info">
+            <span class="ae-media-card-name" title="${escapeHtml(asset.name)}">${escapeHtml(asset.name)}</span>
+            <div class="ae-media-card-meta">
+              <span class="${badgeClass}">${asset.type.toUpperCase()}</span>
+              <span>${durationStr}</span>
+            </div>
+          </div>
         </div>
       `;
     });
 
     mediaPoolList.innerHTML = html;
 
-    // Attach Dragstart, Double-click, and Add-to-Timeline Button Listeners
-    mediaPoolList.querySelectorAll('.ae-asset-row').forEach((row) => {
-      row.addEventListener('dragstart', (e: Event) => {
+    mediaPoolList.querySelectorAll('.ae-media-card-box').forEach((card) => {
+      card.addEventListener('dragstart', (e: Event) => {
         const dragEvt = e as DragEvent;
-        const idxStr = row.getAttribute('data-idx');
+        const idxStr = card.getAttribute('data-idx');
         if (idxStr === null) return;
         const asset = mediaPoolAssets[parseInt(idxStr)];
         if (asset && dragEvt.dataTransfer) {
@@ -4284,49 +4966,134 @@ function initVideoStudio() {
         }
       });
 
-      row.addEventListener('dblclick', () => {
-        const idxStr = row.getAttribute('data-idx');
+      // Click card body -> Add asset to timeline
+      card.addEventListener('dblclick', () => {
+        const idxStr = card.getAttribute('data-idx');
         if (idxStr === null) return;
         const asset = mediaPoolAssets[parseInt(idxStr)];
         if (asset) addAssetToTimeline(asset);
       });
 
-      const addBtn = row.querySelector('.ae-btn-add-timeline');
-      if (addBtn) {
-        addBtn.addEventListener('click', (e) => {
+      // Delete button listener
+      const deleteBtn = card.querySelector('.ae-media-btn-delete');
+      if (deleteBtn) {
+        deleteBtn.addEventListener('click', (e) => {
           e.stopPropagation();
-          const idxStr = row.getAttribute('data-idx');
+          const idxStr = card.getAttribute('data-idx');
+          if (idxStr === null) return;
+          const idx = parseInt(idxStr, 10);
+          mediaPoolAssets.splice(idx, 1);
+          renderMediaPool();
+        });
+      }
+
+      // Play / Audition button listener (plays video frame in card!)
+      const playBtn = card.querySelector('.ae-media-btn-play');
+      if (playBtn) {
+        playBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const idxStr = card.getAttribute('data-idx');
           if (idxStr === null) return;
           const asset = mediaPoolAssets[parseInt(idxStr)];
-          if (asset) addAssetToTimeline(asset);
+          if (!asset) return;
+
+          const videoEl = card.querySelector<HTMLVideoElement>('.ae-media-video-element');
+          const playIcon = playBtn.querySelector('i');
+
+          const streamUrl = asset.url.startsWith('http') || asset.url.startsWith('blob:')
+            ? asset.url
+            : `http://localhost:8000/api/assets-vault/stream/${asset.url.replace('database/assets_vault/', '')}`;
+
+          if (videoEl) {
+            if (videoEl.paused) {
+              if (currentAuditionMedia) {
+                currentAuditionMedia.pause();
+                currentAuditionMedia = null;
+              }
+
+              videoEl.muted = false;
+              videoEl.volume = 1.0;
+              videoEl.play().catch(() => {
+                videoEl.muted = true;
+                videoEl.play().catch(() => {});
+              });
+
+              const audioEl = new Audio(streamUrl);
+              audioEl.volume = 1.0;
+              audioEl.play().catch(() => {});
+              currentAuditionMedia = audioEl;
+
+              if (playIcon) playIcon.className = 'ph-bold ph-pause';
+            } else {
+              videoEl.pause();
+              if (currentAuditionMedia) {
+                currentAuditionMedia.pause();
+                currentAuditionMedia = null;
+              }
+              if (playIcon) playIcon.className = 'ph-bold ph-play';
+            }
+          } else {
+            if (currentAuditionMedia) {
+              currentAuditionMedia.pause();
+              currentAuditionMedia = null;
+            }
+
+            const audioEl = new Audio(streamUrl);
+            audioEl.volume = 1.0;
+            audioEl.play().catch(() => {});
+            currentAuditionMedia = audioEl;
+            if (playIcon) playIcon.className = 'ph-bold ph-pause';
+          }
         });
       }
     });
   }
 
-  function addAssetToTimeline(asset: { name: string; type: 'video' | 'audio' | 'image'; url: string }, targetTrack?: number) {
+  function addAssetToTimeline(asset: { name: string; type: 'video' | 'audio' | 'image'; url: string; duration?: number }, targetTrack?: number) {
+    pushUndoState();
     const isAudio = asset.type === 'audio';
-    const chosenTrackId = targetTrack || (isAudio ? 3 : 2); // Default A1 for audio, V1 for video
+    const isVideo = asset.type === 'video';
 
-    const newClip = {
+    let targetTrackObj = activeTimeline.tracks.find((t: any) => isAudio ? t.type === 'audio' : (t.type === 'video' || t.type === 'image'));
+    if (!targetTrackObj) {
+      const trackId = Date.now();
+      const trackName = isAudio ? `A${activeTimeline.tracks.filter((t: any) => t.type === 'audio').length + 1} · Audio Track` : `V${activeTimeline.tracks.filter((t: any) => t.type === 'video').length + 1} · Video Track`;
+      targetTrackObj = { id: trackId, name: trackName, type: isAudio ? 'audio' : 'video', muted: false, solo: false, locked: false };
+      activeTimeline.tracks.push(targetTrackObj);
+    }
+
+    const chosenTrackId = targetTrack || targetTrackObj.id;
+    const sourceDuration = asset.type === 'image' ? 5.0 : Math.max(0.1, Number(asset.duration || 12.0));
+
+    // Calculate sequential start time: fit at 0.0s for first clip, attach after end for subsequent clips
+    const existingTrackClips = activeTimeline.clips.filter((c: any) => String(c.track_id) === String(chosenTrackId));
+    let dropStartTime = 0.0;
+    if (existingTrackClips.length > 0) {
+      const maxEnd = Math.max(...existingTrackClips.map((c: any) => c.start_time + c.duration));
+      dropStartTime = maxEnd;
+    } else {
+      dropStartTime = 0.0;
+    }
+
+    const newVideoClip = {
       id: 'clip-' + Date.now(),
       name: asset.name,
       src: asset.url,
       media_type: asset.type,
-      start_time: playheadTime,
-      duration: asset.type === 'image' ? 5.0 : 12.0,
+      start_time: dropStartTime,
+      duration: sourceDuration,
       in_point: 0.0,
-      out_point: asset.type === 'image' ? 5.0 : 12.0,
+      out_point: sourceDuration,
       track_id: chosenTrackId,
       transform: { position_x: 0, position_y: 0, position_z: 0, scale_x: 100, scale_y: 100, rotation: 0, opacity: 100 },
       color_grading: { exposure: 0, contrast: 100, saturation: 100, temperature: 0 },
       keyframes: [],
       volume_db: 0.0,
-      is_muted: false,
     };
 
-    activeTimeline.clips.push(newClip);
-    selectedClipId = newClip.id;
+    activeTimeline.clips.push(newVideoClip);
+    selectedClipId = newVideoClip.id;
+
     persistTimelineState();
     renderTimeline();
     drawCompositionGuide();
@@ -4338,14 +5105,32 @@ function initVideoStudio() {
       if (!res.ok) return;
       const data = await res.json();
       if (data.files && Array.isArray(data.files)) {
-        // Only load user-imported files from 'imports' folder, NOT system-generated asset vault files
         const mediaFiles = data.files.filter((f: any) => f.folder === 'imports' && ['video', 'audio', 'image'].includes(f.media_type));
         mediaPoolAssets = mediaFiles.map((f: any) => ({
           name: f.name,
           type: f.media_type as 'video' | 'audio' | 'image',
           url: `database/assets_vault/${f.rel_path}`,
+          duration: f.duration || 12.0,
         }));
         renderMediaPool();
+
+        // Probe real HTML5 duration for videos/audios dynamically
+        mediaPoolAssets.forEach((asset) => {
+          if (asset.type === 'image') return;
+          const streamUrl = asset.url.startsWith('http') || asset.url.startsWith('blob:')
+            ? asset.url
+            : `http://localhost:8000/api/assets-vault/stream/${asset.url.replace('database/assets_vault/', '')}`;
+
+          const tempMedia = asset.type === 'video' ? document.createElement('video') : document.createElement('audio');
+          tempMedia.preload = 'metadata';
+          tempMedia.src = streamUrl;
+          tempMedia.onloadedmetadata = () => {
+            if (tempMedia.duration && !isNaN(tempMedia.duration) && isFinite(tempMedia.duration)) {
+              asset.duration = tempMedia.duration;
+              renderMediaPool();
+            }
+          };
+        });
       }
     } catch (err) {
       console.warn('Failed to sync media pool from assets vault:', err);
@@ -4359,56 +5144,54 @@ function initVideoStudio() {
 
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('category', 'imports');
+        const blobUrl = URL.createObjectURL(file);
+        const filename = file.name;
+        const ext = filename.split('.').pop()?.toLowerCase() || '';
+        const type: 'video' | 'audio' | 'image' = ['mp3', 'wav', 'aac', 'flac', 'ogg', 'm4a'].includes(ext)
+          ? 'audio'
+          : ['png', 'jpg', 'jpeg', 'webp', 'svg', 'gif'].includes(ext)
+          ? 'image'
+          : 'video';
 
+        // Determine asset URL — try uploading to backend, fallback to blob URL
+        let assetUrl = blobUrl;
         try {
-          const res = await fetch('http://localhost:8000/api/assets-vault/upload', {
+          const formData = new FormData();
+          formData.append('file', file);
+          formData.append('category', 'imports');
+          const res = await fetch('http://localhost:8000/api/video/import', {
             method: 'POST',
             body: formData,
           });
-          const data = await res.json();
-          const filename = file.name;
-          const ext = filename.split('.').pop()?.toLowerCase() || '';
-          const type: 'video' | 'audio' | 'image' = ['mp3', 'wav', 'aac', 'flac', 'ogg', 'm4a'].includes(ext)
-            ? 'audio'
-            : ['png', 'jpg', 'jpeg', 'webp', 'svg', 'gif'].includes(ext)
-            ? 'image'
-            : 'video';
-
-          const asset = {
-            name: filename,
-            type,
-            url: data.url || `database/assets_vault/imports/${filename}`,
-          };
-
-          if (!mediaPoolAssets.some((a) => a.name === asset.name)) {
-            mediaPoolAssets.unshift(asset);
+          if (res.ok) {
+            const data = await res.json();
+            assetUrl = data.url || `database/assets_vault/imports/${filename}`;
+            const importedAsset = data.asset as { duration?: number } | undefined;
+            const asset = { name: filename, type, url: assetUrl, duration: importedAsset?.duration };
+            if (!mediaPoolAssets.some((a) => a.name === asset.name)) {
+              mediaPoolAssets.unshift(asset);
+            }
+            addAssetToTimeline(asset);
+            continue;
           }
-          renderMediaPool();
-        } catch (err) {
-          const filename = file.name;
-          const ext = filename.split('.').pop()?.toLowerCase() || '';
-          const type: 'video' | 'audio' | 'image' = ['mp3', 'wav', 'aac', 'flac', 'ogg', 'm4a'].includes(ext)
-            ? 'audio'
-            : ['png', 'jpg', 'jpeg', 'webp', 'svg', 'gif'].includes(ext)
-            ? 'image'
-            : 'video';
-
-          const asset = {
-            name: filename,
-            type,
-            url: URL.createObjectURL(file),
-          };
-
-          if (!mediaPoolAssets.some((a) => a.name === asset.name)) {
-            mediaPoolAssets.unshift(asset);
-          }
-          renderMediaPool();
+        } catch (_) {
+          // Backend upload failed — use blob URL as fallback for instant playback
         }
+
+        // Add to media pool
+        const asset = { name: filename, type, url: assetUrl };
+        if (!mediaPoolAssets.some((a) => a.name === asset.name)) {
+          mediaPoolAssets.unshift(asset);
+        }
+
+        // Auto-add clip to timeline so user sees it immediately
+        addAssetToTimeline(asset);
       }
 
+      renderMediaPool();
+      renderTimeline();
+      updateInspectorForSelectedClip();
+      drawCompositionGuide();
       importInput.value = '';
     });
   }
@@ -4419,5 +5202,3 @@ function initVideoStudio() {
   syncMediaPoolFromBackend();
   updatePlayheadUI();
 }
-
-

@@ -744,7 +744,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             </button>
           </div>
 
-          <iframe
+<iframe
             id="tts-studio-iframe"
             src="http://localhost:8001"
             style="width: 100%; height: 100%; border: none; background: #09090b;"
@@ -753,70 +753,121 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         </div>
       </section>
 
-      <!-- View 9: Video Studio (Adobe After Effects CC Style Workspace) -->
-      <section id="v-video" class="view-panel" style="padding: 0; background: #141416; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; user-select: none; display: flex; flex-direction: column; height: 100vh; width: 100%; overflow: hidden;">
+      <!-- View 9: Video Studio (CapCut Desktop Style UI/UX Cockpit) -->
+      <section id="v-video" class="view-panel" style="padding: 0; background: #0f0f12; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; user-select: none; display: flex; flex-direction: column; height: 100vh; width: 100%; overflow: hidden;">
         
-        <!-- 1. TOP TOOLBAR / MENU STRIP (AFTER EFFECTS TOOLS) -->
-        <div style="height: 38px; background: #1f1f24; border-bottom: 1px solid #000000; display: flex; align-items: center; justify-content: space-between; padding: 0 10px; width: 100%; flex-shrink: 0;">
-          <!-- Left Tool Icons -->
-          <div style="display: flex; align-items: center; gap: 2px;">
-            <button class="ae-tool-btn active" title="Selection Tool (V)"><i class="ph-bold ph-cursor"></i></button>
-            <button class="ae-tool-btn" title="Hand Tool (H)"><i class="ph-bold ph-hand-grabbing"></i></button>
-            <button class="ae-tool-btn" title="Zoom Tool (Z)"><i class="ph-bold ph-magnifying-glass"></i></button>
-            <button class="ae-tool-btn" title="Orbit Camera Tool (C)"><i class="ph-bold ph-camera"></i></button>
-            <button class="ae-tool-btn" title="Rotation Tool (W)"><i class="ph-bold ph-arrows-clockwise"></i></button>
-            <span style="width: 1px; height: 18px; background: #333338; margin: 0 4px;"></span>
-            <button class="ae-tool-btn" title="Rectangle / Shape Tool (Q)"><i class="ph-bold ph-square"></i></button>
-            <button class="ae-tool-btn" title="Pen Tool (G)"><i class="ph-bold ph-vector-two"></i></button>
-            <button class="ae-tool-btn" title="Horizontal Type Tool (T)"><i class="ph-bold ph-text-t"></i></button>
-            <button class="ae-tool-btn" title="Brush Tool (Ctrl+B)"><i class="ph-bold ph-paint-brush-broad"></i></button>
-            <button class="ae-tool-btn" title="Clone Stamp Tool"><i class="ph-bold ph-stamp"></i></button>
-            <button class="ae-tool-btn" title="Eraser Tool"><i class="ph-bold ph-eraser"></i></button>
-            <button class="ae-tool-btn" title="Puppet Pin Tool"><i class="ph-bold ph-push-pin"></i></button>
+        <style>
+          #v-video input[type="range"] {
+            accent-color: #ffffff !important;
+            cursor: pointer;
+          }
+          #v-video input[type="range"]::-webkit-slider-thumb {
+            background: #ffffff !important;
+            border-radius: 3px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.6);
+          }
+        </style>
+        
+        <!-- 1. TOP HEADER BAR (CAPCUT DESKTOP STYLE HEADER) -->
+        <div style="height: 40px; background: #121215; border-bottom: 1px solid #1e1e24; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; width: 100%; flex-shrink: 0;">
+          <!-- Left Logo & Project Title -->
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="width: 24px; height: 24px; border-radius: 6px; background: linear-gradient(135deg, #00b4d8, #0077b6); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 0.8rem;">
+              <i class="ph-bold ph-video-camera"></i>
+            </div>
+            <span style="font-size: 0.82rem; font-weight: 700; color: #ffffff; letter-spacing: -0.01em;">Content OS Video Studio</span>
+            <span style="height: 14px; width: 1px; background: #272730;"></span>
+            <span style="font-size: 0.74rem; color: #a1a1aa; font-weight: 500;">Project: <strong id="ae-project-title-name" style="color: #ffffff;">IntroExercise</strong></span>
+            <span style="font-size: 0.68rem; color: #10b981; background: rgba(16,185,129,0.12); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(16,185,129,0.25); display: flex; align-items: center; gap: 4px;">
+              <i class="ph-bold ph-check-circle"></i> Auto-saved
+            </span>
           </div>
 
-          <!-- Center Aspect Ratio Selector -->
-          <div style="display: flex; align-items: center; gap: 12px;">
-            <select id="ae-aspect-ratio" style="background: #121215; border: 1px solid #2d2d33; color: #d4d4d8; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem;">
-              <option value="16:9">1920x1080 (16:9)</option>
-              <option value="9:16">1080x1920 (9:16 Shorts)</option>
+          <!-- Center Stage Aspect Ratio Selector -->
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <i class="ph-bold ph-aspect-ratio" style="color: #00b4d8; font-size: 0.9rem;"></i>
+            <select id="ae-aspect-ratio" style="background: #1a1a20; border: 1px solid #2d2d38; color: #ffffff; padding: 4px 10px; border-radius: 5px; font-size: 0.75rem; font-weight: 600; cursor: pointer; outline: none;">
+              <option value="16:9">1920x1080 (16:9 Landscape)</option>
+              <option value="9:16">1080x1920 (9:16 Shorts/Reels)</option>
               <option value="1:1">1080x1080 (1:1 Square)</option>
             </select>
           </div>
 
-          <!-- Right Status & Export -->
+          <!-- Right Status & Storage Analytics & Export Button -->
           <div style="display: flex; align-items: center; gap: 10px;">
-            <span style="font-size: 0.75rem; color: #a1a1aa; font-family: monospace;">Rust Engine: Active</span>
-            <button class="btn btn-primary btn-sm" id="ae-btn-export" style="padding: 4px 12px; font-size: 0.78rem; font-weight: 700;">
-              <i class="ph-bold ph-lightning"></i> Render Comp
+            <button class="btn btn-secondary btn-sm" id="ae-btn-storage" style="background: #1a1a20; border: 1px solid #2d2d38; color: #a1a1aa; padding: 4px 10px; font-size: 0.72rem; font-weight: 600; border-radius: 5px; cursor: pointer; display: flex; align-items: center; gap: 5px;" title="View Project Storage & Cache">
+              <i class="ph-bold ph-hard-drives" style="color: #00b4d8;"></i> Storage & Cache
+            </button>
+            <span style="font-size: 0.72rem; color: #71717a; font-family: monospace; display: flex; align-items: center; gap: 6px;">
+              <span style="width: 6px; height: 6px; border-radius: 50%; background: #10b981;"></span> Engine: Active
+            </span>
+            <button class="btn btn-primary btn-sm" id="ae-btn-export" style="background: linear-gradient(135deg, #00b4d8, #0077b6); border: none; color: #ffffff; padding: 5px 16px; font-size: 0.78rem; font-weight: 700; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,180,216,0.3); display: flex; align-items: center; gap: 6px; cursor: pointer;">
+              <i class="ph-bold ph-export"></i> Render Comp
             </button>
           </div>
         </div>
 
-        <!-- 2. MAIN FLEX WORKSPACE CONTAINER (COLUMN LAYOUT) -->
-        <div id="ae-main-workspace" style="display: flex; flex-direction: column; flex: 1; min-height: 0; width: 100%; background: #141416; overflow: hidden; position: relative;">
+        <!-- 2. MAIN FLEX WORKSPACE CONTAINER (CAPCUT 3-COLUMN COCKPIT) -->
+        <div id="ae-main-workspace" style="display: flex; flex-direction: column; flex: 1; min-height: 0; width: 100%; background: #0f0f12; overflow: hidden; position: relative;">
           
-          <!-- TOP 3-PANEL ROW (PROJECT | MONITOR | RIGHT STACK) -->
+          <!-- TOP 3-PANEL ROW (NAV SIDEBAR + MEDIA EXPLORER | MONITOR | INSPECTOR) -->
           <div id="ae-top-row" style="display: flex; flex-direction: row; flex: 1; min-height: 180px; width: 100%; overflow: hidden; position: relative;">
             
-            <!-- LEFT: PROJECT PANEL -->
-            <div id="ae-panel-project" style="width: 290px; min-width: 180px; max-width: 550px; background: #1a1a1e; border-right: 1px solid #000000; display: flex; flex-direction: column; flex-shrink: 0; overflow: hidden;">
-              <!-- Header Tab -->
-              <div style="height: 26px; background: #25252b; border-bottom: 1px solid #111; display: flex; align-items: center; justify-content: space-between; padding: 0 10px;">
-                <span style="font-size: 0.72rem; font-weight: 700; color: #d4d4d8;">Project ≡</span>
-                <label for="ae-import-file" style="cursor: pointer; font-size: 0.7rem; color: var(--accent-orange);"><i class="ph-bold ph-plus"></i> Import</label>
-                <input type="file" id="ae-import-file" multiple style="display: none;" />
+            <!-- CAPCUT FAR LEFT VERTICAL CATEGORY NAV SIDEBAR -->
+            <div id="ae-sidebar-nav" style="width: 58px; background: #121215; border-right: 1px solid #1e1e24; display: flex; flex-direction: column; align-items: center; padding: 8px 0; gap: 6px; flex-shrink: 0; z-index: 15; user-select: none;">
+              <button class="ae-nav-item active" data-tab="media" title="Media Explorer" style="width: 46px; height: 42px; background: #1a1a22; border: 1px solid #00b4d8; border-radius: 8px; color: #00b4d8; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; cursor: pointer; font-size: 0.62rem; font-weight: 700;">
+                <i class="ph-bold ph-folder-open" style="font-size: 1.1rem;"></i> Media
+              </button>
+              <button class="ae-nav-item" data-tab="audio" title="Audio Library" style="width: 46px; height: 42px; background: transparent; border: 1px solid transparent; border-radius: 8px; color: #a1a1aa; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; cursor: pointer; font-size: 0.62rem; font-weight: 600;">
+                <i class="ph-bold ph-waveform" style="font-size: 1.1rem;"></i> Audio
+              </button>
+              <button class="ae-nav-item" data-tab="text" title="Text Overlay" style="width: 46px; height: 42px; background: transparent; border: 1px solid transparent; border-radius: 8px; color: #a1a1aa; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; cursor: pointer; font-size: 0.62rem; font-weight: 600;">
+                <i class="ph-bold ph-text-t" style="font-size: 1.1rem;"></i> Text
+              </button>
+              <button class="ae-nav-item" data-tab="stickers" title="Stickers & Graphics" style="width: 46px; height: 42px; background: transparent; border: 1px solid transparent; border-radius: 8px; color: #a1a1aa; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; cursor: pointer; font-size: 0.62rem; font-weight: 600;">
+                <i class="ph-bold ph-smiley" style="font-size: 1.1rem;"></i> Stickers
+              </button>
+              <button class="ae-nav-item" data-tab="effects" title="Video Effects" style="width: 46px; height: 42px; background: transparent; border: 1px solid transparent; border-radius: 8px; color: #a1a1aa; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; cursor: pointer; font-size: 0.62rem; font-weight: 600;">
+                <i class="ph-bold ph-sparkle" style="font-size: 1.1rem;"></i> Effects
+              </button>
+              <button class="ae-nav-item" data-tab="transitions" title="Transitions" style="width: 46px; height: 42px; background: transparent; border: 1px solid transparent; border-radius: 8px; color: #a1a1aa; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; cursor: pointer; font-size: 0.62rem; font-weight: 600;">
+                <i class="ph-bold ph-square-half-bottom" style="font-size: 1.1rem;"></i> Transitions
+              </button>
+              <button class="ae-nav-item" data-tab="captions" title="Auto Captions" style="width: 46px; height: 42px; background: transparent; border: 1px solid transparent; border-radius: 8px; color: #a1a1aa; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; cursor: pointer; font-size: 0.62rem; font-weight: 600;">
+                <i class="ph-bold ph-closed-captioning" style="font-size: 1.1rem;"></i> Captions
+              </button>
+              <button class="ae-nav-item" data-tab="filters" title="Color Filters" style="width: 46px; height: 42px; background: transparent; border: 1px solid transparent; border-radius: 8px; color: #a1a1aa; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; cursor: pointer; font-size: 0.62rem; font-weight: 600;">
+                <i class="ph-bold ph-sliders-horizontal" style="font-size: 1.1rem;"></i> Filters
+              </button>
+            </div>
+
+            <!-- LEFT: ASSET EXPLORER / MEDIA POOL PANEL -->
+            <div id="ae-panel-project" style="width: 290px; min-width: 200px; max-width: 550px; background: #16161a; border-right: 1px solid #1e1e24; display: flex; flex-direction: column; flex-shrink: 0; overflow: hidden;">
+              <!-- Header Sub-Tabs -->
+              <div style="height: 34px; background: #121215; border-bottom: 1px solid #1e1e24; display: flex; align-items: center; padding: 0 10px; gap: 8px;">
+                <button class="ae-media-tab active" style="background: #1c1c24; border: 1px solid #2d2d38; color: #ffffff; padding: 3px 10px; border-radius: 5px; font-size: 0.72rem; font-weight: 700; cursor: pointer;">Import</button>
+                <button class="ae-media-tab" style="background: transparent; border: none; color: #a1a1aa; padding: 3px 10px; font-size: 0.72rem; font-weight: 600; cursor: pointer;">Media Pool</button>
+                <button class="ae-media-tab" style="background: transparent; border: none; color: #a1a1aa; padding: 3px 10px; font-size: 0.72rem; font-weight: 600; cursor: pointer;">Library</button>
               </div>
 
-              <!-- Simple Media Explorer Pool -->
-              <div style="padding: 6px; background: #1a1a1e; border-bottom: 1px solid #27272a;">
-                <input type="text" id="ae-media-search" placeholder="🔍 Search media pool..." style="width: 100%; background: #121215; border: 1px solid #2d2d33; color: #ffffff; padding: 4px 8px; border-radius: 3px; font-size: 0.72rem;" />
+              <!-- Media Explorer Action Toolbar -->
+              <div style="padding: 8px 10px; background: #16161a; border-bottom: 1px solid #22222a; display: flex; flex-direction: column; gap: 8px;">
+                <div style="display: flex; gap: 6px;">
+                  <label for="ae-import-file" style="flex: 1; cursor: pointer; background: #00b4d8; color: #ffffff; padding: 6px 12px; border-radius: 6px; font-size: 0.74rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 8px rgba(0,180,216,0.25);">
+                    <i class="ph-bold ph-plus"></i> Import
+                  </label>
+                  <input type="file" id="ae-import-file" multiple accept="video/*,audio/*,image/*,.mp4,.mov,.avi,.mkv,.webm,.mp3,.wav,.aac,.flac,.ogg,.m4a,.png,.jpg,.jpeg,.webp,.svg,.gif" style="display: none;" />
+                  <button id="ae-btn-record" style="background: #1c1c24; border: 1px solid #2d2d38; color: #d4d4d8; padding: 6px 10px; border-radius: 6px; font-size: 0.74rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                    <i class="ph-bold ph-microphone" style="color: #ef4444;"></i> Record
+                  </button>
+                </div>
+                <input type="text" id="ae-media-search" placeholder="🔍 Search media files..." style="width: 100%; background: #101014; border: 1px solid #242430; color: #ffffff; padding: 5px 10px; border-radius: 5px; font-size: 0.72rem; outline: none;" />
               </div>
 
               <!-- Media Explorer Asset List (Populated dynamically from Assets Vault) -->
-              <div id="ae-media-pool-list" style="flex: 1; overflow-y: auto; padding: 6px; display: flex; flex-direction: column; gap: 4px; font-size: 0.72rem; color: #ccc;">
-                <div style="padding: 16px 8px; text-align: center; color: #71717a; font-size: 0.72rem;">
-                  <i class="ph-bold ph-folder-open" style="font-size: 1.5rem; display: block; margin-bottom: 6px; color: #3f3f46;"></i>
+              <div id="ae-media-pool-list" style="flex: 1; overflow-y: auto; padding: 8px; display: flex; flex-direction: column; gap: 6px; font-size: 0.72rem; color: #ccc;">
+                <div style="padding: 24px 12px; text-align: center; color: #71717a; font-size: 0.72rem;">
+                  <i class="ph-bold ph-folder-open" style="font-size: 1.8rem; display: block; margin-bottom: 8px; color: #3f3f46;"></i>
                   <span>No media assets imported yet.<br>Click <strong>+ Import</strong> to add files.</span>
                 </div>
               </div>
@@ -825,34 +876,45 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <!-- VERTICAL SPLITTER 1 (PROJECT | MONITOR) -->
             <div id="ae-split-col-1" class="ae-resizer-v" title="Drag to resize Project Panel"></div>
 
-            <!-- CENTER: COMPOSITION WINDOW / PREVIEW VIEWPORT -->
-            <div id="ae-panel-monitor" style="flex: 1; min-width: 300px; background: #1c1c22; border-right: 1px solid #000000; display: flex; flex-direction: column; position: relative; overflow: hidden;">
-              <!-- Comp Tab Bar -->
-              <div style="height: 26px; background: #25252b; border-bottom: 1px solid #111; display: flex; align-items: center; padding: 0 10px;">
-                <span style="font-size: 0.72rem; font-weight: 700; color: #ffffff; background: #1c1c22; padding: 4px 12px; border-radius: 4px 4px 0 0; border: 1px solid #333; border-bottom: none; display: flex; align-items: center; gap: 6px;">
-                  <i class="ph-bold ph-lock-key" style="color: #f59e0b;"></i> Composition: IntroExercise
+            <!-- CENTER: COMPOSITION WINDOW / CAPCUT PLAYER VIEWPORT -->
+            <div id="ae-panel-monitor" style="flex: 1; min-width: 300px; background: #121215; border-right: 1px solid #1e1e24; display: flex; flex-direction: column; position: relative; overflow: hidden;">
+              <!-- Player Tab Bar -->
+              <div style="height: 32px; background: #16161a; border-bottom: 1px solid #1e1e24; display: flex; align-items: center; padding: 0 12px;">
+                <span style="font-size: 0.74rem; font-weight: 700; color: #ffffff; display: flex; align-items: center; gap: 6px;">
+                  <i class="ph-bold ph-play-square" style="color: #00b4d8;"></i> Player - Timeline 01
                 </span>
               </div>
 
-              <!-- Composition Preview Viewport Area (Classic After Effects Slate Grey Backdrop) -->
-              <div style="flex: 1; display: flex; align-items: center; justify-content: center; background: #26262d; position: relative; padding: 16px; overflow: hidden;">
+              <!-- Composition Preview Viewport Area (Clean Dark Slate Canvas Box) -->
+              <div style="flex: 1; display: flex; align-items: center; justify-content: center; background: #0b0b0d; position: relative; padding: 16px; overflow: hidden;">
                 <!-- DYNAMIC REAL COMPOSITION SCREEN BOX -->
-                <div id="ae-comp-stage-box" class="aspect-16-9" style="position: relative; background: #000000; box-shadow: 0 12px 48px rgba(0,0,0,0.95); border: 1px solid #3a3a42; border-radius: 2px; display: flex; align-items: center; justify-content: center; overflow: hidden; transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);">
+                <div id="ae-comp-stage-box" class="aspect-16-9" style="position: relative; background: #000000; box-shadow: 0 16px 48px rgba(0,0,0,0.95); border: 1px solid #22222a; border-radius: 4px; display: flex; align-items: center; justify-content: center; overflow: hidden; transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);">
                   <canvas id="ae-preview-canvas" width="1920" height="1080" style="width: 100%; height: 100%; object-fit: contain; background: #000;"></canvas>
                 </div>
               </div>
 
-              <!-- Viewport Bottom Control Bar (After Effects Style) -->
-              <div style="height: 30px; background: #1f1f24; border-top: 1px solid #27272a; display: flex; align-items: center; justify-content: space-between; padding: 0 10px; font-size: 0.72rem; color: #a1a1aa;">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                  <select style="background: #121215; border: 1px solid #333; color: #ccc; padding: 2px 4px; border-radius: 3px; font-size: 0.7rem;"><option>50%</option><option>100%</option><option>Fit</option></select>
-                  <i class="ph-bold ph-grid-four" id="ae-btn-toggle-grid" title="Toggle Grid Overlay" style="cursor: pointer; padding: 2px 5px; border-radius: 3px; background: #121215; border: 1px solid #333; color: #a1a1aa;"></i>
-                  <i class="ph-bold ph-clock" title="Timecode"></i> <span style="font-family: monospace; color: var(--accent-orange);" id="ae-timecode-display">0;00;00;00</span>
-                  <select style="background: #121215; border: 1px solid #333; color: #ccc; padding: 2px 4px; border-radius: 3px; font-size: 0.7rem;"><option>(Full)</option><option>(Half)</option><option>(Quarter)</option></select>
-                  <span>Active Camera</span>
-                </div>
+              <!-- CapCut Viewport Bottom Controls Bar -->
+              <div style="height: 36px; background: #16161a; border-top: 1px solid #1e1e24; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; font-size: 0.74rem; color: #a1a1aa;">
+                <!-- Left Timecode Display -->
                 <div style="display: flex; align-items: center; gap: 8px;">
-                  <button class="btn btn-icon btn-sm" id="ae-btn-play" style="padding: 2px 10px;"><i class="ph-bold ph-play" id="ae-play-icon"></i></button>
+                  <i class="ph-bold ph-clock" style="color: #00b4d8;"></i>
+                  <span style="font-family: monospace; font-size: 0.78rem; font-weight: 700; color: #00b4d8;" id="ae-timecode-display">00:00:00:00</span>
+                  <span style="color: #444;">/</span>
+                  <span style="font-family: monospace; font-size: 0.74rem; color: #71717a;" id="ae-timecode-total">00:00:30:00</span>
+                </div>
+
+                <!-- Center Play / Pause Controls -->
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <button class="btn btn-icon btn-sm" id="ae-btn-play" style="width: 28px; height: 28px; border-radius: 50%; background: #00b4d8; border: none; color: #ffffff; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,180,216,0.3);">
+                    <i class="ph-bold ph-play" id="ae-play-icon" style="font-size: 0.9rem;"></i>
+                  </button>
+                </div>
+
+                <!-- Right Resolution Fit & Grid Controls -->
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <select style="background: #101014; border: 1px solid #2d2d38; color: #ccc; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; outline: none;"><option>Fit</option><option>100%</option><option>50%</option></select>
+                  <i class="ph-bold ph-grid-four" id="ae-btn-toggle-grid" title="Toggle Grid Overlay" style="cursor: pointer; padding: 3px 6px; border-radius: 4px; background: #101014; border: 1px solid #2d2d38; color: #a1a1aa;"></i>
+                  <select style="background: #101014; border: 1px solid #2d2d38; color: #ccc; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; outline: none;"><option>(Full)</option><option>(Half)</option><option>(Quarter)</option></select>
                 </div>
               </div>
             </div>
@@ -860,63 +922,72 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <!-- VERTICAL SPLITTER 2 (MONITOR | RIGHT STACK) -->
             <div id="ae-split-col-2" class="ae-resizer-v" title="Drag to resize Inspector Panel"></div>
 
-            <!-- RIGHT: STACKED PANELS (INSPECTOR, LUMETRI COLOR & EFFECTS) -->
-            <div id="ae-panel-right" style="width: 300px; min-width: 220px; max-width: 500px; background: #1a1a1e; display: flex; flex-direction: column; flex-shrink: 0; overflow: hidden;">
+            <!-- RIGHT: CAPCUT INSPECTOR PANEL (PROPERTIES & KEYFRAMES) -->
+            <div id="ae-panel-right" style="width: 320px; min-width: 240px; max-width: 500px; background: #16161a; display: flex; flex-direction: column; flex-shrink: 0; overflow: hidden;">
               
-              <!-- Tab Header Bar -->
-              <div style="height: 28px; background: #25252b; border-bottom: 1px solid #111; display: flex; align-items: center; padding: 0 4px; gap: 2px;">
-                <button class="ae-right-tab active" id="ae-tab-transform" style="flex: 1; background: #1a1a1e; border: none; color: #ffffff; padding: 4px 6px; font-size: 0.7rem; font-weight: 700; border-radius: 3px 3px 0 0; cursor: pointer;">Transform</button>
-                <button class="ae-right-tab" id="ae-tab-lumetri" style="flex: 1; background: transparent; border: none; color: #a1a1aa; padding: 4px 6px; font-size: 0.7rem; font-weight: 700; border-radius: 3px 3px 0 0; cursor: pointer;">Lumetri Color</button>
-                <button class="ae-right-tab" id="ae-tab-fx" style="flex: 1; background: transparent; border: none; color: #a1a1aa; padding: 4px 6px; font-size: 0.7rem; font-weight: 700; border-radius: 3px 3px 0 0; cursor: pointer;">Effects</button>
+              <!-- Inspector Main Tab Header Bar (CapCut Style: Video, Audio, Speed, Animation, Adjust) -->
+              <div style="height: 34px; background: #121215; border-bottom: 1px solid #1e1e24; display: flex; align-items: center; padding: 0 4px; gap: 2px; user-select: none;">
+                <button class="ae-right-tab active" id="ae-tab-transform" style="flex: 1; background: #1c1c24; border: none; color: #ffffff; padding: 5px 6px; font-size: 0.72rem; font-weight: 700; border-radius: 5px 5px 0 0; cursor: pointer;">Video</button>
+                <button class="ae-right-tab" id="ae-tab-audio" style="flex: 1; background: transparent; border: none; color: #a1a1aa; padding: 5px 6px; font-size: 0.72rem; font-weight: 600; border-radius: 5px 5px 0 0; cursor: pointer;">Audio</button>
+                <button class="ae-right-tab" id="ae-tab-lumetri" style="flex: 1; background: transparent; border: none; color: #a1a1aa; padding: 5px 6px; font-size: 0.72rem; font-weight: 600; border-radius: 5px 5px 0 0; cursor: pointer;">Speed</button>
+                <button class="ae-right-tab" id="ae-tab-fx" style="flex: 1; background: transparent; border: none; color: #a1a1aa; padding: 5px 6px; font-size: 0.72rem; font-weight: 600; border-radius: 5px 5px 0 0; cursor: pointer;">Effects</button>
               </div>
 
-              <!-- Tab 1: Transform & Keyframe Controls -->
-              <div id="ae-pane-transform" style="flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 10px; font-size: 0.72rem; color: #ccc;">
-                <div style="font-weight: 700; color: #ffffff; border-bottom: 1px solid #27272a; padding-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
-                  <span>Selected Clip: <strong id="ae-inspect-clip-name" style="color: var(--accent-orange);">Footage_01.mp4</strong></span>
+              <!-- Inspector Sub-Tabs under Video (Basic, Remove BG, Mask, Retouch) -->
+              <div style="height: 28px; background: #16161a; border-bottom: 1px solid #22222a; display: flex; align-items: center; padding: 0 8px; gap: 12px; font-size: 0.68rem; color: #a1a1aa; font-weight: 600;">
+                <span style="color: #00b4d8; font-weight: 700; border-bottom: 2px solid #00b4d8; padding-bottom: 4px; cursor: pointer;">Basic</span>
+                <span style="cursor: pointer; padding-bottom: 4px;">Cutout</span>
+                <span style="cursor: pointer; padding-bottom: 4px;">Mask</span>
+                <span style="cursor: pointer; padding-bottom: 4px;">Enhance</span>
+              </div>
+
+              <!-- Tab 1: Video Basic Transform & Keyframe Controls -->
+              <div id="ae-pane-transform" style="flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 12px; font-size: 0.74rem; color: #ccc;">
+                <div style="font-weight: 700; color: #ffffff; border-bottom: 1px solid #242430; padding-bottom: 6px; display: flex; justify-content: space-between; align-items: center;">
+                  <span>Selected Clip: <strong id="ae-inspect-clip-name" style="color: #00b4d8;">Footage_01.mp4</strong></span>
                   <span style="font-size: 0.65rem; color: #71717a;">V1 • Track 1</span>
                 </div>
 
                 <!-- Position X / Y -->
                 <div>
-                  <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
-                    <span>⏱️ Position X / Y</span>
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                    <span style="font-weight: 600; color: #d4d4d8;">⏱️ Position X / Y</span>
                     <button class="ae-kf-toggle" id="kf-btn-pos" title="Toggle Position Keyframe">◆</button>
                   </div>
-                  <div style="display: flex; gap: 6px;">
-                    <input type="number" id="ae-inp-pos-x" value="0" style="width: 50%; background: #121215; border: 1px solid #333; color: #ff5500; padding: 3px 6px; border-radius: 3px; font-size: 0.72rem;" />
-                    <input type="number" id="ae-inp-pos-y" value="0" style="width: 50%; background: #121215; border: 1px solid #333; color: #ff5500; padding: 3px 6px; border-radius: 3px; font-size: 0.72rem;" />
+                  <div style="display: flex; gap: 8px;">
+                    <input type="number" id="ae-inp-pos-x" value="0" style="width: 50%; background: #101014; border: 1px solid #2d2d38; color: #00b4d8; padding: 4px 8px; border-radius: 4px; font-size: 0.74rem; font-weight: 700; outline: none;" />
+                    <input type="number" id="ae-inp-pos-y" value="0" style="width: 50%; background: #101014; border: 1px solid #2d2d38; color: #00b4d8; padding: 4px 8px; border-radius: 4px; font-size: 0.74rem; font-weight: 700; outline: none;" />
                   </div>
                 </div>
 
                 <!-- Scale X / Y -->
                 <div>
-                  <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
-                    <span>⏱️ Scale (%)</span>
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                    <span style="font-weight: 600; color: #d4d4d8;">⏱️ Scale (%)</span>
                     <button class="ae-kf-toggle" id="kf-btn-scale" title="Toggle Scale Keyframe">◆</button>
                   </div>
-                  <input type="range" id="ae-inp-scale" min="10" max="300" value="100" style="width: 100%; accent-color: var(--accent-orange);" />
-                  <div style="text-align: right; font-size: 0.68rem; color: #a1a1aa;" id="ae-val-scale">100%</div>
+                  <input type="range" id="ae-inp-scale" min="10" max="300" value="100" style="width: 100%; accent-color: #ffffff;" />
+                  <div style="text-align: right; font-size: 0.7rem; color: #ffffff; font-weight: 700;" id="ae-val-scale">100%</div>
                 </div>
 
                 <!-- Rotation -->
                 <div>
-                  <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
-                    <span>⏱️ Rotation (deg)</span>
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                    <span style="font-weight: 600; color: #d4d4d8;">⏱️ Rotation (deg)</span>
                     <button class="ae-kf-toggle" id="kf-btn-rot" title="Toggle Rotation Keyframe">◆</button>
                   </div>
-                  <input type="range" id="ae-inp-rotation" min="-180" max="180" value="0" style="width: 100%; accent-color: var(--accent-orange);" />
-                  <div style="text-align: right; font-size: 0.68rem; color: #a1a1aa;" id="ae-val-rotation">0°</div>
+                  <input type="range" id="ae-inp-rotation" min="-180" max="180" value="0" style="width: 100%; accent-color: #ffffff;" />
+                  <div style="text-align: right; font-size: 0.7rem; color: #ffffff; font-weight: 700;" id="ae-val-rotation">0°</div>
                 </div>
 
                 <!-- Opacity -->
                 <div>
-                  <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
-                    <span>⏱️ Opacity (%)</span>
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                    <span style="font-weight: 600; color: #d4d4d8;">⏱️ Opacity (%)</span>
                     <button class="ae-kf-toggle" id="kf-btn-opacity" title="Toggle Opacity Keyframe">◆</button>
                   </div>
-                  <input type="range" id="ae-inp-opacity" min="0" max="100" value="100" style="width: 100%; accent-color: var(--accent-orange);" />
-                  <div style="text-align: right; font-size: 0.68rem; color: #a1a1aa;" id="ae-val-opacity">100%</div>
+                  <input type="range" id="ae-inp-opacity" min="0" max="100" value="100" style="width: 100%; accent-color: #ffffff;" />
+                  <div style="text-align: right; font-size: 0.7rem; color: #ffffff; font-weight: 700;" id="ae-val-opacity">100%</div>
                 </div>
 
                 <!-- KEYFRAME SETTINGS INSPECTOR BOX -->
@@ -948,19 +1019,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
               <!-- Tab 2: Lumetri Color Grading Panel -->
               <div id="ae-pane-lumetri" style="flex: 1; overflow-y: auto; padding: 10px; display: none; flex-direction: column; gap: 10px; font-size: 0.72rem; color: #ccc;">
                 <div style="font-weight: 700; color: #ffffff; border-bottom: 1px solid #27272a; padding-bottom: 4px;">
-                  🎨 Lumetri Color Correction
+                  🎨 Color & Speed Adjustments
                 </div>
 
                 <!-- Exposure -->
                 <div>
                   <div style="display: flex; justify-content: space-between; margin-bottom: 2px;"><span>Exposure</span><span id="lum-val-exp">0.0</span></div>
-                  <input type="range" id="lum-inp-exp" min="-3" max="3" step="0.1" value="0" style="width: 100%; accent-color: #3b82f6;" />
+                  <input type="range" id="lum-inp-exp" min="-3" max="3" step="0.1" value="0" style="width: 100%; accent-color: #00b4d8;" />
                 </div>
 
                 <!-- Contrast -->
                 <div>
                   <div style="display: flex; justify-content: space-between; margin-bottom: 2px;"><span>Contrast</span><span id="lum-val-contrast">100%</span></div>
-                  <input type="range" id="lum-inp-contrast" min="0" max="200" value="100" style="width: 100%; accent-color: #3b82f6;" />
+                  <input type="range" id="lum-inp-contrast" min="0" max="200" value="100" style="width: 100%; accent-color: #00b4d8;" />
                 </div>
 
                 <!-- Saturation -->
@@ -968,40 +1039,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                   <div style="display: flex; justify-content: space-between; margin-bottom: 2px;"><span>Saturation</span><span id="lum-val-sat">100%</span></div>
                   <input type="range" id="lum-inp-sat" min="0" max="200" value="100" style="width: 100%; accent-color: #10b981;" />
                 </div>
-
-                <!-- Temperature & Tint -->
-                <div>
-                  <div style="display: flex; justify-content: space-between; margin-bottom: 2px;"><span>Temperature (Warmth)</span><span id="lum-val-temp">0</span></div>
-                  <input type="range" id="lum-inp-temp" min="-50" max="50" value="0" style="width: 100%; accent-color: #f59e0b;" />
-                </div>
-
-                <!-- LUT Presets -->
-                <div>
-                  <label style="display: block; margin-bottom: 4px; font-weight: 700;">Preset LUT Look:</label>
-                  <select id="lum-lut-preset" style="width: 100%; background: #121215; border: 1px solid #333; color: #ffffff; padding: 4px; border-radius: 3px; font-size: 0.72rem;">
-                    <option value="none">None (Rec.709 Standard)</option>
-                    <option value="cinematic">Cinematic Teal & Orange</option>
-                    <option value="vintage">Vintage Film 35mm</option>
-                    <option value="bw">High Contrast Monochrome</option>
-                    <option value="cyberpunk">Cyberpunk Neon Night</option>
-                  </select>
-                </div>
               </div>
 
-              <!-- Tab 3: Effects & Presets Panel -->
-              <div id="ae-pane-fx" style="flex: 1; display: none; flex-direction: column; overflow: hidden;">
-                <div style="padding: 4px 6px; background: #1f1f24; border-bottom: 1px solid #27272a;">
-                  <input type="text" placeholder="🔍 Search effects..." style="width: 100%; background: #121215; border: 1px solid #2d2d33; color: #ffffff; padding: 3px 8px; border-radius: 3px; font-size: 0.72rem;" />
+              <!-- Tab 3: Effects Panel -->
+              <div id="ae-pane-fx" style="flex: 1; overflow-y: auto; padding: 10px; display: none; flex-direction: column; gap: 8px; font-size: 0.72rem; color: #ccc;">
+                <div style="font-weight: 700; color: #ffffff; border-bottom: 1px solid #27272a; padding-bottom: 4px;">
+                  ⚡ Video Effects & Presets
                 </div>
-                <div style="flex: 1; overflow-y: auto; padding: 6px; font-size: 0.72rem; color: #aaa; display: flex; flex-direction: column; gap: 4px;">
-                  <div class="ae-fx-cat" style="font-weight: 700; color: #ffffff;">▶ Animation Presets</div>
-                  <div class="ae-fx-cat">▶ Gaussian Blur & Sharpen</div>
-                  <div class="ae-fx-cat">▶ Lumetri Color Correction</div>
-                  <div class="ae-fx-cat">▶ Chroma Key (Green Screen)</div>
-                  <div class="ae-fx-cat">▶ Directional Motion Blur</div>
-                  <div class="ae-fx-cat">▶ Audio Equalizer & Reverb</div>
-                  <div class="ae-fx-cat">▶ Crossfade Video Transition</div>
-                </div>
+                <div class="ae-fx-cat" style="font-weight: 700; color: #ffffff;">▶ Animation Presets</div>
+                <div class="ae-fx-cat">▶ Gaussian Blur & Sharpen</div>
+                <div class="ae-fx-cat">▶ Color Correction</div>
+                <div class="ae-fx-cat">▶ Chroma Key (Green Screen)</div>
+                <div class="ae-fx-cat">▶ Audio Equalizer & Reverb</div>
               </div>
 
             </div>
@@ -1012,14 +1061,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <div id="ae-split-row-bottom" class="ae-resizer-h" title="Drag to resize Timeline height"></div>
 
           <!-- CAPCUT DESKTOP TIMELINE HEADER TOOLBAR -->
-          <div id="ae-capcut-toolbar" style="height: 36px; background: #121214; border-top: 1px solid #27272a; border-bottom: 1px solid #000000; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; width: 100%; flex-shrink: 0; user-select: none;">
+          <div id="ae-capcut-toolbar" style="height: 36px; background: #121214; border-top: 1px solid #1e1e24; border-bottom: 1px solid #0f0f12; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; width: 100%; flex-shrink: 0; user-select: none;">
             <!-- Left Action Tools -->
             <div style="display: flex; align-items: center; gap: 4px;">
+              <button class="ae-tool-btn" id="ae-capcut-btn-undo" title="Undo (Ctrl+Z)"><i class="ph-bold ph-arrow-u-up-left"></i></button>
+              <button class="ae-tool-btn" id="ae-capcut-btn-redo" title="Redo (Ctrl+Y)"><i class="ph-bold ph-arrow-u-up-right"></i></button>
+              <span style="width: 1px; height: 18px; background: #272730; margin: 0 4px;"></span>
               <button class="ae-tool-btn active" id="ae-capcut-btn-select" title="Selection Tool (A)"><i class="ph-bold ph-cursor"></i></button>
               <button class="ae-tool-btn" id="ae-capcut-btn-split" title="Split Clip at Playhead (B / Ctrl+S)"><i class="ph-bold ph-scissors"></i></button>
               <button class="ae-tool-btn" id="ae-capcut-btn-split-left" title="Delete Left of Playhead ([|)"><i class="ph-bold ph-caret-line-left"></i></button>
               <button class="ae-tool-btn" id="ae-capcut-btn-split-right" title="Delete Right of Playhead (|])"><i class="ph-bold ph-caret-line-right"></i></button>
-              <span style="width: 1px; height: 18px; background: #27272a; margin: 0 4px;"></span>
+              <span style="width: 1px; height: 18px; background: #272730; margin: 0 4px;"></span>
               <button class="ae-tool-btn" id="ae-capcut-btn-delete" title="Delete Selected Clip (Delete)"><i class="ph-bold ph-trash"></i></button>
               <button class="ae-tool-btn" id="ae-capcut-btn-keyframe" title="Add Keyframe (◆)"><i class="ph-bold ph-diamond"></i></button>
               <button class="ae-tool-btn" id="ae-capcut-btn-freeze" title="Freeze Frame (❄️)"><i class="ph-bold ph-snowflake"></i></button>
@@ -1033,25 +1085,33 @@ import BaseLayout from '../layouts/BaseLayout.astro';
               <button class="ae-tool-btn active" id="ae-capcut-btn-magnet" title="Toggle Main Track Magnet (🧲)"><i class="ph-bold ph-magnet"></i></button>
               <button class="ae-tool-btn active" id="ae-capcut-btn-link" title="Toggle Auto-Link Video/Audio (🔗)"><i class="ph-bold ph-link"></i></button>
               <button class="ae-tool-btn active" id="ae-capcut-btn-snap" title="Toggle Snap to Grid (📍)"><i class="ph-bold ph-magnet-straight"></i></button>
-              <span style="width: 1px; height: 18px; background: #27272a; margin: 0 4px;"></span>
+              <span style="width: 1px; height: 18px; background: #272730; margin: 0 4px;"></span>
               <div style="display: flex; align-items: center; gap: 6px;">
                 <button class="ae-tool-btn" id="ae-capcut-btn-zoom-out" style="padding: 2px 4px;"><i class="ph-bold ph-magnifying-glass-minus"></i></button>
-                <input type="range" id="ae-capcut-zoom-slider" min="10" max="200" value="40" style="width: 110px; accent-color: #3b82f6; cursor: pointer;" title="Timeline Zoom" />
+                <input type="range" id="ae-capcut-zoom-slider" min="2" max="100" value="20" style="width: 110px; accent-color: #00b4d8; cursor: pointer;" title="Timeline Zoom Scale" />
                 <button class="ae-tool-btn" id="ae-capcut-btn-zoom-in" style="padding: 2px 4px;"><i class="ph-bold ph-magnifying-glass-plus"></i></button>
               </div>
             </div>
           </div>
 
-          <!-- 5. BOTTOM WIDTH: TIMELINE & LAYER STACK (AFTER EFFECTS CC LAYOUT) -->
-          <div id="ae-panel-timeline" style="height: 240px; min-height: 120px; max-height: 500px; width: 100%; background: #18181c; border-top: 1px solid #000000; display: grid; grid-template-columns: 380px 1fr; overflow: hidden; flex-shrink: 0;">
+          <!-- 5. BOTTOM WIDTH: TIMELINE & LAYER STACK (CAPCUT LAYOUT) -->
+          <div id="ae-panel-timeline" style="height: 240px; min-height: 120px; max-height: 500px; width: 100%; background: #121215; border-top: 1px solid #1e1e24; display: grid; grid-template-columns: 380px 1fr; overflow: hidden; flex-shrink: 0;">
             
             <!-- Left: Layer Property Controls (380px) -->
-            <div style="border-right: 1px solid #000000; display: flex; flex-direction: column; background: #1c1c21; overflow: hidden;">
-              <!-- Header Bar -->
-              <div style="height: 24px; background: #25252b; border-bottom: 1px solid #111; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; font-size: 0.7rem; color: #aaa; font-weight: 700;">
-                <span># Layer Name</span>
+            <div style="border-right: 1px solid #1e1e24; display: flex; flex-direction: column; background: #16161a; overflow: hidden;">
+              <!-- Header Bar with + Add Track button -->
+              <div style="height: 24px; background: #121215; border-bottom: 1px solid #1e1e24; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; font-size: 0.7rem; color: #aaa; font-weight: 700; position: relative;">
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <button id="ae-header-btn-add-track" style="background: rgba(0,180,216,0.15); border: 1px solid rgba(0,180,216,0.3); color: #00b4d8; width: 18px; height: 18px; border-radius: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer;" title="Add Track (Video / Audio)"><i class="ph-bold ph-plus" style="font-size: 0.65rem;"></i></button>
+                  <span># Track Name</span>
+                </div>
                 <div style="display: flex; gap: 10px;">
                   <span>👁️</span><span>🔊</span><span>S</span><span>🔒</span>
+                </div>
+                <!-- Add Track Popup Dropdown Menu -->
+                <div id="ae-add-track-popup" style="display: none; position: absolute; top: 26px; left: 6px; z-index: 100; background: #1a1a20; border: 1px solid #2d2d38; border-radius: 6px; box-shadow: 0 6px 18px rgba(0,0,0,0.8); padding: 4px; width: 140px; font-size: 0.72rem;">
+                  <div class="ae-add-track-item" data-type="video" style="padding: 6px 10px; border-radius: 4px; cursor: pointer; color: #00b4d8; display: flex; align-items: center; gap: 8px; font-weight: 600;"><i class="ph-bold ph-video-camera"></i> Video Track</div>
+                  <div class="ae-add-track-item" data-type="audio" style="padding: 6px 10px; border-radius: 4px; cursor: pointer; color: #10b981; display: flex; align-items: center; gap: 8px; font-weight: 600;"><i class="ph-bold ph-waveform"></i> Audio Track</div>
                 </div>
               </div>
 
@@ -1061,26 +1121,26 @@ import BaseLayout from '../layouts/BaseLayout.astro';
               </div>
 
               <!-- Bottom Toggle Modes & Clear Layers Button -->
-              <div style="height: 24px; background: #141416; border-top: 1px solid #27272a; display: flex; align-items: center; justify-content: space-between; padding: 0 10px;">
+              <div style="height: 24px; background: #121215; border-top: 1px solid #1e1e24; display: flex; align-items: center; justify-content: space-between; padding: 0 10px;">
                 <div style="display: flex; gap: 6px;">
-                  <button id="ae-btn-add-track" style="background: #222; border: 1px solid #333; color: var(--accent-orange); padding: 2px 8px; border-radius: 3px; font-size: 0.68rem; cursor: pointer;"><i class="ph-bold ph-plus"></i> Add Layer</button>
-                  <button id="ae-btn-clear-tracks" style="background: #222; border: 1px solid #333; color: #ef4444; padding: 2px 8px; border-radius: 3px; font-size: 0.68rem; cursor: pointer;" title="Clear All Layers"><i class="ph-bold ph-trash"></i> Clear All</button>
+                  <button id="ae-btn-add-track" style="background: #1f1f26; border: 1px solid #2d2d38; color: #00b4d8; padding: 2px 8px; border-radius: 3px; font-size: 0.68rem; cursor: pointer;"><i class="ph-bold ph-plus"></i> Add Layer</button>
+                  <button id="ae-btn-clear-tracks" style="background: #1f1f26; border: 1px solid #2d2d38; color: #ef4444; padding: 2px 8px; border-radius: 3px; font-size: 0.68rem; cursor: pointer;" title="Clear All Layers"><i class="ph-bold ph-trash"></i> Clear All</button>
                 </div>
                 <span style="font-size: 0.68rem; color: #71717a;">Snap: On (Shift)</span>
               </div>
             </div>
 
             <!-- Right: Time Ruler & Keyframe Tracks (1fr) -->
-            <div id="ae-timeline-ruler-container" style="display: flex; flex-direction: column; background: #141416; position: relative; overflow-x: auto;">
+            <div id="ae-timeline-ruler-container" style="display: flex; flex-direction: column; background: #121215; position: relative; overflow-x: auto;">
               <!-- Time Ruler Bar -->
-              <div id="ae-time-ruler" style="height: 24px; background: #1f1f24; border-bottom: 1px solid #000; position: relative; font-family: monospace; font-size: 0.68rem; color: #71717a; display: flex; align-items: center; cursor: pointer; user-select: none;">
+              <div id="ae-time-ruler" style="height: 24px; background: #16161a; border-bottom: 1px solid #1e1e24; position: relative; font-family: monospace; font-size: 0.68rem; color: #71717a; display: flex; align-items: center; cursor: pointer; user-select: none;">
                 <!-- Ticks rendered dynamically -->
               </div>
 
               <!-- Keyframe Track Canvas Area -->
-              <div id="ae-track-canvas" style="flex: 1; position: relative; background: #121214; min-height: 150px; overflow-y: auto; cursor: crosshair;">
+              <div id="ae-track-canvas" style="flex: 1; position: relative; background: #0f0f12; min-height: 150px; overflow-y: auto; cursor: crosshair;">
                 <!-- Work Area Bar -->
-                <div id="ae-work-area-bar" style="position: absolute; top: 0; left: 0; width: 650px; height: 4px; background: #3b82f6; border-radius: 2px; z-index: 2;"></div>
+                <div id="ae-work-area-bar" style="position: absolute; top: 0; left: 0; width: 650px; height: 4px; background: #00b4d8; border-radius: 2px; z-index: 2;"></div>
 
                 <!-- Clip Track Lanes rendered dynamically -->
 
@@ -1089,13 +1149,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                   <div style="width: 10px; height: 10px; background: var(--accent-orange); transform: translateX(-4px) rotate(45deg); position: absolute; top: 0;"></div>
                 </div>
 
-                <!-- Right-Click Context Menu -->
-                <div id="ae-clip-context-menu" style="display: none; position: fixed; z-index: 999; background: #1e1e24; border: 1px solid #333; border-radius: 6px; box-shadow: 0 8px 24px rgba(0,0,0,0.8); padding: 4px; font-size: 0.72rem; min-width: 160px; color: #e4e4e7;">
-                  <div class="ae-menu-item" id="ae-ctx-split" style="padding: 6px 10px; border-radius: 3px; cursor: pointer; display: flex; align-items: center; gap: 8px;"><i class="ph-bold ph-scissors" style="color: #3b82f6;"></i> Split at Playhead (Cut)</div>
-                  <div class="ae-menu-item" id="ae-ctx-dup" style="padding: 6px 10px; border-radius: 3px; cursor: pointer; display: flex; align-items: center; gap: 8px;"><i class="ph-bold ph-copy" style="color: #10b981;"></i> Duplicate Layer</div>
-                  <div class="ae-menu-item" id="ae-ctx-inspect" style="padding: 6px 10px; border-radius: 3px; cursor: pointer; display: flex; align-items: center; gap: 8px;"><i class="ph-bold ph-sliders" style="color: #f59e0b;"></i> Inspect Properties</div>
-                  <div style="height: 1px; background: #27272a; margin: 4px 0;"></div>
-                  <div class="ae-menu-item" id="ae-ctx-delete" style="padding: 6px 10px; border-radius: 3px; cursor: pointer; display: flex; align-items: center; gap: 8px; color: #ef4444;"><i class="ph-bold ph-trash"></i> Delete Layer</div>
                 </div>
               </div>
             </div>
@@ -1103,6 +1156,55 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </div> <!-- END OF ae-panel-timeline -->
 
         </div> <!-- END OF ae-main-workspace -->
+
+        <!-- STORAGE & CACHE ANALYTICS DRAWER MODAL -->
+        <div id="ae-storage-drawer" class="drawer-backdrop" style="display: none; z-index: 1000;">
+          <div class="project-drawer-card" style="max-width: 480px; background: #16161a; border: 1px solid #272730; border-radius: 12px; padding: 20px;">
+            <div class="drawer-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #272730; padding-bottom: 12px; margin-bottom: 16px;">
+              <div>
+                <span class="platform-tag" style="background: rgba(0,180,216,0.15); color: #00b4d8; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700;">STORAGE MANAGEMENT</span>
+                <h2 style="font-size: 1.2rem; font-weight: 800; color: #ffffff; margin-top: 4px;">Project Disk & Cache Usage</h2>
+              </div>
+              <button id="ae-close-storage-modal" class="modal-close-btn" style="background: transparent; border: none; color: #a1a1aa; cursor: pointer; font-size: 1.2rem;"><i class="ph-bold ph-x"></i></button>
+            </div>
+            <div class="drawer-body" style="display: flex; flex-direction: column; gap: 14px; font-size: 0.8rem; color: #ccc;">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div style="background: #101014; padding: 10px; border-radius: 6px; border: 1px solid #222;">
+                  <span style="color: #71717a; font-size: 0.7rem;">Original Media Assets</span>
+                  <div id="stg-orig-size" style="font-weight: 700; font-size: 1.05rem; color: #fff; margin-top: 2px;">0 MB</div>
+                </div>
+                <div style="background: #101014; padding: 10px; border-radius: 6px; border: 1px solid #222;">
+                  <span style="color: #71717a; font-size: 0.7rem;">Proxy Video Cache</span>
+                  <div id="stg-proxy-size" style="font-weight: 700; font-size: 1.05rem; color: #8b5cf6; margin-top: 2px;">0 MB</div>
+                </div>
+                <div style="background: #101014; padding: 10px; border-radius: 6px; border: 1px solid #222;">
+                  <span style="color: #71717a; font-size: 0.7rem;">Thumbnail & Waveform Cache</span>
+                  <div id="stg-thumb-size" style="font-weight: 700; font-size: 1.05rem; color: #10b981; margin-top: 2px;">0 MB</div>
+                </div>
+                <div style="background: #101014; padding: 10px; border-radius: 6px; border: 1px solid #222;">
+                  <span style="color: #71717a; font-size: 0.7rem;">Rendered Comp Exports</span>
+                  <div id="stg-export-size" style="font-weight: 700; font-size: 1.05rem; color: #00b4d8; margin-top: 2px;">0 MB</div>
+                </div>
+              </div>
+
+              <div style="background: #101014; padding: 12px; border-radius: 6px; border: 1px solid #222; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <span style="color: #a1a1aa; font-weight: 600;">Unused Media Assets</span>
+                  <p id="stg-unused-info" style="color: #71717a; font-size: 0.72rem; margin-top: 2px;">0 assets not referenced on timeline</p>
+                </div>
+                <button id="stg-btn-clean-unused" class="btn btn-secondary btn-sm" style="font-size: 0.72rem; padding: 4px 10px;">Clean Unused</button>
+              </div>
+
+              <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+                <label style="font-weight: 700; color: #fff; font-size: 0.78rem;">Cache Cleaning Actions</label>
+                <div style="display: flex; gap: 8px;">
+                  <button id="stg-btn-clean-proxy" class="btn btn-secondary btn-sm" style="flex: 1; font-size: 0.72rem; padding: 8px;">Clean Proxies</button>
+                  <button id="stg-btn-clean-all" class="btn btn-secondary btn-sm" style="flex: 1; font-size: 0.72rem; padding: 8px; color: #ef4444; border-color: rgba(239,68,68,0.3);">Clean All Cache</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
       </section>
 
@@ -1329,10 +1431,56 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <h3 id="markdown-modal-title" style="font-family: var(--font-heading); font-weight: 700;">Research Note</h3>
         <button class="close-btn" id="close-markdown-modal">&times;</button>
       </div>
-      <div class="modal-body">
-        <pre id="markdown-modal-content" style="font-family: var(--font-mono); white-space: pre-wrap; font-size: 0.9rem; background: var(--bg-input); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color);"></pre>
+      <div class="modal-body" style="max-height: 500px; overflow-y: auto;">
+        <pre id="markdown-modal-content" style="white-space: pre-wrap; font-family: var(--font-body); font-size: 0.9rem; line-height: 1.6; color: var(--text-main);"></pre>
       </div>
     </div>
+  </div>
+
+  <!-- Global Floating Right-Click CapCut Desktop Context Menu -->
+  <div id="ae-clip-context-menu" class="ae-capcut-context-menu" style="display: none; position: fixed; z-index: 999999; background: #1a1a1e; border: 1px solid #2d2d38; border-radius: 8px; box-shadow: 0 12px 32px rgba(0,0,0,0.85); padding: 5px; font-size: 0.72rem; min-width: 230px; color: #e4e4e7; user-select: none;">
+    <!-- Group 1: Basic Edit Actions -->
+    <div class="ae-menu-item" id="ae-ctx-copy"><div style="display: flex; align-items: center; gap: 8px;"><i class="ph-bold ph-copy"></i> Copy</div><kbd>Ctrl C</kbd></div>
+    <div class="ae-menu-item" id="ae-ctx-cut"><div style="display: flex; align-items: center; gap: 8px;"><i class="ph-bold ph-scissors"></i> Cut</div><kbd>Ctrl X</kbd></div>
+    <div class="ae-menu-item disabled"><div>Copy/paste attributes</div><i class="ph-bold ph-caret-right"></i></div>
+    <div class="ae-menu-item" id="ae-ctx-delete"><div style="display: flex; align-items: center; gap: 8px; color: #ef4444;"><i class="ph-bold ph-trash"></i> Delete</div><kbd>Backspace</kbd></div>
+    <div class="ae-menu-item disabled"><div>Edit</div><i class="ph-bold ph-caret-right"></i></div>
+
+    <div class="ae-menu-divider"></div>
+
+    <!-- Group 2: Scene & Audio Tools -->
+    <div class="ae-menu-item" id="ae-ctx-split"><div style="display: flex; align-items: center; gap: 8px;"><i class="ph-bold ph-scissors" style="color: #3b82f6;"></i> Split scenes</div></div>
+    <div class="ae-menu-item disabled"><div style="display: flex; align-items: center; gap: 8px;"><i class="ph-bold ph-text-t"></i> Transcript</div></div>
+    <div class="ae-menu-item disabled"><div style="display: flex; align-items: center; gap: 8px;"><i class="ph-bold ph-closed-captioning"></i> Generate captions</div></div>
+    <div class="ae-menu-item disabled"><div style="display: flex; align-items: center; gap: 8px;"><i class="ph-bold ph-microphone"></i> Isolate voice</div><i class="ph-bold ph-caret-right"></i></div>
+    <div class="ae-menu-item" id="ae-ctx-extract-audio"><div style="display: flex; align-items: center; gap: 8px; color: #00b4d8;"><i class="ph-bold ph-waveform"></i> Extract audio</div><kbd>Ctrl Shift S</kbd></div>
+
+    <div class="ae-menu-divider"></div>
+
+    <!-- Group 3: Video & Audio Enhancers -->
+    <div class="ae-menu-item disabled"><div>Enhance audio</div><i class="ph-bold ph-caret-right"></i></div>
+    <div class="ae-menu-item disabled"><div>Enhance visuals</div><i class="ph-bold ph-caret-right"></i></div>
+    <div class="ae-menu-item" id="ae-ctx-adjust-color"><div>Adjust color</div><i class="ph-bold ph-caret-right"></i></div>
+    <div class="ae-menu-item disabled"><div>Enhance motion</div><i class="ph-bold ph-caret-right"></i></div>
+
+    <div class="ae-menu-divider"></div>
+
+    <!-- Group 4: Compound & Presets -->
+    <div class="ae-menu-item disabled"><div>Group</div><kbd>Ctrl G</kbd></div>
+    <div class="ae-menu-item disabled"><div>Create compound clip (subproject)</div><kbd>Alt G</kbd></div>
+    <div class="ae-menu-item disabled"><div>Save preset</div></div>
+
+    <div class="ae-menu-divider"></div>
+
+    <!-- Group 5: Export & Deactivate -->
+    <div class="ae-menu-item disabled"><div>Export selected clips</div></div>
+    <div class="ae-menu-item" id="ae-ctx-deactivate"><div>Deactivate clip</div><kbd>V</kbd></div>
+    <div class="ae-menu-item disabled"><div>More clip actions</div><i class="ph-bold ph-caret-right"></i></div>
+
+    <div class="ae-menu-divider"></div>
+
+    <div class="ae-menu-item disabled"><div>Range</div><i class="ph-bold ph-caret-right"></i></div>
+    <div class="ae-menu-item disabled"><div>Render</div><i class="ph-bold ph-caret-right"></i></div>
   </div>
 
   <!-- Custom Confirmation Modal -->

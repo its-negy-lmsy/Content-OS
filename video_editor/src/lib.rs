@@ -1,9 +1,11 @@
 //! Content OS Native Rust Video Engine Core
 //! Handles timeline track composite calculation, frame transformations, keyframe interpolation, and export rendering pipelines.
 
+pub mod commands;
 pub mod encoder;
 pub mod timeline;
 
+pub use commands::{process_ui_event, EngineSession};
 pub use encoder::{generate_ffmpeg_command, RenderConfig};
 pub use timeline::{ColorGrading, Keyframe, MediaClip, TimelineState, Track, TrackType, Transform};
 
