@@ -1,4 +1,4 @@
-import { spawn, exec } from 'node:child_process';
+import { spawn, exec, execSync } from 'node:child_process';
 import path from 'node:path';
 import fs from 'node:fs';
 import http from 'node:http';
@@ -76,16 +76,19 @@ backendProcess.stderr?.on('data', (data) => {
   }
 });
 
-// 2. Launch Astro Web Workspace (Use prebuilt dist/ for 0.06s instant load if available, or dev mode)
-const hasPrebuilt = fs.existsSync(path.join(__dirname, 'dist', 'index.html'));
-const astroArgs = hasPrebuilt
-  ? ['astro', 'preview', '--port', '4321']
-  : ['astro', 'dev', '--port', '4321'];
+// 2. Build fresh dist/ from source, then serve via preview for instant startup
+console.log(`\x1b[36m[System]\x1b[0m Building fresh Astro UI from source...`);
+try {
+  execSync('npx astro build', { cwd: __dirname, stdio: 'inherit' });
+  console.log(`\x1b[32m[System]\x1b[0m ✓ Astro build complete.`);
+} catch (e) {
+  console.error(`\x1b[31m[Build Error]\x1b[0m ${e.message}`);
+}
 
-console.log(`\x1b[36m[System]\x1b[0m Starting Astro Web Workspace on http://localhost:4321 ${hasPrebuilt ? '(Instant Build)' : '(Dev Mode)'}...`);
+console.log(`\x1b[36m[System]\x1b[0m Starting Astro Web Workspace on http://localhost:4321 (Fresh Build)...`);
 const frontendProcess = spawn(
   npxCmd,
-  astroArgs,
+  ['astro', 'preview', '--port', '4321'],
   { cwd: __dirname, shell: true }
 );
 

@@ -16,69 +16,69 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <nav class="nav-section" aria-label="Main Navigation">
         <!-- CORE -->
         <div class="nav-label">Core Workspace</div>
-        <a href="#dashboard" class="nav-item active" data-target="v-dashboard">
+        <a href="javascript:void(0)" class="nav-item active" data-target="v-dashboard">
           <i class="ph-bold ph-squares-four"></i>
           <span>Dashboard</span>
         </a>
-        <a href="#projects" class="nav-item" data-target="v-projects">
+        <a href="javascript:void(0)" class="nav-item" data-target="v-projects">
           <i class="ph-bold ph-folder-open"></i>
           <span>Projects</span>
         </a>
-        <a href="#research" class="nav-item" data-target="v-research">
+        <a href="javascript:void(0)" class="nav-item" data-target="v-research">
           <i class="ph-bold ph-book-bookmark"></i>
           <span>Knowledge Vault</span>
         </a>
-        <a href="#canvas" class="nav-item" data-target="v-canvas">
+        <a href="javascript:void(0)" class="nav-item" data-target="v-canvas">
           <i class="ph-bold ph-diagram"></i>
           <span>Workflow</span>
         </a>
-        <a href="#agents" class="nav-item" data-target="v-agents">
+        <a href="javascript:void(0)" class="nav-item" data-target="v-agents">
           <i class="ph-bold ph-robot"></i>
           <span>Agents</span>
         </a>
-        <a href="#assets" class="nav-item" data-target="v-assets">
+        <a href="javascript:void(0)" class="nav-item" data-target="v-assets">
           <i class="ph-bold ph-frame-corners"></i>
           <span>Hyperframe</span>
         </a>
-        <a href="#templates" class="nav-item" data-target="v-templates">
+        <a href="javascript:void(0)" class="nav-item" data-target="v-templates">
           <i class="ph-bold ph-vault"></i>
           <span>Assets Vault</span>
         </a>
 
         <!-- TOOLS -->
         <div class="nav-label">Tools</div>
-        <a href="#voice" class="nav-item" data-target="v-voice">
+        <a href="javascript:void(0)" class="nav-item" data-target="v-voice">
           <i class="ph-bold ph-microphone"></i>
           <span>TTS Studio</span>
         </a>
-        <a href="#video" class="nav-item" data-target="v-video">
+        <a href="javascript:void(0)" class="nav-item" data-target="v-video">
           <i class="ph-bold ph-video-camera"></i>
           <span>Video Studio</span>
         </a>
-        <a href="#audio" class="nav-item" data-target="v-audio">
+        <a href="javascript:void(0)" class="nav-item" data-target="v-audio">
           <i class="ph-bold ph-waveform"></i>
           <span>Audio Studio</span>
         </a>
-        <a href="#image-studio" class="nav-item" data-target="v-image">
+        <a href="javascript:void(0)" class="nav-item" data-target="v-image">
           <i class="ph-bold ph-palette"></i>
           <span>Image Studio</span>
         </a>
-        <a href="#research-hub" class="nav-item" data-target="v-research-hub">
+        <a href="javascript:void(0)" class="nav-item" data-target="v-research-hub">
           <i class="ph-bold ph-magnifying-glass-plus"></i>
           <span>Research Hub</span>
         </a>
 
         <!-- SYSTEM -->
         <div class="nav-label">System</div>
-        <a href="#settings" class="nav-item" data-target="v-settings">
+        <a href="javascript:void(0)" class="nav-item" data-target="v-settings">
           <i class="ph-bold ph-gear-six"></i>
           <span>Settings</span>
         </a>
-        <a href="#integrations" class="nav-item" data-target="v-integrations">
+        <a href="javascript:void(0)" class="nav-item" data-target="v-integrations">
           <i class="ph-bold ph-plugs-connected"></i>
           <span>Integrations</span>
         </a>
-        <a href="#logs" class="nav-item" data-target="v-logs">
+        <a href="javascript:void(0)" class="nav-item" data-target="v-logs">
           <i class="ph-bold ph-terminal-window"></i>
           <span>System Logs</span>
         </a>
@@ -152,20 +152,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
               <div class="pipeline-steps-row" id="pipeline-steps-container">
                 <!-- Dynamic Pipeline Steps -->
-                <div class="pipeline-step-box done">
+                <div class="pipeline-step-box">
                   <div class="pipeline-step-node"><i class="ph-bold ph-lightbulb"></i></div>
                   <span class="pipeline-step-label">Idea</span>
-                  <span class="pipeline-step-status">✓ Done</span>
+                  <span class="pipeline-step-status">Waiting</span>
                 </div>
-                <div class="pipeline-step-box done">
+                <div class="pipeline-step-box">
                   <div class="pipeline-step-node"><i class="ph-bold ph-magnifying-glass"></i></div>
                   <span class="pipeline-step-label">Research</span>
-                  <span class="pipeline-step-status">✓ Done</span>
+                  <span class="pipeline-step-status">Waiting</span>
                 </div>
-                <div class="pipeline-step-box in_progress">
+                <div class="pipeline-step-box">
                   <div class="pipeline-step-node"><i class="ph-bold ph-file-text"></i></div>
                   <span class="pipeline-step-label">Script</span>
-                  <span class="pipeline-step-status">In Progress</span>
+                  <span class="pipeline-step-status">Waiting</span>
                 </div>
                 <div class="pipeline-step-box">
                   <div class="pipeline-step-node"><i class="ph-bold ph-squares-four"></i></div>
@@ -190,16 +190,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 <div class="pipeline-step-box">
                   <div class="pipeline-step-node"><i class="ph-bold ph-play-circle"></i></div>
                   <span class="pipeline-step-label">Render</span>
-                  <span class="pipeline-step-status">Queued</span>
+                  <span class="pipeline-step-status">Waiting</span>
                 </div>
               </div>
 
               <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; color: var(--text-dim); margin-top: 8px;">
                 <span>Overall Progress</span>
-                <strong id="pipeline-progress-percent" style="color: #ffffff;">28%</strong>
+                <strong id="pipeline-progress-percent" style="color: #ffffff;">0%</strong>
               </div>
               <div class="pipeline-progress-bar-wrap">
-                <div class="pipeline-progress-bar-fill" id="pipeline-progress-bar" style="width: 28%;"></div>
+                <div class="pipeline-progress-bar-fill" id="pipeline-progress-bar" style="width: 0%;"></div>
               </div>
             </div>
 
@@ -207,10 +207,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <div class="panel-card">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
                 <h3><i class="ph-bold ph-folder"></i> Active Projects</h3>
-                <a href="#projects" class="btn-secondary" style="font-size: 0.78rem; padding: 5px 10px;">View All Projects →</a>
+                <a href="#v-projects" class="btn-secondary" style="font-size: 0.78rem; padding: 5px 10px;">View All Projects →</a>
               </div>
               <div id="dashboard-projects-list" class="items-grid">
-                <p style="color: var(--text-dim);">Loading active projects...</p>
+                <p style="color: var(--text-dim); font-size: 0.85rem;">No active projects found. Click + New Project to start.</p>
               </div>
             </div>
           </div>
@@ -224,7 +224,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 <button class="btn-secondary" id="add-schedule-task-btn" style="font-size: 0.75rem; padding: 4px 8px;">+ Task</button>
               </div>
               <div id="today-timeline-list" class="timeline-list">
-                <p style="color: var(--text-dim);">Loading today's schedule...</p>
+                <p style="color: var(--text-dim); font-size: 0.85rem;">No tasks scheduled for today.</p>
               </div>
             </div>
 
@@ -232,7 +232,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <div class="panel-card">
               <h3 style="font-size: 1.05rem; margin-bottom: 14px;"><i class="ph-bold ph-clock-counter-clockwise"></i> Recent Activity</h3>
               <div id="activity-feed-list" class="activity-feed">
-                <p style="color: var(--text-dim);">Loading activity log...</p>
+                <p style="color: var(--text-dim); font-size: 0.85rem;">No recent activity logged.</p>
               </div>
             </div>
           </div>
@@ -668,7 +668,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <!-- Studio Frame Container -->
           <div id="hf-studio-viewport" style="width: 100%; height: 100%; position: relative; background: #09090b;">
             <!-- Embedded Live Studio Iframe -->
-            <iframe id="hf-studio-iframe" src="http://localhost:3002" style="width: 100%; height: 100%; border: none; display: block;"></iframe>
+            <iframe id="hf-studio-iframe" data-src="http://localhost:3002" style="width: 100%; height: 100%; border: none; display: block;"></iframe>
 
             <!-- Fallback Overlay when Server is Stopped -->
             <div id="hf-server-offline-overlay" style="position: absolute; inset: 0; background: #09090b; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; text-align: center; display: none;">
@@ -724,32 +724,21 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </section>
 
       <!-- View 8: TTS Studio (Chatterbox TTS Engine) -->
-      <section id="v-voice" class="view-panel" style="padding-bottom: 0;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-          <h2 style="font-size: 1.15rem; font-weight: 700; color: #ffffff; margin: 0; display: flex; align-items: center; gap: 8px;">
-            <i class="ph-bold ph-waveform" style="color: var(--accent-orange);"></i> TTS Studio
-          </h2>
-          <button id="tts-btn-start-server" class="btn btn-secondary btn-sm" style="display: flex; align-items: center; gap: 6px;">
-            <i class="ph-bold ph-power"></i> Reconnect Server
+      <section id="v-voice" class="view-panel" style="padding: 0; margin: 0; width: 100%; height: 100vh; display: flex; flex-direction: column; background: #09090b; overflow: hidden; position: relative;">
+        <iframe
+          id="tts-studio-iframe"
+          data-src="http://localhost:8001"
+          style="width: 100%; height: 100%; border: none; background: #09090b; display: block;"
+          title="Chatterbox TTS Studio Interface"
+        ></iframe>
+
+        <div id="tts-offline-notice" style="display: none; position: absolute; inset: 0; background: #09090b; flex-direction: column; align-items: center; justify-content: center; padding: 40px; text-align: center; z-index: 10;">
+          <i class="ph-bold ph-warning-circle" style="font-size: 3rem; color: var(--accent-orange); margin-bottom: 16px;"></i>
+          <h3 style="color: #ffffff; margin-bottom: 8px;">Chatterbox TTS Local Web Server is Offline</h3>
+          <p style="color: #71717a; max-width: 460px; margin: 0 auto 20px; font-size: 0.9rem;">The local Chatterbox web studio server on port 8001 is starting up or disconnected.</p>
+          <button id="tts-btn-launch-offline" class="btn btn-primary" style="padding: 10px 24px; font-weight: 700;">
+            🚀 Launch Chatterbox Server (Port 8001)
           </button>
-        </div>
-
-        <div style="width: 100%; height: calc(100vh - 125px); border-radius: 12px; overflow: hidden; background: #09090b; border: 1px solid var(--border-color); display: flex; flex-direction: column;">
-          <div id="tts-offline-notice" style="display: none; padding: 40px; text-align: center; margin: auto;">
-            <i class="ph-bold ph-warning-circle" style="font-size: 3rem; color: var(--accent-orange); margin-bottom: 16px; display: block;"></i>
-            <h3 style="color: #ffffff; margin-bottom: 8px;">Chatterbox TTS Local Web Server is Offline</h3>
-            <p style="color: #71717a; max-width: 460px; margin: 0 auto 20px; font-size: 0.9rem;">The local Chatterbox web studio server on port 8001 is starting up or disconnected.</p>
-            <button id="tts-btn-launch-offline" class="btn btn-primary" style="padding: 10px 24px; font-weight: 700;">
-              🚀 Launch Chatterbox Server (Port 8001)
-            </button>
-          </div>
-
-<iframe
-            id="tts-studio-iframe"
-            src="http://localhost:8001"
-            style="width: 100%; height: 100%; border: none; background: #09090b;"
-            title="Chatterbox TTS Studio Interface"
-          ></iframe>
         </div>
       </section>
 
@@ -1155,8 +1144,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
           </div> <!-- END OF ae-panel-timeline -->
 
-        </div> <!-- END OF ae-main-workspace -->
-
         <!-- STORAGE & CACHE ANALYTICS DRAWER MODAL -->
         <div id="ae-storage-drawer" class="drawer-backdrop" style="display: none; z-index: 1000;">
           <div class="project-drawer-card" style="max-width: 480px; background: #16161a; border: 1px solid #272730; border-radius: 12px; padding: 20px;">
@@ -1223,41 +1210,137 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <!-- View 11: Image Studio -->
       <section id="v-image" class="view-panel">
         <div class="view-header">
-          <h1>Image Studio</h1>
-          <p>AI Thumbnail prompts and asset card rendering.</p>
+          <h1>Image Studio & Thumbnail Factory</h1>
+          <p>Generate high-clickbait video thumbnails, social media artwork, and visual prompt specs.</p>
         </div>
-        <div class="panel-card">
-          <h3><i class="ph-bold ph-palette"></i> Thumbnail Prompt Factory</h3>
-          <p style="color: var(--text-muted); font-size: 0.9rem;">Generates prompt specifications for Flux and Midjourney.</p>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+          <div class="panel-card" style="padding: 20px; display: flex; flex-direction: column; gap: 16px;">
+            <h3><i class="ph-bold ph-palette" style="color: var(--accent-orange);"></i> Visual Prompt Generator</h3>
+            <div class="form-group">
+              <label>Thumbnail / Image Concept</label>
+              <textarea id="img-prompt-input" class="form-control" style="height: 100px; resize: none;" placeholder="e.g. Glowing neon AI neural brain floating above dark futuristic cityscape, 8k resolution, cinematic lighting..."></textarea>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div class="form-group">
+                <label>Aspect Ratio</label>
+                <select id="img-aspect-select" class="form-control">
+                  <option value="16:9">16:9 • YouTube Thumbnail</option>
+                  <option value="9:16">9:16 • Shorts / Reel Cover</option>
+                  <option value="1:1">1:1 • Square Post</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Style Preset</label>
+                <select id="img-style-select" class="form-control">
+                  <option value="cinematic">Cinematic 3D Render</option>
+                  <option value="clickbait">YouTube High Contrast</option>
+                  <option value="anime">Anime / Manga Style</option>
+                  <option value="photo">Photorealistic Studio</option>
+                </select>
+              </div>
+            </div>
+            <button id="img-btn-generate" class="btn btn-primary" style="font-weight: 700; width: 100%;">
+              <i class="ph-bold ph-magic-wand"></i> Generate Image Asset
+            </button>
+          </div>
+
+          <div class="panel-card" style="padding: 20px; display: flex; flex-direction: column; gap: 16px;">
+            <h3><i class="ph-bold ph-images"></i> Generated Visual Gallery</h3>
+            <div style="flex: 1; border: 2px dashed var(--border-color); border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center; color: var(--text-dim);">
+              <i class="ph-bold ph-image-square" style="font-size: 2.5rem; margin-bottom: 8px; opacity: 0.5;"></i>
+              <p style="font-size: 0.85rem;">Generated image previews will appear here.</p>
+            </div>
+          </div>
         </div>
       </section>
 
       <!-- View 12: Research Hub -->
       <section id="v-research-hub" class="view-panel">
         <div class="view-header">
-          <h1>Research Hub & Scraper</h1>
-          <p>Ingest public video transcripts and web content into Markdown memory.</p>
+          <h1>Research Hub & Web Scraper</h1>
+          <p>Ingest public video transcripts, web articles, and research papers into Markdown memory.</p>
         </div>
-        <div class="panel-card">
-          <h3><i class="ph-bold ph-magnifying-glass-plus"></i> Transcript & Trend Scraper</h3>
-          <p style="color: var(--text-muted); font-size: 0.9rem;">Extract key insights directly into the Karpathy Wiki.</p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+          <div class="panel-card" style="padding: 20px; display: flex; flex-direction: column; gap: 16px;">
+            <h3><i class="ph-bold ph-magnifying-glass-plus" style="color: var(--accent-blue);"></i> Web & Transcript Ingester</h3>
+            <div class="form-group">
+              <label>Target URL (YouTube / Article / Paper)</label>
+              <input type="url" id="res-url-input" class="form-control" placeholder="https://www.youtube.com/watch?v=..." />
+            </div>
+            <button id="res-btn-search" class="btn btn-primary" style="font-weight: 700;">
+              <i class="ph-bold ph-download-simple"></i> Extract Transcript & Summarize
+            </button>
+          </div>
+
+          <div class="panel-card" style="padding: 20px; display: flex; flex-direction: column; gap: 16px;">
+            <h3><i class="ph-bold ph-notebook"></i> Extracted Research Insights</h3>
+            <textarea id="res-output-text" class="form-control" style="flex: 1; min-height: 220px; font-family: var(--font-mono); font-size: 0.85rem; resize: none;" readonly placeholder="Extracted transcripts and notes will be displayed here..."></textarea>
+          </div>
         </div>
       </section>
 
       <!-- View 13: Settings -->
       <section id="v-settings" class="view-panel">
         <div class="view-header">
-          <h1>Settings & Local Runners</h1>
-          <p>Configure local CLI agents, Ollama endpoints, and environment paths.</p>
+          <h1>Settings & Local Execution Engine</h1>
+          <p>Configure local CLI agents, Ollama endpoints, GPU memory, and workspace paths.</p>
         </div>
-        <div class="panel-card">
-          <h3><i class="ph-bold ph-cpu"></i> Detected CLI Agents</h3>
-          <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 20px;">
-            <button class="btn-primary" id="scan-runners-btn">Scan System for CLI Agents</button>
-            <span id="scan-status" style="font-size: 0.85rem; color: var(--status-green);"></span>
+
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+          <!-- Card 1: CLI Runners -->
+          <div class="panel-card" style="padding: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+              <h3><i class="ph-bold ph-cpu" style="color: var(--accent-light);"></i> Detected System CLI Runners</h3>
+              <button class="btn btn-primary btn-sm" id="scan-runners-btn">
+                <i class="ph-bold ph-arrows-clockwise"></i> Scan System Runners
+              </button>
+            </div>
+            <div id="discovered-runners-list" style="display: flex; flex-wrap: wrap; gap: 12px;">
+              <div style="padding: 10px 16px; background: #121215; border: 1px solid #242430; border-radius: 6px; display: flex; align-items: center; gap: 8px;">
+                <div class="pulse-dot"></div>
+                <span style="font-size: 0.85rem; font-weight: 600; color: #ffffff;">Python 3.12 Engine</span>
+              </div>
+              <div style="padding: 10px 16px; background: #121215; border: 1px solid #242430; border-radius: 6px; display: flex; align-items: center; gap: 8px;">
+                <div class="pulse-dot"></div>
+                <span style="font-size: 0.85rem; font-weight: 600; color: #ffffff;">FastAPI Backend (Port 8000)</span>
+              </div>
+            </div>
           </div>
-          <div id="discovered-runners-list" style="display: flex; flex-wrap: wrap; gap: 12px;">
-            <p style="color: var(--text-dim);">Click scan to find local CLI tools.</p>
+
+          <!-- Card 2: Local AI & Ollama Configuration -->
+          <div class="panel-card" style="padding: 20px; display: flex; flex-direction: column; gap: 16px;">
+            <h3><i class="ph-bold ph-robot"></i> Local LLM & Ollama Configuration</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+              <div class="form-group">
+                <label>Ollama Base Endpoint</label>
+                <input type="text" class="form-control" value="http://localhost:11434" />
+              </div>
+              <div class="form-group">
+                <label>Default LLM Model</label>
+                <select class="form-control">
+                  <option value="llama3.2">llama3.2 (Default)</option>
+                  <option value="mistral">mistral-7b</option>
+                  <option value="qwen2.5-coder">qwen2.5-coder</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3: Storage Paths -->
+          <div class="panel-card" style="padding: 20px; display: flex; flex-direction: column; gap: 16px;">
+            <h3><i class="ph-bold ph-hard-drives"></i> Workspace Storage Directories</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+              <div class="form-group">
+                <label>Assets Vault Path</label>
+                <input type="text" class="form-control" value="database/assets_vault" readonly />
+              </div>
+              <div class="form-group">
+                <label>Cache & Model Weight Directory</label>
+                <input type="text" class="form-control" value="database/cache" readonly />
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -1265,12 +1348,43 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <!-- View 14: Integrations -->
       <section id="v-integrations" class="view-panel">
         <div class="view-header">
-          <h1>Integrations</h1>
-          <p>Connect 9router, local LLM endpoints, and social APIs.</p>
+          <h1>Integrations & External Gateways</h1>
+          <p>Connect cloud AI API keys, social publishing platforms, and local router gateways.</p>
         </div>
-        <div class="panel-card">
-          <h3><i class="ph-bold ph-plugs-connected"></i> Universal Connectors</h3>
-          <p style="color: var(--text-muted); font-size: 0.9rem;">Connect local CLI agents or API gateways.</p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+          <div class="panel-card" style="padding: 20px; display: flex; flex-direction: column; gap: 16px;">
+            <h3><i class="ph-bold ph-key" style="color: var(--accent-orange);"></i> Cloud AI API Keys</h3>
+            <div class="form-group">
+              <label>OpenAI API Key</label>
+              <input type="password" class="form-control" placeholder="sk-proj-..." />
+            </div>
+            <div class="form-group">
+              <label>Anthropic Claude Key</label>
+              <input type="password" class="form-control" placeholder="sk-ant-..." />
+            </div>
+            <div class="form-group">
+              <label>Google Gemini API Key</label>
+              <input type="password" class="form-control" placeholder="AIzaSy..." />
+            </div>
+            <button class="btn btn-primary" style="font-weight: 700; align-self: flex-start;">Save API Credentials</button>
+          </div>
+
+          <div class="panel-card" style="padding: 20px; display: flex; flex-direction: column; gap: 16px;">
+            <h3><i class="ph-bold ph-plugs-connected" style="color: var(--accent-blue);"></i> Local Gateways & WebUI</h3>
+            <div class="form-group">
+              <label>9router Local Endpoint</label>
+              <input type="text" class="form-control" value="http://localhost:9000" />
+            </div>
+            <div class="form-group">
+              <label>ComfyUI WebUI Address</label>
+              <input type="text" class="form-control" value="http://localhost:8188" />
+            </div>
+            <div class="form-group">
+              <label>Chatterbox TTS Port</label>
+              <input type="text" class="form-control" value="http://localhost:8001" readonly />
+            </div>
+          </div>
         </div>
       </section>
 
@@ -1278,7 +1392,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <section id="v-logs" class="view-panel">
         <div class="view-header" style="display: flex; justify-content: space-between; align-items: flex-end;">
           <div>
-            <h1>System Logs</h1>
+            <h1>System Logs & API Execution Console</h1>
             <p>Real-time execution logs for local API, agent subprocesses, and background runners.</p>
           </div>
           <div style="display: flex; align-items: center; gap: 12px;">
@@ -1314,11 +1428,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </div>
 
           <!-- Log Console Display -->
-          <div id="sys-log-console" class="log-console-container">
-            <div class="log-entry log-entry-info">
-              <span class="log-time">[00:00:00.000]</span>
-              <span class="log-tag tag-system">SYSTEM</span>
-              <span class="log-text">Connecting to real-time log stream...</span>
+          <div id="sys-log-console" class="log-console-container" style="min-height: 380px; max-height: 520px; overflow-y: auto; background: #08080a; padding: 12px; border-radius: 6px; font-family: var(--font-mono); font-size: 0.82rem;">
+            <div class="log-entry log-entry-info" style="color: #10b981; padding: 4px 0;">
+              <span class="log-time">[SYSTEM OK]</span>
+              <span class="log-tag tag-system" style="background: rgba(16,185,129,0.2); padding: 2px 6px; border-radius: 4px; font-weight: 700; margin: 0 8px;">FASTAPI</span>
+              <span class="log-text">Backend API connected cleanly on http://localhost:8000</span>
             </div>
           </div>
         </div>
